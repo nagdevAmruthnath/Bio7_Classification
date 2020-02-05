@@ -7,7 +7,7 @@
 
 When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
 
-#### Compile the 'Main.java' class with Bio7 >=3.1 to open the interface.
+#### Open and compile ('Compile Java' action main toolbar) the 'Main.java' class dynamically with Bio7 >=3.1 to open the interface.
 
 Follow Button 1-4 for a classification workflow which trains and classifies images with R (scripts
 are available in the R directory) in a non-blocking job.
