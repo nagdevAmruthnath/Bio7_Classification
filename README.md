@@ -11,4 +11,4 @@ Enable/disable/add filters in the 'createStackFeatures' method.
 
 Until now Multichannel images (e.g. RGB) can be classified.
 
-The ModelGui interface can be extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
+The 'ModelGui' graphical view interface can be extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
