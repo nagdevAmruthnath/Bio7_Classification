@@ -12,3 +12,8 @@ Enable/disable/add filters in the 'createStackFeatures' method.
 Until now Multichannel images (e.g. RGB) can be classified.
 
 The 'ModelGui' graphical view interface can be extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
+
+#### Please note: To compile the Project imported from GIT you have to fix the Java classpath when using a different computer. 
+#### Select the project, open the context menu and execute the 'Fix Project Classpath' action. This will automatically fix the classpath.
+
+When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
