@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Composite;
 
 public class ModelGui extends Composite {
 
-	private CreateTrainingFeatureSet model;
+	private Main model;
 
-	public ModelGui(Composite parent, CreateTrainingFeatureSet model, int style) {
+	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, style);
 		this.model = model;
 		setLayout(new GridLayout(2, true));

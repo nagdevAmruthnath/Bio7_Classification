@@ -30,9 +30,9 @@ import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
 import ij.process.ImageProcessor;
 
-public class CreateTrainingFeatureSet {
+public class Main {
 
-	public CreateTrainingFeatureSet() {
+	public Main() {
 		
 		CustomView view = new CustomView();
 
@@ -42,7 +42,7 @@ public class CreateTrainingFeatureSet {
 
 			public void run() {
 				Composite parent = view.getComposite("Classification");
-				new ModelGui(parent, CreateTrainingFeatureSet.this, SWT.NONE);
+				new ModelGui(parent, Main.this, SWT.NONE);
 
 				parent.layout(true);
 			}
