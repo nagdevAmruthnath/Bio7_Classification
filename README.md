@@ -2,7 +2,12 @@
 
 ### A repository for a Bio7 Graphical User Interface for supervised classification which can be extended easily.
 
-#### Download and compile the 'Main.java' class with Bio7 >=3.1 to open the interface.
+#### Please note: To compile the Java project imported from GIT you have to fix the Java classpath (created on a different computer). 
+#### Select the project, open the context menu and execute the 'Fix Project Classpath' action. This will automatically fix the classpath.
+
+When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
+
+#### Compile the 'Main.java' class with Bio7 >=3.1 to open the interface.
 
 Follow Button 1-4 for a classification workflow which trains and classifies images with R (scripts
 are available in the R directory) in a non-blocking job.
@@ -13,7 +18,3 @@ Until now Multichannel images (e.g. RGB) can be classified.
 
 The 'ModelGui' graphical view interface can be extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
 
-#### Please note: To compile the Project imported from GIT you have to fix the Java classpath when using a different computer. 
-#### Select the project, open the context menu and execute the 'Fix Project Classpath' action. This will automatically fix the classpath.
-
-When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
