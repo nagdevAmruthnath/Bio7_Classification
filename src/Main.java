@@ -13,11 +13,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException; 
+import org.rosuda.REngine.Rserve.RserveException;
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.collection.Work;
+import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
 import com.eco.bio7.rbridge.RServe;
 import com.eco.bio7.rbridge.RServeUtil;
@@ -32,8 +33,10 @@ import ij.process.ImageProcessor;
 
 public class Main {
 
+	private ModelGui gui;
+
 	public Main() {
-		
+
 		CustomView view = new CustomView();
 
 		Display display = Util.getDisplay();
@@ -42,7 +45,7 @@ public class Main {
 
 			public void run() {
 				Composite parent = view.getComposite("Classification");
-				new ModelGui(parent, Main.this, SWT.NONE);
+				gui = new ModelGui(parent, Main.this, SWT.NONE);
 
 				parent.layout(true);
 			}
@@ -90,20 +93,19 @@ public class Main {
 	}
 
 	public void action(int choice) {
-		
-		/*Create feature stack!*/
+
+		/* Create feature stack! */
 		if (choice == 1) {
 			String[] files = openMultipleFiles();
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
 					ImagePlus imPlus = createStackFeatures(files[i]);
 					imPlus.show();
-
 				}
 			}
 
 		}
-		/*Create ROI Classes!*/
+		/* Create ROI Classes! */
 		else if (choice == 2) {
 			Bio7Dialog.message(
 					"Add selections to the ROI Manager and transfer the ROI selections with the 'Pixel RM Stack action'\n\n'"
@@ -111,16 +113,19 @@ public class Main {
 							+ "in the 'Pixel RM Stack action'!");
 			IJ.run("ROI Manager...", "");
 
-		} 
-		
-		/*Train Classifier with external R script!*/
+		}
+
+		/* Train Classifier with external R script! */
 		else if (choice == 3) {
-			/*We have set the busy variable to false to use the R-Shell selection in this job!*/
+			/*
+			 * We have set the busy variable to false to use the R-Shell selection in this
+			 * job!
+			 */
 			RState.setBusy(false);
 			Work.openView("com.eco.bio7.RShell");
 			Bio7Dialog.selection("Select training features (classes) in R-Shell!\n\n"
 					+ "Select multiple with STRG (CMD)+MouseClick or SHIFT+MouseClick!\n\nPress 'OK' when selected to execute the training R script!");
-			/*Set the busy variable again to true because now we call R!*/
+			/* Set the busy variable again to true because now we call R! */
 			RState.setBusy(true);
 			evalRScript(FileRoot.getCurrentCompileDir() + "/../R/Train_RandomForest.R");
 		}
@@ -150,57 +155,82 @@ public class Main {
 					/* Transfer the classification result from R back to ImageJ! */
 					imageFromR(3, "imageMatrix", 1);
 					WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
+
 				}
 			}
 
-		} 
+		}
 
 	}
 
 	private ImagePlus createStackFeatures(String files) {
 		ImagePlus imPlus = null;
 
-		System.out.println(getCurrentPath() + "/" + files);
-		ImagePlus image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without display!
+		// System.out.println(getCurrentPath() + "/" + files);
+		ImagePlus image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
+																		// display!
 		/* Duplicate the image! */
 		Duplicator duplicator = new Duplicator();
 		/* Duplicate original for the RGB channels! */
 		ImagePlus rgb = duplicator.run(image);
 		/* Split original to R,G,B channels! */
 		ImagePlus[] channels = ChannelSplitter.split(rgb);
-		
+		/* Get the features and feature options from the GUI! */
+		gui.getFeatureOptions();
+		String opt=gui.channelOption;
+		String[] channelToInclude = gui.channelOption.split(",");
+
 		/* Create a feature stack from all available channels (e.g., R,G,B) images! */
 		ImageStack stack = new ImageStack(image.getWidth(), image.getHeight());
-		for (int j = 0; j < channels.length; j++) {
-			/* Add RGB channels to the stack! */
-			/* Convert original to float to have a float image stack for the filters! */
-			ImageProcessor floatProcessor = channels[j].getProcessor().convertToFloat();
-			stack.addSlice("Channel" + j, floatProcessor);
+		if (opt.isEmpty()==false&&channelToInclude.length > 0) {
+			for (int j = 0; j < channelToInclude.length; j++) {
+				/* Add RGB channels to the stack! */
+				/* Convert original to float to have a float image stack for the filters! */
+				int sel=Integer.parseInt(channelToInclude[j])-1;
+				ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
+				stack.addSlice("Channel" + j, floatProcessor);
+			}
+
+		} else {
+			for (int j = 0; j < channels.length; j++) {
+				/* Add RGB channels to the stack! */
+				/* Convert original to float to have a float image stack for the filters! */
+				ImageProcessor floatProcessor = channels[j].getProcessor().convertToFloat();
+				stack.addSlice("Channel" + j, floatProcessor);
+			}
 		}
-		
+
 		/* Convert original to float for the filter images! */
 		image.setProcessor(image.getProcessor().convertToFloat());
-		
-		/*Duplicate the filtered images (our additional features!) and
-		  add the filtered image copies to the feature stack!
-		 */
-		ImagePlus smoothed = duplicator.run(image);
-		IJ.run(smoothed, "Gaussian Blur...", "radius=20");
-		stack.addSlice("smoothed", smoothed.getProcessor());
-		
-		ImagePlus medianed = duplicator.run(image);
-		IJ.run(medianed, "Median...", "radius=10");
-		stack.addSlice("medianed", medianed.getProcessor());
-		
-		ImagePlus convolved = duplicator.run(image);
-				IJ.run(convolved, "Convolve...",
-				"text1=[-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
-		stack.addSlice("convolved", convolved.getProcessor());
 
+		/*
+		 * Duplicate the filtered images (our additional features!) and add the filtered
+		 * image copies to the feature stack!
+		 */
+
+		if (gui.gaussian) {
+			ImagePlus smoothed = duplicator.run(image);
+			IJ.run(smoothed, "Gaussian Blur...", gui.gaussianOption);
+			stack.addSlice("smoothed", smoothed.getProcessor());
+		}
+		if (gui.median) {
+			ImagePlus medianed = duplicator.run(image);
+			IJ.run(medianed, "Median...", gui.medianOption);
+			stack.addSlice("medianed", medianed.getProcessor());
+		}
+		if (gui.convolve) {
+			ImagePlus convolved = duplicator.run(image);
+			IJ.run(convolved, "Convolve...", gui.convolveOption);
+			stack.addSlice("convolved", convolved.getProcessor());
+		}
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
 
-
 		return imPlus;
+	}
+
+	/* Only implemented to avoid a console warning! */
+	public static void main(String[] args) {
+
 	}
 }
