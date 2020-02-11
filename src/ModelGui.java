@@ -11,6 +11,9 @@ import org.eclipse.swt.widgets.Text;
 import com.eco.bio7.image.Util;
 
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ModelGui extends Composite {
 
@@ -29,6 +32,23 @@ public class ModelGui extends Composite {
 	public String medianOption;
 	public String channelOption;
 	public String gaussianOption;
+	private Text optionsMean;
+	private Text optionsMaximum;
+	private Text optionsMinimum;
+	private Button checkMaximum;
+	private Button checkMean;
+	private Button checkMinimum;
+	protected boolean mean;
+	protected String meanOption;
+	protected boolean maximum;
+	protected String maximumOption;
+	protected boolean minimum;
+	protected String minimumOption;
+	private CTabFolder tabFolder;
+	private CTabItem tabItemFeatures;
+	private Composite composite;
+	private CTabItem tbtmMore;
+	private Composite composite_1;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, style);
@@ -83,49 +103,83 @@ public class ModelGui extends Composite {
 		btnNewButton_3.setLayoutData(gd_btnNewButton_3);
 		btnNewButton_3.setText("Classify Script (4)");
 
-		Label lblSelectChannels = new Label(this, SWT.NONE);
-		lblSelectChannels.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1));
+		tabFolder = new CTabFolder(this, SWT.BORDER);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_tabFolder.heightHint = 349;
+		tabFolder.setLayoutData(gd_tabFolder);
+		tabFolder.setSelectionBackground(
+				Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+
+		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
+		tabItemFeatures.setFont(SWTResourceManager.getFont("Arial", 10, SWT.BOLD));
+		tabItemFeatures.setText("Features");
+		tabFolder.setSelection(tabItemFeatures);
+		composite = new Composite(tabFolder, SWT.NONE);
+		tabItemFeatures.setControl(composite);
+		composite.setLayout(new GridLayout(2, true));
+
+		Label lblSelectChannels = new Label(composite, SWT.NONE);
+		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
+		gd_lblSelectChannels.widthHint = 206;
+		lblSelectChannels.setLayoutData(gd_lblSelectChannels);
 		lblSelectChannels.setText("Include Channels (1,2,...)\r\n");
 
-		channelSelectionText = new Text(this, SWT.BORDER);
-		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		channelSelectionText = new Text(composite, SWT.BORDER);
+		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		Label lblNewLabel = new Label(this, SWT.NONE);
-		lblNewLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1));
-		lblNewLabel.setText("Features");
-
-		Label lblFilter = new Label(this, SWT.NONE);
-		lblFilter.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		Label lblFilter = new Label(composite, SWT.NONE);
 		lblFilter.setText("Filter");
 
-		Label lblOption = new Label(this, SWT.NONE);
-		lblOption.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+		Label lblOption = new Label(composite, SWT.NONE);
 		lblOption.setText("Option");
 
-		checkGaussianFilter = new Button(this, SWT.CHECK);
-		checkGaussianFilter.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		checkGaussianFilter = new Button(composite, SWT.CHECK);
 		checkGaussianFilter.setText("Gaussian Blur");
 
-		optionGaussian = new Text(this, SWT.BORDER);
-		optionGaussian.setText("radius=20");
-		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		optionGaussian = new Text(composite, SWT.BORDER);
+		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionGaussian.setText("radius=2");
 
-		checkMedian = new Button(this, SWT.CHECK);
+		checkMedian = new Button(composite, SWT.CHECK);
 		checkMedian.setText("Median");
 
-		optionMedian = new Text(this, SWT.BORDER);
-		optionMedian.setText("radius=10");
-		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		optionMedian = new Text(composite, SWT.BORDER);
+		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionMedian.setText("radius=2");
 
-		checkConvolve = new Button(this, SWT.CHECK);
+		checkMean = new Button(composite, SWT.CHECK);
+		checkMean.setText("Mean");
+
+		optionsMean = new Text(composite, SWT.BORDER);
+		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionsMean.setText("radius=2");
+
+		checkMaximum = new Button(composite, SWT.CHECK);
+		checkMaximum.setText("Maximum");
+
+		optionsMaximum = new Text(composite, SWT.BORDER);
+		optionsMaximum.setText("radius=2");
+
+		checkMinimum = new Button(composite, SWT.CHECK);
+		checkMinimum.setText("Minimum");
+
+		optionsMinimum = new Text(composite, SWT.BORDER);
+		optionsMinimum.setText("radius=2");
+
+		checkConvolve = new Button(composite, SWT.CHECK);
 		checkConvolve.setText("Convolve");
 
-		optionConvolve = new Text(this, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		optionConvolve.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionConvolve.setText(
 				"text1=[\r\n-1 -1 -1 -1 -1\r\n-1 -1 -1 -1 -1\r\n-1 -1 24 -1 -1\r\n-1 -1 -1 -1 -1\r\n-1 -1 -1 -1 -1\r\n] normalize");
-		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_optionConvolve.heightHint = 80;
-		optionConvolve.setLayoutData(gd_optionConvolve);
+
+		tbtmMore = new CTabItem(tabFolder, SWT.NONE);
+		tbtmMore.setText("More");
+
+		composite_1 = new Composite(tabFolder, SWT.NONE);
+		tbtmMore.setControl(composite_1);
+		composite_1.setLayout(new GridLayout(2, true));
 
 	}
 
@@ -144,6 +198,15 @@ public class ModelGui extends Composite {
 
 				median = checkMedian.getSelection();
 				medianOption = optionMedian.getText();
+
+				mean = checkMean.getSelection();
+				meanOption = optionsMean.getText();
+
+				maximum = checkMaximum.getSelection();
+				maximumOption = optionsMaximum.getText();
+
+				minimum = checkMinimum.getSelection();
+				minimumOption = optionsMinimum.getText();
 
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();

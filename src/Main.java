@@ -209,19 +209,38 @@ public class Main {
 		 */
 
 		if (gui.gaussian) {
-			ImagePlus smoothed = duplicator.run(image);
-			IJ.run(smoothed, "Gaussian Blur...", gui.gaussianOption);
-			stack.addSlice("smoothed", smoothed.getProcessor());
+			ImagePlus gaussianFiltered = duplicator.run(image);
+			IJ.run(gaussianFiltered, "Gaussian Blur...", gui.gaussianOption);
+			stack.addSlice("gaussian", gaussianFiltered.getProcessor());
 		}
 		if (gui.median) {
-			ImagePlus medianed = duplicator.run(image);
-			IJ.run(medianed, "Median...", gui.medianOption);
-			stack.addSlice("medianed", medianed.getProcessor());
+			ImagePlus medianFiltered = duplicator.run(image);
+			IJ.run(medianFiltered, "Median...", gui.medianOption);
+			stack.addSlice("median", medianFiltered.getProcessor());
 		}
+		
+		if (gui.mean) {
+			ImagePlus meanFiltered = duplicator.run(image);
+			IJ.run(meanFiltered, "Mean...", gui.meanOption);
+			stack.addSlice("mean", meanFiltered.getProcessor());
+		}
+		
+		if (gui.minimum) {
+			ImagePlus minimumedFiltered = duplicator.run(image);
+			IJ.run(minimumedFiltered, "Minimum...", gui.minimumOption);
+			stack.addSlice("minimum", minimumedFiltered.getProcessor());
+		}
+		
+		if (gui.maximum) {
+			ImagePlus maximumFiltered = duplicator.run(image);
+			IJ.run(maximumFiltered, "Maximum...", gui.maximumOption);
+			stack.addSlice("maximum", maximumFiltered.getProcessor());
+		}
+		
 		if (gui.convolve) {
-			ImagePlus convolved = duplicator.run(image);
-			IJ.run(convolved, "Convolve...", gui.convolveOption);
-			stack.addSlice("convolved", convolved.getProcessor());
+			ImagePlus convolvedFiltered = duplicator.run(image);
+			IJ.run(convolvedFiltered, "Convolve...", gui.convolveOption);
+			stack.addSlice("convolved", convolvedFiltered.getProcessor());
 		}
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
