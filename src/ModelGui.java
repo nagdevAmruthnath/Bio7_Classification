@@ -49,9 +49,11 @@ public class ModelGui extends Composite {
 	private Composite composite;
 	private CTabItem tbtmMore;
 	private Composite composite_1;
+	private Button checkEdges;
+	protected boolean edges;
 
 	public ModelGui(Composite parent, Main model, int style) {
-		super(parent, style);
+		super(parent, SWT.NONE);
 		this.model = model;
 		setLayout(new GridLayout(2, true));
 
@@ -104,14 +106,13 @@ public class ModelGui extends Composite {
 		btnNewButton_3.setText("Classify Script (4)");
 
 		tabFolder = new CTabFolder(this, SWT.BORDER);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		gd_tabFolder.heightHint = 349;
 		tabFolder.setLayoutData(gd_tabFolder);
 		tabFolder.setSelectionBackground(
 				Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
 		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
-		tabItemFeatures.setFont(SWTResourceManager.getFont("Arial", 10, SWT.BOLD));
 		tabItemFeatures.setText("Features");
 		tabFolder.setSelection(tabItemFeatures);
 		composite = new Composite(tabFolder, SWT.NONE);
@@ -120,9 +121,9 @@ public class ModelGui extends Composite {
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
 		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
-		gd_lblSelectChannels.widthHint = 206;
+		gd_lblSelectChannels.widthHint = 279;
 		lblSelectChannels.setLayoutData(gd_lblSelectChannels);
-		lblSelectChannels.setText("Include Channels (1,2,...)\r\n");
+		lblSelectChannels.setText("Select Channels (1,2,... - Leave blank for all!)\r\n");
 
 		channelSelectionText = new Text(composite, SWT.BORDER);
 		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -158,19 +159,28 @@ public class ModelGui extends Composite {
 		checkMaximum.setText("Maximum");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
+		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMaximum.setText("radius=2");
 
 		checkMinimum = new Button(composite, SWT.CHECK);
 		checkMinimum.setText("Minimum");
 
 		optionsMinimum = new Text(composite, SWT.BORDER);
+		optionsMinimum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		optionsMinimum.setText("radius=2");
+
+		checkEdges = new Button(composite, SWT.CHECK);
+		checkEdges.setText("Edges");
+		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
 		checkConvolve.setText("Convolve");
+		new Label(composite, SWT.NONE);
 
 		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		optionConvolve.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		gd_optionConvolve.widthHint = 248;
+		optionConvolve.setLayoutData(gd_optionConvolve);
 		optionConvolve.setText(
 				"text1=[\r\n-1 -1 -1 -1 -1\r\n-1 -1 -1 -1 -1\r\n-1 -1 24 -1 -1\r\n-1 -1 -1 -1 -1\r\n-1 -1 -1 -1 -1\r\n] normalize");
 
@@ -207,6 +217,8 @@ public class ModelGui extends Composite {
 
 				minimum = checkMinimum.getSelection();
 				minimumOption = optionsMinimum.getText();
+
+				edges = checkEdges.getSelection();
 
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();

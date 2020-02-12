@@ -237,6 +237,12 @@ public class Main {
 			stack.addSlice("maximum", maximumFiltered.getProcessor());
 		}
 		
+		if (gui.edges) {
+			ImagePlus edgesCreated = duplicator.run(image);
+			IJ.run(edgesCreated, "Find Edges", "");
+			stack.addSlice("edges", edgesCreated.getProcessor());
+		}
+		
 		if (gui.convolve) {
 			ImagePlus convolvedFiltered = duplicator.run(image);
 			IJ.run(convolvedFiltered, "Convolve...", gui.convolveOption);
