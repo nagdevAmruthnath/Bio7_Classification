@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
+import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.image.Util;
 
 import org.eclipse.swt.widgets.Label;
@@ -16,41 +17,43 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ModelGui extends Composite {
-
-	private Main model;
-	private Text channelSelectionText;
-	private Text optionGaussian;
-	private Text optionMedian;
-	private Text optionConvolve;
-	private Button checkGaussianFilter;
-	private Button checkMedian;
-	private Button checkConvolve;
-	public boolean convolve;
-	public boolean gaussian;
-	public boolean median;
-	public String convolveOption;
-	public String medianOption;
-	public String channelOption;
-	public String gaussianOption;
-	private Text optionsMean;
-	private Text optionsMaximum;
-	private Text optionsMinimum;
-	private Button checkMaximum;
-	private Button checkMean;
-	private Button checkMinimum;
+	protected boolean convolve;
+	protected boolean gaussian;
+	protected boolean median;
 	protected boolean mean;
-	protected String meanOption;
 	protected boolean maximum;
-	protected String maximumOption;
 	protected boolean minimum;
-	protected String minimumOption;
+	protected boolean edges;
+	protected String convolveOption="text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize";
+	protected String medianOption="radius=2";
+	protected String channelOption="";
+	protected String gaussianOption="radius=2";
+	protected String meanOption="radius=2";	
+	protected String maximumOption="radius=2";
+	protected String minimumOption="radius=2";
+	private Main model;
+	protected Text channelSelectionText;
+	protected Text optionGaussian;
+	protected Text optionMedian;
+	protected Text optionConvolve;
+	protected Text optionsMean;
+	protected Text optionsMaximum;
+	protected Text optionsMinimum;
+	protected Button checkGaussianFilter;
+	protected Button checkMedian;
+	protected Button checkConvolve;	
+	protected Button checkMaximum;
+	protected Button checkMean;
+	protected Button checkMinimum;
+	protected Button checkEdges;	
 	private CTabFolder tabFolder;
 	private CTabItem tabItemFeatures;
 	private Composite composite;
 	private CTabItem tbtmMore;
-	private Composite composite_1;
-	private Button checkEdges;
-	protected boolean edges;
+	private Composite composite_1;	
+	private Button btnLoadConfiguration;
+	private Button btnNewButton_4;
+	private Label label;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -104,6 +107,33 @@ public class ModelGui extends Composite {
 		gd_btnNewButton_3.heightHint = 30;
 		btnNewButton_3.setLayoutData(gd_btnNewButton_3);
 		btnNewButton_3.setText("Classify Script (4)");
+		
+		label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		
+		btnLoadConfiguration = new Button(this, SWT.NONE);
+		GridData gd_btnLoadConfiguration = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_btnLoadConfiguration.heightHint = 30;
+		btnLoadConfiguration.setLayoutData(gd_btnLoadConfiguration);
+		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				new LoadAndSaveConfig(ModelGui.this).loadScript();
+			}
+		});
+		btnLoadConfiguration.setText("Load Configuration");
+		
+		btnNewButton_4 = new Button(this, SWT.NONE);
+		GridData gd_btnNewButton_4 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_btnNewButton_4.heightHint = 30;
+		btnNewButton_4.setLayoutData(gd_btnNewButton_4);
+		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				new LoadAndSaveConfig(ModelGui.this).saveScript();
+			}
+		});
+		btnNewButton_4.setText("Save Configuration");
 
 		tabFolder = new CTabFolder(this, SWT.BORDER);
 		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
@@ -182,14 +212,14 @@ public class ModelGui extends Composite {
 		gd_optionConvolve.widthHint = 248;
 		optionConvolve.setLayoutData(gd_optionConvolve);
 		optionConvolve.setText(
-				"text1=[\r\n-1 -1 -1 -1 -1\r\n-1 -1 -1 -1 -1\r\n-1 -1 24 -1 -1\r\n-1 -1 -1 -1 -1\r\n-1 -1 -1 -1 -1\r\n] normalize");
+				"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
 
 		tbtmMore = new CTabItem(tabFolder, SWT.NONE);
 		tbtmMore.setText("More");
 
 		composite_1 = new Composite(tabFolder, SWT.NONE);
 		tbtmMore.setControl(composite_1);
-		composite_1.setLayout(new GridLayout(2, true));
+		composite_1.setLayout(new GridLayout(1, true));
 
 	}
 
