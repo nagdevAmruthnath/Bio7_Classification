@@ -13,6 +13,17 @@ public class LoadAndSaveConfig {
 		this.modelGui = modelGui;
 	}
 
+	public boolean read(BufferedReader reader) {
+		boolean value = false;
+		try {
+			value = Boolean.parseBoolean(reader.readLine());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return value;
+	}
+
 	public void loadScript() {
 
 		String file = Bio7Dialog.openFile(new String[] { "*.txt", "*" });
@@ -26,24 +37,24 @@ public class LoadAndSaveConfig {
 
 				modelGui.channelSelectionText.setText(reader.readLine());
 
-				modelGui.checkGaussianFilter.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkGaussianFilter.setSelection(read(reader));
 				modelGui.optionGaussian.setText(reader.readLine());
 
-				modelGui.checkMedian.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkMedian.setSelection(read(reader));
 				modelGui.optionMedian.setText(reader.readLine());
 
-				modelGui.checkMean.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkMean.setSelection(read(reader));
 				modelGui.optionsMean.setText(reader.readLine());
 
-				modelGui.checkMaximum.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkMaximum.setSelection(read(reader));
 				modelGui.optionsMaximum.setText(reader.readLine());
 
-				modelGui.checkMinimum.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkMinimum.setSelection(read(reader));
 				modelGui.optionsMinimum.setText(reader.readLine());
 
-				modelGui.checkEdges.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkEdges.setSelection(read(reader));
 
-				modelGui.checkConvolve.setSelection(Boolean.parseBoolean(reader.readLine()));
+				modelGui.checkConvolve.setSelection(read(reader));
 				modelGui.optionConvolve.setText(reader.readLine().replace("\\n", System.lineSeparator()));
 
 				reader.close();
@@ -57,40 +68,41 @@ public class LoadAndSaveConfig {
 
 	public void saveScript() {
 		StringBuffer buffer = new StringBuffer();
+		String sep = System.getProperty("line.separator");
+		buffer.append(sep);
 
 		buffer.append(modelGui.channelSelectionText.getText());
-		buffer.append(System.getProperty("line.separator"));
 
 		buffer.append(modelGui.checkGaussianFilter.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 		buffer.append(modelGui.optionGaussian.getText());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 
 		buffer.append(modelGui.checkMedian.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 		buffer.append(modelGui.optionMedian.getText());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 
 		buffer.append(modelGui.checkMean.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 		buffer.append(modelGui.optionsMean.getText());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 
 		buffer.append(modelGui.checkMaximum.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 		buffer.append(modelGui.optionsMaximum.getText());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 
 		buffer.append(modelGui.checkMinimum.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 		buffer.append(modelGui.optionsMinimum.getText());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 
 		buffer.append(modelGui.checkEdges.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 
 		buffer.append(modelGui.checkConvolve.getSelection());
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(sep);
 		buffer.append(modelGui.optionConvolve.getText().replace(System.lineSeparator(), "\\n"));
 		// buffer.append(System.getProperty("line.separator"));
 
