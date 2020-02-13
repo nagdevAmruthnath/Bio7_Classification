@@ -56,7 +56,11 @@ public class LoadAndSaveConfig {
 
 				modelGui.checkConvolve.setSelection(read(reader));
 				modelGui.optionConvolve.setText(reader.readLine().replace("\\n", System.lineSeparator()));
-
+                
+				modelGui.txtTrainingRScript.setText(reader.readLine());
+				
+				modelGui.txtClassificationRScript.setText(reader.readLine());
+				
 				reader.close();
 
 			} catch (IOException ex) {
@@ -69,10 +73,9 @@ public class LoadAndSaveConfig {
 	public void saveScript() {
 		StringBuffer buffer = new StringBuffer();
 		String sep = System.getProperty("line.separator");
-		buffer.append(sep);
-
+		//buffer.append(sep);
 		buffer.append(modelGui.channelSelectionText.getText());
-
+		buffer.append(sep);
 		buffer.append(modelGui.checkGaussianFilter.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionGaussian.getText());
@@ -104,6 +107,11 @@ public class LoadAndSaveConfig {
 		buffer.append(modelGui.checkConvolve.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionConvolve.getText().replace(System.lineSeparator(), "\\n"));
+		buffer.append(sep);
+		buffer.append(modelGui.getPathTrainingRScript());
+		buffer.append(sep);
+		buffer.append(modelGui.getPathClassificationRScript());
+		buffer.append(sep);
 		// buffer.append(System.getProperty("line.separator"));
 
 		String file = Bio7Dialog.saveFile("*.txt");

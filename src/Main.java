@@ -96,12 +96,13 @@ public class Main {
 
 		/* Create feature stack! */
 		if (choice == 1) {
-			String[] files = openMultipleFiles();
+			String files = Bio7Dialog.openFile();
 			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
-					ImagePlus imPlus = createStackFeatures(files[i]);
-					imPlus.show();
-				}
+				System.out.println(files);
+				// for (int i = 0; i < files.length; i++) {
+				ImagePlus imPlus = createStackFeatures(null, files);
+				imPlus.show();
+				// }
 			}
 
 		}
@@ -127,7 +128,7 @@ public class Main {
 					+ "Select multiple with STRG (CMD)+MouseClick or SHIFT+MouseClick!\n\nPress 'OK' when selected to execute the training R script!");
 			/* Set the busy variable again to true because now we call R! */
 			RState.setBusy(true);
-			evalRScript(FileRoot.getCurrentCompileDir() + "/../R/Train_RandomForest.R");
+			evalRScript(gui.getPathTrainingRScript());
 		}
 
 		/* Classify selected images with external R Script! */
@@ -137,7 +138,7 @@ public class Main {
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
 
-					ImagePlus imPlus = createStackFeatures(files[i]);
+					ImagePlus imPlus = createStackFeatures(files[i], null);
 					// System.out.println(choice);
 
 					/* Correct some image names for R! */
@@ -151,7 +152,7 @@ public class Main {
 						e.printStackTrace();
 					}
 					/* Predict in R (evalRScript is a custom method) with the randomForest model! */
-					evalRScript(FileRoot.getCurrentCompileDir() + "/../R/Classify_RandomForest.R");
+					evalRScript(gui.getPathClassificationRScript());
 					/* Transfer the classification result from R back to ImageJ! */
 					imageFromR(3, "imageMatrix", 1);
 					WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
@@ -163,12 +164,17 @@ public class Main {
 
 	}
 
-	private ImagePlus createStackFeatures(String files) {
+	private ImagePlus createStackFeatures(String files, String singleFile) {
 		ImagePlus imPlus = null;
+		ImagePlus image;
+		
+		if (files != null) {
+			image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
+																	// display!
+		} else {
+			image = IJ.openImage(singleFile);
+		}
 
-		// System.out.println(getCurrentPath() + "/" + files);
-		ImagePlus image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
-																		// display!
 		/* Duplicate the image! */
 		Duplicator duplicator = new Duplicator();
 		/* Duplicate original for the RGB channels! */
@@ -177,16 +183,16 @@ public class Main {
 		ImagePlus[] channels = ChannelSplitter.split(rgb);
 		/* Get the features and feature options from the GUI! */
 		gui.getFeatureOptions();
-		String opt=gui.channelOption;
+		String opt = gui.channelOption;
 		String[] channelToInclude = gui.channelOption.split(",");
 
 		/* Create a feature stack from all available channels (e.g., R,G,B) images! */
 		ImageStack stack = new ImageStack(image.getWidth(), image.getHeight());
-		if (opt.isEmpty()==false&&channelToInclude.length > 0) {
+		if (opt.isEmpty() == false && channelToInclude.length > 0) {
 			for (int j = 0; j < channelToInclude.length; j++) {
 				/* Add RGB channels to the stack! */
 				/* Convert original to float to have a float image stack for the filters! */
-				int sel=Integer.parseInt(channelToInclude[j])-1;
+				int sel = Integer.parseInt(channelToInclude[j]) - 1;
 				ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
 				stack.addSlice("Channel" + j, floatProcessor);
 			}
@@ -218,31 +224,31 @@ public class Main {
 			IJ.run(medianFiltered, "Median...", gui.medianOption);
 			stack.addSlice("median", medianFiltered.getProcessor());
 		}
-		
+
 		if (gui.mean) {
 			ImagePlus meanFiltered = duplicator.run(image);
 			IJ.run(meanFiltered, "Mean...", gui.meanOption);
 			stack.addSlice("mean", meanFiltered.getProcessor());
 		}
-		
+
 		if (gui.minimum) {
 			ImagePlus minimumedFiltered = duplicator.run(image);
 			IJ.run(minimumedFiltered, "Minimum...", gui.minimumOption);
 			stack.addSlice("minimum", minimumedFiltered.getProcessor());
 		}
-		
+
 		if (gui.maximum) {
 			ImagePlus maximumFiltered = duplicator.run(image);
 			IJ.run(maximumFiltered, "Maximum...", gui.maximumOption);
 			stack.addSlice("maximum", maximumFiltered.getProcessor());
 		}
-		
+
 		if (gui.edges) {
 			ImagePlus edgesCreated = duplicator.run(image);
 			IJ.run(edgesCreated, "Find Edges", "");
 			stack.addSlice("edges", edgesCreated.getProcessor());
 		}
-		
+
 		if (gui.convolve) {
 			ImagePlus convolvedFiltered = duplicator.run(image);
 			IJ.run(convolvedFiltered, "Convolve...", gui.convolveOption);
