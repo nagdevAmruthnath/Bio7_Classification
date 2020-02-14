@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
+import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
 
 import org.eclipse.swt.widgets.Label;
@@ -335,6 +336,11 @@ public class ModelGui extends Composite {
 			}
 		});
 		return pathClassificationScript;
+	}
+	
+	public void layout() {
+		CanvasView canvasView = CanvasView.getCanvas_view();
+		canvasView.recalculateLayout();
 	}
 
 }

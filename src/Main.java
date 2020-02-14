@@ -100,10 +100,11 @@ public class Main {
 		if (choice == 1) {
 			String files = Bio7Dialog.openFile();
 			if (files != null) {
-				System.out.println(files);
+				//System.out.println(files);
 				// for (int i = 0; i < files.length; i++) {
 				ImagePlus imPlus = createStackFeatures(null, files);
 				imPlus.show();
+				gui.layout();
 				// }
 			}
 
@@ -158,7 +159,7 @@ public class Main {
 					/* Transfer the classification result from R back to ImageJ! */
 					imageFromR(3, "imageMatrix", 1);
 					WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
-
+					gui.layout();
 				}
 			}
 
