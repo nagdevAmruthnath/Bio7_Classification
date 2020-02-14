@@ -29,6 +29,8 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
+import ij.process.ColorProcessor;
+import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
 public class Main {
@@ -167,7 +169,7 @@ public class Main {
 	private ImagePlus createStackFeatures(String files, String singleFile) {
 		ImagePlus imPlus = null;
 		ImagePlus image;
-		
+
 		if (files != null) {
 			image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
 																	// display!
@@ -179,35 +181,82 @@ public class Main {
 		Duplicator duplicator = new Duplicator();
 		/* Duplicate original for the RGB channels! */
 		ImagePlus rgb = duplicator.run(image);
-		/* Split original to R,G,B channels! */
-		ImagePlus[] channels = ChannelSplitter.split(rgb);
-		/* Get the features and feature options from the GUI! */
+		ImageStack stack = null;
+		/*
+		 * Convert original to float for the filter (and grayscale layer if not color)
+		 * images!
+		 */
+		image.setProcessor(image.getProcessor().convertToFloat());
+		/* Important to call to get the features and feature options from the GUI! */
 		gui.getFeatureOptions();
-		String opt = gui.channelOption;
-		String[] channelToInclude = gui.channelOption.split(",");
+		/* If we have a RGB! */
+		if (rgb.getProcessor() instanceof ColorProcessor) {
 
-		/* Create a feature stack from all available channels (e.g., R,G,B) images! */
-		ImageStack stack = new ImageStack(image.getWidth(), image.getHeight());
-		if (opt.isEmpty() == false && channelToInclude.length > 0) {
-			for (int j = 0; j < channelToInclude.length; j++) {
-				/* Add RGB channels to the stack! */
-				/* Convert original to float to have a float image stack for the filters! */
-				int sel = Integer.parseInt(channelToInclude[j]) - 1;
-				ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
-				stack.addSlice("Channel" + j, floatProcessor);
+			if (gui.toHsb) {
+				ImageConverter con = new ImageConverter(rgb);
+				con.convertToHSB();
+
+				String opt = gui.channelOption;
+				String[] channelToInclude = opt.split(",");
+
+				// IJ.run(rgb, "HSB Stack", "");
+				ImageStack hsbStack = rgb.getStack();
+				/* Create a feature stack from all available channels (e.g., R,G,B) images! */
+				stack = new ImageStack(image.getWidth(), image.getHeight());
+				if (opt.isEmpty() == false && channelToInclude.length > 0) {
+
+					for (int j = 0; j < channelToInclude.length; j++) {
+						/* Add RGB channels to the stack! */
+						/* Convert original to float to have a float image stack for the filters! */
+						int sel = Integer.parseInt(channelToInclude[j]);
+						/* Use selected slices. Important to convert to Float! */
+						ImageProcessor floatProcessor = hsbStack.getProcessor(sel).convertToFloat();
+						stack.addSlice("Channel" + j, floatProcessor);
+					}
+				} else {
+					/* Use all slices. Important to convert to Float! */
+					stack = rgb.getStack().convertToFloat();
+				}
+
+			} else {
+
+				/* Split original to R,G,B channels! */
+				ImagePlus[] channels = ChannelSplitter.split(rgb);
+
+				String opt = gui.channelOption;
+				String[] channelToInclude = opt.split(",");
+
+				/* Create a feature stack from all available channels (e.g., R,G,B) images! */
+				stack = new ImageStack(image.getWidth(), image.getHeight());
+				if (opt.isEmpty() == false && channelToInclude.length > 0) {
+					for (int j = 0; j < channelToInclude.length; j++) {
+						/* Add RGB channels to the stack! */
+						/* Convert original to float to have a float image stack for the filters! */
+						int sel = Integer.parseInt(channelToInclude[j]) - 1;
+						ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
+						stack.addSlice("Channel" + j, floatProcessor);
+					}
+
+				} else {
+					for (int j = 0; j < channels.length; j++) {
+						/* Add RGB channels to the stack! */
+						/* Convert original to float to have a float image stack for the filters! */
+						ImageProcessor floatProcessor = channels[j].getProcessor().convertToFloat();
+						stack.addSlice("Channel" + j, floatProcessor);
+					}
+				}
 			}
-
-		} else {
-			for (int j = 0; j < channels.length; j++) {
-				/* Add RGB channels to the stack! */
+		} else {/* Grayscale images (8-bit, 16-bit, 32-bit) */
+			/* If we have a multichannel image! */
+			if (image.getStackSize() > 1) {
 				/* Convert original to float to have a float image stack for the filters! */
-				ImageProcessor floatProcessor = channels[j].getProcessor().convertToFloat();
-				stack.addSlice("Channel" + j, floatProcessor);
+				stack = image.getStack().convertToFloat();
+			} else {
+
+				stack = new ImageStack(image.getWidth(), image.getHeight());
+				stack.addSlice("grayscale", image.getProcessor());
 			}
 		}
-
-		/* Convert original to float for the filter images! */
-		image.setProcessor(image.getProcessor().convertToFloat());
 
 		/*
 		 * Duplicate the filtered images (our additional features!) and add the filtered

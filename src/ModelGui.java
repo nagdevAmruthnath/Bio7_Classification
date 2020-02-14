@@ -61,6 +61,8 @@ public class ModelGui extends Composite {
 	protected Text txtClassificationRScript;
 	protected String pathTrainingScript;
 	protected String pathClassificationScript;
+	protected Button checkConvertToHsb;
+	protected boolean toHsb;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -164,6 +166,10 @@ public class ModelGui extends Composite {
 
 		channelSelectionText = new Text(composite, SWT.BORDER);
 		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+		checkConvertToHsb = new Button(composite, SWT.CHECK);
+		checkConvertToHsb.setText("Convert to HSB Color Space");
+		new Label(composite, SWT.NONE);
 
 		Label lblFilter = new Label(composite, SWT.NONE);
 		lblFilter.setText("Filter");
@@ -274,6 +280,8 @@ public class ModelGui extends Composite {
 		display.syncExec(new Runnable() {
 
 			public void run() {
+
+				toHsb = checkConvertToHsb.getSelection();
 
 				channelOption = channelSelectionText.getText();
 

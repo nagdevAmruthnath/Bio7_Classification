@@ -35,6 +35,8 @@ public class LoadAndSaveConfig {
 				FileReader fileReader = new FileReader(fil);
 				BufferedReader reader = new BufferedReader(fileReader);
 
+				modelGui.checkConvertToHsb.setSelection(read(reader));
+
 				modelGui.channelSelectionText.setText(reader.readLine());
 
 				modelGui.checkGaussianFilter.setSelection(read(reader));
@@ -56,11 +58,11 @@ public class LoadAndSaveConfig {
 
 				modelGui.checkConvolve.setSelection(read(reader));
 				modelGui.optionConvolve.setText(reader.readLine().replace("\\n", System.lineSeparator()));
-                
+
 				modelGui.txtTrainingRScript.setText(reader.readLine());
-				
+
 				modelGui.txtClassificationRScript.setText(reader.readLine());
-				
+
 				reader.close();
 
 			} catch (IOException ex) {
@@ -73,7 +75,10 @@ public class LoadAndSaveConfig {
 	public void saveScript() {
 		StringBuffer buffer = new StringBuffer();
 		String sep = System.getProperty("line.separator");
-		//buffer.append(sep);
+		// buffer.append(sep);
+		buffer.append(modelGui.checkConvertToHsb.getSelection());
+		buffer.append(sep);
+
 		buffer.append(modelGui.channelSelectionText.getText());
 		buffer.append(sep);
 		buffer.append(modelGui.checkGaussianFilter.getSelection());
