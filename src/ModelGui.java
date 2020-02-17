@@ -14,6 +14,8 @@ import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
 
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -27,12 +29,12 @@ public class ModelGui extends Composite {
 	protected boolean minimum;
 	protected boolean edges;
 	protected String convolveOption = "text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize";
-	protected String medianOption = "radius=2";
+	protected String medianOption = "2";
 	protected String channelOption = "";
-	protected String gaussianOption = "radius=2";
-	protected String meanOption = "radius=2";
-	protected String maximumOption = "radius=2";
-	protected String minimumOption = "radius=2";
+	protected String gaussianOption = "2";
+	protected String meanOption = "2";
+	protected String maximumOption = "2";
+	protected String minimumOption = "2";
 	private Main model;
 	protected Text channelSelectionText;
 	protected Text optionGaussian;
@@ -149,8 +151,8 @@ public class ModelGui extends Composite {
 		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		gd_tabFolder.heightHint = 349;
 		tabFolder.setLayoutData(gd_tabFolder);
-		tabFolder.setSelectionBackground(
-				Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		//tabFolder.setSelectionBackground(
+				//Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
 		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
 		tabItemFeatures.setText("Features");
@@ -176,42 +178,42 @@ public class ModelGui extends Composite {
 		lblFilter.setText("Filter");
 
 		Label lblOption = new Label(composite, SWT.NONE);
-		lblOption.setText("Option");
+		lblOption.setText("Sigma");
 
 		checkGaussianFilter = new Button(composite, SWT.CHECK);
 		checkGaussianFilter.setText("Gaussian Blur");
 
 		optionGaussian = new Text(composite, SWT.BORDER);
 		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionGaussian.setText("radius=2");
+		optionGaussian.setText("2");
 
 		checkMedian = new Button(composite, SWT.CHECK);
 		checkMedian.setText("Median");
 
 		optionMedian = new Text(composite, SWT.BORDER);
 		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionMedian.setText("radius=2");
+		optionMedian.setText("2");
 
 		checkMean = new Button(composite, SWT.CHECK);
 		checkMean.setText("Mean");
 
 		optionsMean = new Text(composite, SWT.BORDER);
 		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionsMean.setText("radius=2");
+		optionsMean.setText("2");
 
 		checkMaximum = new Button(composite, SWT.CHECK);
 		checkMaximum.setText("Maximum");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
 		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionsMaximum.setText("radius=2");
+		optionsMaximum.setText("2");
 
 		checkMinimum = new Button(composite, SWT.CHECK);
 		checkMinimum.setText("Minimum");
 
 		optionsMinimum = new Text(composite, SWT.BORDER);
 		optionsMinimum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		optionsMinimum.setText("radius=2");
+		optionsMinimum.setText("2");
 
 		checkEdges = new Button(composite, SWT.CHECK);
 		checkEdges.setText("Edges");

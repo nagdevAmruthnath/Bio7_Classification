@@ -29,6 +29,8 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
+import ij.plugin.filter.GaussianBlur;
+import ij.plugin.filter.RankFilters;
 import ij.process.ColorProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
@@ -100,7 +102,7 @@ public class Main {
 		if (choice == 1) {
 			String files = Bio7Dialog.openFile();
 			if (files != null) {
-				//System.out.println(files);
+				// System.out.println(files);
 				// for (int i = 0; i < files.length; i++) {
 				ImagePlus imPlus = createStackFeatures(null, files);
 				imPlus.show();
@@ -263,34 +265,94 @@ public class Main {
 		 * Duplicate the filtered images (our additional features!) and add the filtered
 		 * image copies to the feature stack!
 		 */
-
+		
+		ImageStack tempStack=stack.duplicate();
+		RankFilters ran=new RankFilters();
 		if (gui.gaussian) {
-			ImagePlus gaussianFiltered = duplicator.run(image);
-			IJ.run(gaussianFiltered, "Gaussian Blur...", gui.gaussianOption);
-			stack.addSlice("gaussian", gaussianFiltered.getProcessor());
+			GaussianBlur gaussian= new GaussianBlur();
+			/*Split the gaussian option to get all sigmas!*/
+			String[] gaussianSigma = gui.gaussianOption.split(",");
+			int stackSize=tempStack.getSize();
+			for (int i = 1; i <=stackSize; i++) {
+				
+				for (int j = 0; j < gaussianSigma.length; j++) {
+					ImagePlus plus = new ImagePlus("gaussian_sigma_"+gaussianSigma[j], tempStack.getProcessor(i).duplicate());
+					//IJ.run(plus, "Gaussian Blur...", "radius="+gaussianSigma[j]); 
+					ImageProcessor ip=plus.getProcessor();
+					double sigma=Double.parseDouble(gaussianSigma[j]);
+					/*See: https://imagej.nih.gov/ij/developer/api/ij/plugin/filter/GaussianBlur.html#blur-ij.process.ImageProcessor-double-*/
+					gaussian.blurGaussian(ip, 0.4*sigma,0.4*sigma,0.0002);
+					stack.addSlice(plus.getTitle(), plus.getProcessor());
+				}
+			}
+			// ImagePlus gaussianFiltered = duplicator.run(image);
+			// IJ.run(gaussianFiltered, "Gaussian Blur...", gui.gaussianOption);
+
 		}
-		if (gui.median) {
-			ImagePlus medianFiltered = duplicator.run(image);
-			IJ.run(medianFiltered, "Median...", gui.medianOption);
-			stack.addSlice("median", medianFiltered.getProcessor());
+		if (gui.median) {		
+			
+				/*Split the median option to get all sigmas!*/
+				String[] medianSigma = gui.medianOption.split(",");
+				int stackSize=tempStack.getSize();
+				for (int i = 1; i <=stackSize; i++) {
+					
+					for (int j = 0; j < medianSigma.length; j++) {
+						ImagePlus plus = new ImagePlus("median_sigma"+medianSigma[j], tempStack.getProcessor(i).duplicate());
+						//IJ.run(plus, "Median...", "radius="+medianSigma[j]); 
+						ImageProcessor ip=plus.getProcessor();
+						ran.rank(ip, Double.parseDouble(medianSigma[j]), 4);
+						stack.addSlice(plus.getTitle(), plus.getProcessor());
+					}
+				}
 		}
 
-		if (gui.mean) {
-			ImagePlus meanFiltered = duplicator.run(image);
-			IJ.run(meanFiltered, "Mean...", gui.meanOption);
-			stack.addSlice("mean", meanFiltered.getProcessor());
+		if (gui.mean) {		
+			/*Split the mean option to get all sigmas!*/
+			String[] meanSigma = gui.meanOption.split(",");
+			int stackSize=tempStack.getSize();
+			for (int i = 1; i <=stackSize; i++) {
+				
+				for (int j = 0; j < meanSigma.length; j++) {
+					ImagePlus plus = new ImagePlus("mean_sigma"+meanSigma[j], tempStack.getProcessor(i).duplicate());
+					//IJ.run(plus, "Mean...", "radius="+meanSigma[j]); 
+					ImageProcessor ip=plus.getProcessor();
+					ran.rank(ip, Double.parseDouble(meanSigma[j]), 0);
+					stack.addSlice(plus.getTitle(), plus.getProcessor());
+				}
+			}
 		}
 
 		if (gui.minimum) {
-			ImagePlus minimumedFiltered = duplicator.run(image);
-			IJ.run(minimumedFiltered, "Minimum...", gui.minimumOption);
-			stack.addSlice("minimum", minimumedFiltered.getProcessor());
+			/*Split the mean option to get all sigmas!*/
+			String[] minimumSigma = gui.minimumOption.split(",");
+			int stackSize=tempStack.getSize();
+			for (int i = 1; i <=stackSize; i++) {
+				
+				for (int j = 0; j < minimumSigma.length; j++) {
+					ImagePlus plus = new ImagePlus("minimum_sigma"+minimumSigma[j], tempStack.getProcessor(i).duplicate());
+					//IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]); 
+					ImageProcessor ip=plus.getProcessor();
+					ran.rank(ip, Double.parseDouble(minimumSigma[j]), 1);
+					stack.addSlice(plus.getTitle(), plus.getProcessor());
+				}
+			}
 		}
 
 		if (gui.maximum) {
-			ImagePlus maximumFiltered = duplicator.run(image);
-			IJ.run(maximumFiltered, "Maximum...", gui.maximumOption);
-			stack.addSlice("maximum", maximumFiltered.getProcessor());
+			/*Split the mean option to get all sigmas!*/
+			
+			String[] maximumSigma = gui.maximumOption.split(",");
+			int stackSize=tempStack.getSize();
+			for (int i = 1; i <=stackSize; i++) {
+				
+				for (int j = 0; j < maximumSigma.length; j++) {
+					ImagePlus plus = new ImagePlus("maximum_sigma"+maximumSigma[j], tempStack.getProcessor(i).duplicate());
+					ImageProcessor ip=plus.getProcessor();
+					ran.rank(ip, Double.parseDouble(maximumSigma[j]), 2);
+					//IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]); 
+					stack.addSlice(plus.getTitle(),ip); 
+				}
+			}
 		}
 
 		if (gui.edges) {
