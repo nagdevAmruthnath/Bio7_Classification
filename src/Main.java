@@ -63,12 +63,12 @@ public class Main {
 			if (RState.isBusy() == false) {
 				/* Notify that R is busy! */
 				RState.setBusy(true);
-				Job job = new Job("Transfer from R") {
+				Job job = new Job("Classification Process") {
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						monitor.beginTask("Transfer Image Data And Convolve ...", IProgressMonitor.UNKNOWN);
-						action(choice);
+						action(choice,monitor);
 						monitor.done();
 						return Status.OK_STATUS;
 					}
@@ -87,7 +87,7 @@ public class Main {
 						}
 					}
 				});
-
+                
 				job.schedule();
 			} else {
 				System.out.println("RServer is busy. Can't execute the R script!");
@@ -96,7 +96,7 @@ public class Main {
 
 	}
 
-	public void action(int choice) {
+	public void action(int choice,IProgressMonitor monitor) {
 
 		/* Create feature stack! */
 		if (choice == 1) {
@@ -104,7 +104,7 @@ public class Main {
 			if (files != null) {
 				// System.out.println(files);
 				// for (int i = 0; i < files.length; i++) {
-				ImagePlus imPlus = createStackFeatures(null, files);
+				ImagePlus imPlus = createStackFeatures(null, files,monitor);
 				imPlus.show();
 				gui.layout();
 				// }
@@ -133,6 +133,7 @@ public class Main {
 					+ "Select multiple with STRG (CMD)+MouseClick or SHIFT+MouseClick!\n\nPress 'OK' when selected to execute the training R script!");
 			/* Set the busy variable again to true because now we call R! */
 			RState.setBusy(true);
+			monitor.setTaskName("Apply Training Script");
 			evalRScript(gui.getPathTrainingRScript());
 		}
 
@@ -143,8 +144,8 @@ public class Main {
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
 
-					ImagePlus imPlus = createStackFeatures(files[i], null);
-					// System.out.println(choice);
+					ImagePlus imPlus = createStackFeatures(files[i], null, monitor);
+					// System.out.println(choice); 
 
 					/* Correct some image names for R! */
 					String name = imPlus.getTitle();
@@ -156,6 +157,7 @@ public class Main {
 					} catch (RserveException e) {
 						e.printStackTrace();
 					}
+					monitor.setTaskName("Apply Classification Script");
 					/* Predict in R (evalRScript is a custom method) with the randomForest model! */
 					evalRScript(gui.getPathClassificationRScript());
 					/* Transfer the classification result from R back to ImageJ! */
@@ -169,7 +171,7 @@ public class Main {
 
 	}
 
-	private ImagePlus createStackFeatures(String files, String singleFile) {
+	private ImagePlus createStackFeatures(String files, String singleFile,IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image;
 
@@ -196,6 +198,7 @@ public class Main {
 		if (rgb.getProcessor() instanceof ColorProcessor) {
 
 			if (gui.toHsb) {
+				monitor.setTaskName("Convert RGB To HSB Color Space");
 				ImageConverter con = new ImageConverter(rgb);
 				con.convertToHSB();
 
@@ -269,6 +272,8 @@ public class Main {
 		ImageStack tempStack=stack.duplicate();
 		RankFilters ran=new RankFilters();
 		if (gui.gaussian) {
+			monitor.setTaskName("Apply Gaussian Filter");
+			
 			GaussianBlur gaussian= new GaussianBlur();
 			/*Split the gaussian option to get all sigmas!*/
 			String[] gaussianSigma = gui.gaussianOption.split(",");
@@ -287,10 +292,11 @@ public class Main {
 			}
 			// ImagePlus gaussianFiltered = duplicator.run(image);
 			// IJ.run(gaussianFiltered, "Gaussian Blur...", gui.gaussianOption);
-
-		}
-		if (gui.median) {		
 			
+		}
+		
+		if (gui.median) {		
+			monitor.setTaskName("Apply Median Filter");		
 				/*Split the median option to get all sigmas!*/
 				String[] medianSigma = gui.medianOption.split(",");
 				int stackSize=tempStack.getSize();
@@ -305,8 +311,10 @@ public class Main {
 					}
 				}
 		}
+		
 
-		if (gui.mean) {		
+		if (gui.mean) {	
+			monitor.setTaskName("Apply Mean Filter");	
 			/*Split the mean option to get all sigmas!*/
 			String[] meanSigma = gui.meanOption.split(",");
 			int stackSize=tempStack.getSize();
@@ -321,8 +329,8 @@ public class Main {
 				}
 			}
 		}
-
 		if (gui.minimum) {
+			monitor.setTaskName("Apply Minimum Filter");		
 			/*Split the mean option to get all sigmas!*/
 			String[] minimumSigma = gui.minimumOption.split(",");
 			int stackSize=tempStack.getSize();
@@ -337,8 +345,9 @@ public class Main {
 				}
 			}
 		}
-
+		
 		if (gui.maximum) {
+			monitor.setTaskName("Apply Maximum Filter");
 			/*Split the mean option to get all sigmas!*/
 			
 			String[] maximumSigma = gui.maximumOption.split(",");
@@ -354,18 +363,21 @@ public class Main {
 				}
 			}
 		}
-
+		
 		if (gui.edges) {
+			monitor.setTaskName("Apply Edges");
 			ImagePlus edgesCreated = duplicator.run(image);
 			IJ.run(edgesCreated, "Find Edges", "");
 			stack.addSlice("edges", edgesCreated.getProcessor());
 		}
 
 		if (gui.convolve) {
+			monitor.setTaskName("Apply Convolve");
 			ImagePlus convolvedFiltered = duplicator.run(image);
 			IJ.run(convolvedFiltered, "Convolve...", gui.convolveOption);
 			stack.addSlice("convolved", convolvedFiltered.getProcessor());
 		}
+		
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
 
