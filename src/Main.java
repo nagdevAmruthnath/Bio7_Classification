@@ -266,7 +266,7 @@ public class Main {
 
 		/*
 		 * Duplicate the filtered images (our additional features!) and add the filtered
-		 * image copies to the feature stack!
+		 * image copies with specified deltas to the feature stack!
 		 */
 		
 		ImageStack tempStack=stack.duplicate();
@@ -303,10 +303,10 @@ public class Main {
 				for (int i = 1; i <=stackSize; i++) {
 					
 					for (int j = 0; j < medianSigma.length; j++) {
-						ImagePlus plus = new ImagePlus("median_sigma"+medianSigma[j], tempStack.getProcessor(i).duplicate());
+						ImagePlus plus = new ImagePlus("median_sigma_"+medianSigma[j], tempStack.getProcessor(i).duplicate());
 						//IJ.run(plus, "Median...", "radius="+medianSigma[j]); 
 						ImageProcessor ip=plus.getProcessor();
-						ran.rank(ip, Double.parseDouble(medianSigma[j]), RankFilters.MEDIAN);
+						ran.rank(ip, Double.parseDouble(medianSigma[j]), 4);
 						stack.addSlice(plus.getTitle(), plus.getProcessor());
 					}
 				}
@@ -321,10 +321,10 @@ public class Main {
 			for (int i = 1; i <=stackSize; i++) {
 				
 				for (int j = 0; j < meanSigma.length; j++) {
-					ImagePlus plus = new ImagePlus("mean_sigma"+meanSigma[j], tempStack.getProcessor(i).duplicate());
+					ImagePlus plus = new ImagePlus("mean_sigma_"+meanSigma[j], tempStack.getProcessor(i).duplicate());
 					//IJ.run(plus, "Mean...", "radius="+meanSigma[j]); 
 					ImageProcessor ip=plus.getProcessor();
-					ran.rank(ip, Double.parseDouble(meanSigma[j]), RankFilters.MEAN);
+					ran.rank(ip, Double.parseDouble(meanSigma[j]), 0);
 					stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
@@ -337,10 +337,10 @@ public class Main {
 			for (int i = 1; i <=stackSize; i++) {
 				
 				for (int j = 0; j < minimumSigma.length; j++) {
-					ImagePlus plus = new ImagePlus("minimum_sigma"+minimumSigma[j], tempStack.getProcessor(i).duplicate());
+					ImagePlus plus = new ImagePlus("minimum_sigma_"+minimumSigma[j], tempStack.getProcessor(i).duplicate());
 					//IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]); 
 					ImageProcessor ip=plus.getProcessor();
-					ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
+					ran.rank(ip, Double.parseDouble(minimumSigma[j]), 1);
 					stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
@@ -355,9 +355,9 @@ public class Main {
 			for (int i = 1; i <=stackSize; i++) {
 				
 				for (int j = 0; j < maximumSigma.length; j++) {
-					ImagePlus plus = new ImagePlus("maximum_sigma"+maximumSigma[j], tempStack.getProcessor(i).duplicate());
+					ImagePlus plus = new ImagePlus("maximum_sigma_"+maximumSigma[j], tempStack.getProcessor(i).duplicate());
 					ImageProcessor ip=plus.getProcessor();
-					ran.rank(ip, Double.parseDouble(maximumSigma[j]), RankFilters.MAX);
+					ran.rank(ip, Double.parseDouble(maximumSigma[j]), 2);
 					//IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]); 
 					stack.addSlice(plus.getTitle(),ip); 
 				}
