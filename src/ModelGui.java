@@ -342,7 +342,7 @@ public class ModelGui extends Composite {
 	
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
-		canvasView.recalculateLayout();
+		canvasView.updatePlotCanvas();
 	}
 
 }

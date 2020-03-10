@@ -106,7 +106,7 @@
 	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/org.eclipse.jface_3.18.0.v20191122-2109.jar"/>
 	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7_3.1.0/bin" sourcepath="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7_3.1.0/src"/>
 	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.javaedit_2.0.0/bin"/>
-	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.image_1.52.2100/bin" sourcepath="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.image_1.52.2100/src"/>
+	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.image_1.52.3300/bin" sourcepath="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.image_1.52.3300/src"/>
 	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.WorldWind_2.1.0/bin" sourcepath="I:/Bio7_3.1_Test/Bio7/plugins/com.eco.bio7.WorldWind_2.1.0/src"/>
 	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/plugins/Bundled_R_3.5.1/bin" sourcepath="I:/Bio7_3.1_Test/Bio7/plugins/Bundled_R_3.5.1/src"/>
 	<classpathentry kind="lib" path="I:/Bio7_3.1_Test/Bio7/jdk/javafx/lib/javafx.base.jar"/>
