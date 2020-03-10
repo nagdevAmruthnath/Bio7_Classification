@@ -270,7 +270,8 @@ public class Main {
 		 */
 		
 		ImageStack tempStack=stack.duplicate();
-		RankFilters ran=new RankFilters();
+		
+		
 		if (gui.gaussian) {
 			monitor.setTaskName("Apply Gaussian Filter");
 			
@@ -299,6 +300,7 @@ public class Main {
 			monitor.setTaskName("Apply Median Filter");		
 				/*Split the median option to get all sigmas!*/
 				String[] medianSigma = gui.medianOption.split(",");
+				final RankFilters ran=new RankFilters();
 				int stackSize=tempStack.getSize();
 				for (int i = 1; i <=stackSize; i++) {
 					
@@ -317,6 +319,7 @@ public class Main {
 			monitor.setTaskName("Apply Mean Filter");	
 			/*Split the mean option to get all sigmas!*/
 			String[] meanSigma = gui.meanOption.split(",");
+			final RankFilters ran=new RankFilters();
 			int stackSize=tempStack.getSize();
 			for (int i = 1; i <=stackSize; i++) {
 				
@@ -333,6 +336,7 @@ public class Main {
 			monitor.setTaskName("Apply Minimum Filter");		
 			/*Split the mean option to get all sigmas!*/
 			String[] minimumSigma = gui.minimumOption.split(",");
+			final RankFilters ran=new RankFilters();
 			int stackSize=tempStack.getSize();
 			for (int i = 1; i <=stackSize; i++) {
 				
@@ -351,6 +355,7 @@ public class Main {
 			/*Split the mean option to get all sigmas!*/
 			
 			String[] maximumSigma = gui.maximumOption.split(",");
+			final RankFilters ran=new RankFilters();
 			int stackSize=tempStack.getSize();
 			for (int i = 1; i <=stackSize; i++) {
 				
