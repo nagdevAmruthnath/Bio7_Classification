@@ -232,7 +232,7 @@ public class ModelGui extends Composite {
 			}
 		});
 		GridData gd_btnNewButton_5 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_5.heightHint = 30;
+		gd_btnNewButton_5.heightHint = 25;
 		btnNewButton_5.setLayoutData(gd_btnNewButton_5);
 		btnNewButton_5.setText("R Training Script");
 
@@ -249,7 +249,7 @@ public class ModelGui extends Composite {
 			}
 		});
 		GridData gd_btnRClassificationScript = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnRClassificationScript.heightHint = 30;
+		gd_btnRClassificationScript.heightHint = 25;
 		btnRClassificationScript.setLayoutData(gd_btnRClassificationScript);
 		btnRClassificationScript.setText("R Classification Script");
 
