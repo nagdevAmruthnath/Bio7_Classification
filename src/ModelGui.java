@@ -19,6 +19,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FillLayout;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -57,7 +61,6 @@ public class ModelGui extends Composite {
 	private Composite composite_1;
 	private Button btnLoadConfiguration;
 	private Button btnNewButton_4;
-	private Label label;
 	protected Text txtTrainingRScript;
 	private Button btnNewButton_5;
 	private Button btnRClassificationScript;
@@ -70,87 +73,9 @@ public class ModelGui extends Composite {
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
 		this.model = model;
-		setLayout(new GridLayout(2, true));
-
-		Button btnNewButton = new Button(this, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				model.executeSelection(1);
-			}
-		});
-		GridData gd_btnNewButton = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_btnNewButton.heightHint = 30;
-		btnNewButton.setLayoutData(gd_btnNewButton);
-		btnNewButton.setText("Create Stack (1)");
-
-		Button btnNewButton_1 = new Button(this, SWT.NONE);
-		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				model.executeSelection(2);
-			}
-		});
-		GridData gd_btnNewButton_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_1.heightHint = 30;
-		btnNewButton_1.setLayoutData(gd_btnNewButton_1);
-		btnNewButton_1.setText("Create Classes (2)");
-
-		Button btnNewButton_2 = new Button(this, SWT.NONE);
-		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				model.executeSelection(3);
-			}
-		});
-		GridData gd_btnNewButton_2 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_2.heightHint = 30;
-		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
-		btnNewButton_2.setText("Train Script (3)");
-
-		Button btnNewButton_3 = new Button(this, SWT.NONE);
-		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				model.executeSelection(4);
-			}
-		});
-		GridData gd_btnNewButton_3 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_3.heightHint = 30;
-		btnNewButton_3.setLayoutData(gd_btnNewButton_3);
-		btnNewButton_3.setText("Classify Script (4)");
-
-		label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-
-		btnLoadConfiguration = new Button(this, SWT.NONE);
-		GridData gd_btnLoadConfiguration = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnLoadConfiguration.heightHint = 30;
-		btnLoadConfiguration.setLayoutData(gd_btnLoadConfiguration);
-		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				new LoadAndSaveConfig(ModelGui.this).loadScript();
-			}
-		});
-		btnLoadConfiguration.setText("Load Configuration");
-
-		btnNewButton_4 = new Button(this, SWT.NONE);
-		GridData gd_btnNewButton_4 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_btnNewButton_4.heightHint = 30;
-		btnNewButton_4.setLayoutData(gd_btnNewButton_4);
-		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				new LoadAndSaveConfig(ModelGui.this).saveScript();
-			}
-		});
-		btnNewButton_4.setText("Save Configuration");
+		setLayout(new FillLayout(SWT.HORIZONTAL));
 
 		tabFolder = new CTabFolder(this, SWT.BORDER);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-		gd_tabFolder.heightHint = 349;
-		tabFolder.setLayoutData(gd_tabFolder);
 		//tabFolder.setSelectionBackground(
 				//Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
@@ -160,6 +85,66 @@ public class ModelGui extends Composite {
 		composite = new Composite(tabFolder, SWT.NONE);
 		tabItemFeatures.setControl(composite);
 		composite.setLayout(new GridLayout(2, true));
+		
+				Button btnNewButton = new Button(composite, SWT.NONE);
+				btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				btnNewButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						model.executeSelection(1);
+					}
+				});
+				btnNewButton.setText("Create Stack (1)");
+		
+				Button btnNewButton_1 = new Button(composite, SWT.NONE);
+				btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						model.executeSelection(2);
+					}
+				});
+				btnNewButton_1.setText("Create Classes (2)");
+		
+				Button btnNewButton_2 = new Button(composite, SWT.NONE);
+				btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				btnNewButton_2.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						model.executeSelection(3);
+					}
+				});
+				btnNewButton_2.setText("Train Script (3)");
+		
+				Button btnNewButton_3 = new Button(composite, SWT.NONE);
+				btnNewButton_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				btnNewButton_3.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						model.executeSelection(4);
+					}
+				});
+				btnNewButton_3.setText("Classify Script (4)");
+		
+				btnLoadConfiguration = new Button(composite, SWT.NONE);
+				btnLoadConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						new LoadAndSaveConfig(ModelGui.this).loadScript();
+					}
+				});
+				btnLoadConfiguration.setText("Load Configuration");
+		
+				btnNewButton_4 = new Button(composite, SWT.NONE);
+				btnNewButton_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				btnNewButton_4.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						new LoadAndSaveConfig(ModelGui.this).saveScript();
+					}
+				});
+				btnNewButton_4.setText("Save Configuration");
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
 		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
@@ -169,9 +154,9 @@ public class ModelGui extends Composite {
 
 		channelSelectionText = new Text(composite, SWT.BORDER);
 		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-
-		checkConvertToHsb = new Button(composite, SWT.CHECK);
-		checkConvertToHsb.setText("Convert to HSB Color Space");
+				
+						checkConvertToHsb = new Button(composite, SWT.CHECK);
+						checkConvertToHsb.setText("Convert to HSB Color Space");
 		new Label(composite, SWT.NONE);
 
 		Label lblFilter = new Label(composite, SWT.NONE);
@@ -269,9 +254,7 @@ public class ModelGui extends Composite {
 		btnRClassificationScript.setText("R Classification Script");
 
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
-		GridData gd_txtClassificationRScript = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_txtClassificationRScript.heightHint = 30;
-		txtClassificationRScript.setLayoutData(gd_txtClassificationRScript);
+		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify_RandomForest.R");
 
 	}
