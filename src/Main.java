@@ -40,7 +40,7 @@ public class Main {
 	private ModelGui gui;
 
 	public Main() {
-
+ 
 		CustomView view = new CustomView();
 
 		Display display = Util.getDisplay();
