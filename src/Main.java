@@ -378,9 +378,14 @@ public class Main {
 
 		if (gui.convolve) {
 			monitor.setTaskName("Apply Convolve");
-			ImagePlus convolvedFiltered = duplicator.run(image);
-			IJ.run(convolvedFiltered, "Convolve...", gui.convolveOption);
-			stack.addSlice("convolved", convolvedFiltered.getProcessor());
+			String[] matrices=gui.convolveOption.split(";");
+			for (int i = 0; i < matrices.length; i++) {
+				ImagePlus convolvedFiltered = duplicator.run(image);
+				//System.out.println(matrices[i]);
+				IJ.run(convolvedFiltered, "Convolve...", matrices[i]);
+				stack.addSlice("convolved"+i, convolvedFiltered.getProcessor());
+			}
+			
 		}
 		
 		String name = image.getShortTitle();
