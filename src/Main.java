@@ -42,7 +42,7 @@ public class Main {
 	public Main() {
 
 		CustomView view = new CustomView();
-
+  
 		Display display = Util.getDisplay();
 
 		display.syncExec(new Runnable() {
@@ -378,14 +378,14 @@ public class Main {
 
 		if (gui.convolve) {
 			monitor.setTaskName("Apply Convolve");
-			String[] matrices=gui.convolveOption.split(";");
+			String[] matrices = gui.convolveOption.split(";");
 			for (int i = 0; i < matrices.length; i++) {
 				ImagePlus convolvedFiltered = duplicator.run(image);
-				//System.out.println(matrices[i]);
+				// System.out.println(matrices[i]);
 				IJ.run(convolvedFiltered, "Convolve...", matrices[i]);
-				stack.addSlice("convolved"+i, convolvedFiltered.getProcessor());
+				stack.addSlice("convolved" + i, convolvedFiltered.getProcessor());
 			}
-			
+
 		}
 		
 		String name = image.getShortTitle();
