@@ -39,7 +39,7 @@ public class Main {
 
 	private ModelGui gui;
 
-	public Main() {
+	public Main() { 
 
 		CustomView view = new CustomView();
   
