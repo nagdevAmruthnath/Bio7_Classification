@@ -145,75 +145,74 @@ public class ModelGui extends Composite {
 					}
 				});
 				btnNewButton_4.setText("Save Configuration");
+		
+				checkConvertToHsb = new Button(composite, SWT.CHECK);
+				checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				checkConvertToHsb.setText("Convert to HSB Color Space");
+		new Label(composite, SWT.NONE);
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
-		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
+		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
 		gd_lblSelectChannels.widthHint = 279;
 		lblSelectChannels.setLayoutData(gd_lblSelectChannels);
 		lblSelectChannels.setText("Select Channels (1,2,... - Leave blank for all!)\r\n");
+		new Label(composite, SWT.NONE);
 
 		channelSelectionText = new Text(composite, SWT.BORDER);
 		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-				
-						checkConvertToHsb = new Button(composite, SWT.CHECK);
-						checkConvertToHsb.setText("Convert to HSB Color Space");
 		new Label(composite, SWT.NONE);
-
-		Label lblFilter = new Label(composite, SWT.NONE);
-		lblFilter.setText("Filter");
-
-		Label lblOption = new Label(composite, SWT.NONE);
-		lblOption.setText("Sigma");
+		new Label(composite, SWT.NONE);
 
 		checkGaussianFilter = new Button(composite, SWT.CHECK);
 		checkGaussianFilter.setText("Gaussian Blur");
-
-		optionGaussian = new Text(composite, SWT.BORDER);
-		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionGaussian.setText("2");
-
-		checkMedian = new Button(composite, SWT.CHECK);
-		checkMedian.setText("Median");
-
-		optionMedian = new Text(composite, SWT.BORDER);
-		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionMedian.setText("2");
-
-		checkMean = new Button(composite, SWT.CHECK);
-		checkMean.setText("Mean");
-
-		optionsMean = new Text(composite, SWT.BORDER);
-		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionsMean.setText("2");
-
-		checkMaximum = new Button(composite, SWT.CHECK);
-		checkMaximum.setText("Maximum");
-
-		optionsMaximum = new Text(composite, SWT.BORDER);
-		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionsMaximum.setText("2");
-
-		checkMinimum = new Button(composite, SWT.CHECK);
-		checkMinimum.setText("Minimum");
-
-		optionsMinimum = new Text(composite, SWT.BORDER);
-		optionsMinimum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		optionsMinimum.setText("2");
-
-		checkEdges = new Button(composite, SWT.CHECK);
-		checkEdges.setText("Edges");
+				
+						checkMedian = new Button(composite, SWT.CHECK);
+						checkMedian.setText("Median");
+		
+				optionGaussian = new Text(composite, SWT.BORDER);
+				optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				optionGaussian.setText("2");
+		
+				optionMedian = new Text(composite, SWT.BORDER);
+				optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				optionMedian.setText("2");
+				
+						checkMean = new Button(composite, SWT.CHECK);
+						checkMean.setText("Mean");
+				
+						checkMaximum = new Button(composite, SWT.CHECK);
+						checkMaximum.setText("Maximum");
+		
+				optionsMean = new Text(composite, SWT.BORDER);
+				optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				optionsMean.setText("2");
+		
+				optionsMaximum = new Text(composite, SWT.BORDER);
+				optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				optionsMaximum.setText("2");
+		
+				checkMinimum = new Button(composite, SWT.CHECK);
+				checkMinimum.setText("Minimum");
 		new Label(composite, SWT.NONE);
-
-		checkConvolve = new Button(composite, SWT.CHECK);
-		checkConvolve.setText("Convolve");
+				
+						optionsMinimum = new Text(composite, SWT.BORDER);
+						optionsMinimum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+						optionsMinimum.setText("2");
+		
+				checkEdges = new Button(composite, SWT.CHECK);
+				checkEdges.setText("Edges");
 		new Label(composite, SWT.NONE);
-
-		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-		gd_optionConvolve.widthHint = 248;
-		optionConvolve.setLayoutData(gd_optionConvolve);
-		optionConvolve.setText(
-				"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
+				
+						checkConvolve = new Button(composite, SWT.CHECK);
+						checkConvolve.setText("Convolve");
+				new Label(composite, SWT.NONE);
+		
+				optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+				GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+				gd_optionConvolve.widthHint = 248;
+				optionConvolve.setLayoutData(gd_optionConvolve);
+				optionConvolve.setText(
+						"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
 
 		tbtmMore = new CTabItem(tabFolder, SWT.NONE);
 		tbtmMore.setText("Settings");
