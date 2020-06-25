@@ -47,17 +47,20 @@ public class Main {
 
 	private ModelGui gui;
 
-	public Main() { 
+	public Main() {
 
 		CustomView view = new CustomView();
-  
+
 		Display display = Util.getDisplay();
 
 		display.syncExec(new Runnable() {
 
 			public void run() {
 				Composite parent = view.getComposite("Classification");
-				/*Create the GUI and transfer a reference to this class thus that the GUI can execute methods from this class!*/
+				/*
+				 * Create the GUI and transfer a reference to this class thus that the GUI can
+				 * execute methods from this class!
+				 */
 				gui = new ModelGui(parent, Main.this, SWT.NONE);
 
 				parent.layout(true);
@@ -68,44 +71,54 @@ public class Main {
 	/* Called from the GUI class! */
 	public void executeSelection(int choice) {
 
-		if (RServe.isAliveDialog()) {
-			if (RState.isBusy() == false) {
-				/* Notify that R is busy! */
-				RState.setBusy(true);
-				Job job = new Job("Classification Process") {
+		Job job = new Job("Classification Process") {
 
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						monitor.beginTask("Transfer Image Data And Convolve ...", IProgressMonitor.UNKNOWN);
-						action(choice,monitor);
-						monitor.done();
-						return Status.OK_STATUS;
-					}
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Transfer Image Data And Convolve ...", IProgressMonitor.UNKNOWN);
+				/* We create a feature stack. R connection not necessary! */
+				if (choice == 1) {
+					action(choice, monitor);
+				}
 
-				};
-				job.addJobChangeListener(new JobChangeAdapter() {
-					public void done(IJobChangeEvent event) {
-						if (event.getResult().isOK()) {
-
-							RState.setBusy(false);
-							/* Update the R-Shell view workspace objects! */
-							listRObjects();
+				else {
+					if (RServe.isAliveDialog()) {
+						if (RState.isBusy() == false) {
+							/* Notify that R is busy! */
+							RState.setBusy(true);
+							action(choice, monitor);
 						} else {
-
-							RState.setBusy(false);
+							System.out.println("RServer is busy. Can't execute the R script!");
 						}
+
 					}
-				});
-                
-				job.schedule();
-			} else {
-				System.out.println("RServer is busy. Can't execute the R script!");
+				}
+				monitor.done();
+				return Status.OK_STATUS;
 			}
-		}
+
+		};
+		job.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().isOK()) {
+
+					RState.setBusy(false);
+					/* Update the R-Shell view workspace objects! */
+					if (RServe.isAlive()) {
+						listRObjects();
+					}
+				} else {
+
+					RState.setBusy(false);
+				}
+			}
+		});
+
+		job.schedule();
 
 	}
 
-	public void action(int choice,IProgressMonitor monitor) {
+	public void action(int choice, IProgressMonitor monitor) {
 
 		/* Create feature stack! */
 		if (choice == 1) {
@@ -113,7 +126,7 @@ public class Main {
 			if (files != null) {
 				// System.out.println(files);
 				// for (int i = 0; i < files.length; i++) {
-				ImagePlus imPlus = createStackFeatures(null, files,monitor);
+				ImagePlus imPlus = createStackFeatures(null, files, monitor);
 				imPlus.show();
 				gui.layout();
 				// }
@@ -130,7 +143,7 @@ public class Main {
 
 		}
 
-		/* Train Classifier with external R script! */
+		/* Train Classifier with external script! */
 		else if (choice == 3) {
 			/*
 			 * We have set the busy variable to false to use the R-Shell selection in this
@@ -143,10 +156,14 @@ public class Main {
 			/* Set the busy variable again to true because now we call R! */
 			RState.setBusy(true);
 			monitor.setTaskName("Apply Training Script");
-			evalRScript(gui.getPathTrainingRScript());
+			String path = gui.getPathTrainingScript();
+			/* Execute R script! */
+			if (path.endsWith(".R")) {
+				evalRScript(path);
+			}
 		}
 
-		/* Classify selected images with external R Script! */
+		/* Classify selected images with external Script! */
 		else if (choice == 4) {
 
 			String[] files = openMultipleFiles();
@@ -154,11 +171,12 @@ public class Main {
 				for (int i = 0; i < files.length; i++) {
 
 					ImagePlus imPlus = createStackFeatures(files[i], null, monitor);
-					// System.out.println(choice); 
+					// System.out.println(choice);
 
 					/* Correct some image names for R! */
 					String name = imPlus.getTitle();
 					String nameCorrected = RServeUtil.replaceWrongRWord(name);
+					/* Transfer the feature stack to R! */
 					imageFeatureStackToR(nameCorrected, 0, imPlus);
 					RConnection rcon = RServe.getConnection();
 					try {
@@ -168,11 +186,15 @@ public class Main {
 					}
 					monitor.setTaskName("Apply Classification Script");
 					/* Predict in R (evalRScript is a custom method) with the randomForest model! */
-					evalRScript(gui.getPathClassificationRScript());
-					/* Transfer the classification result from R back to ImageJ! */
-					imageFromR(3, "imageMatrix", 1);
-					WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
-					gui.layout();
+					String path = gui.getPathClassificationScript();
+					if (path.endsWith(".R")) {
+						evalRScript(path);
+						/* Transfer the classification result from R back to ImageJ! */
+						imageFromR(3, "imageMatrix", 1);
+						WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
+						gui.layout();
+					}
+					
 				}
 			}
 
@@ -180,7 +202,7 @@ public class Main {
 
 	}
 
-	private ImagePlus createStackFeatures(String files, String singleFile,IProgressMonitor monitor) {
+	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image;
 
@@ -277,143 +299,154 @@ public class Main {
 		 * Duplicate the filtered images (our additional features!) and add the filtered
 		 * image copies with specified sigmas to the feature stack!
 		 */
-		
-		ImageStack tempStack=stack.duplicate();
-		
-		
+
+		ImageStack tempStack = stack.duplicate();
+
 		if (gui.gaussian) {
 			monitor.setTaskName("Apply Gaussian Filter");
-			
-			GaussianBlur gaussian= new GaussianBlur();
-			/*Split the gaussian option to get all sigmas!*/
+
+			GaussianBlur gaussian = new GaussianBlur();
+			/* Split the gaussian option to get all sigmas! */
 			String[] gaussianSigma = gui.gaussianOption.split(",");
-			int stackSize=tempStack.getSize();
-			for (int i = 1; i <=stackSize; i++) {
-				
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+
 				for (int j = 0; j < gaussianSigma.length; j++) {
-					ImagePlus plus = new ImagePlus("gaussian_sigma_"+gaussianSigma[j], tempStack.getProcessor(i).duplicate());
-					//IJ.run(plus, "Gaussian Blur...", "radius="+gaussianSigma[j]); 
-					ImageProcessor ip=plus.getProcessor();
-					double sigma=Double.parseDouble(gaussianSigma[j]);
-					/*See: https://imagej.nih.gov/ij/developer/api/ij/plugin/filter/GaussianBlur.html#blur-ij.process.ImageProcessor-double-*/
+					ImagePlus plus = new ImagePlus("gaussian_sigma_" + gaussianSigma[j],
+							tempStack.getProcessor(i).duplicate());
+					// IJ.run(plus, "Gaussian Blur...", "radius="+gaussianSigma[j]);
+					ImageProcessor ip = plus.getProcessor();
+					double sigma = Double.parseDouble(gaussianSigma[j]);
+					/*
+					 * See:
+					 * https://imagej.nih.gov/ij/developer/api/ij/plugin/filter/GaussianBlur.html#
+					 * blur-ij.process.ImageProcessor-double-
+					 */
 					int width = plus.getWidth();
 					int height = plus.getHeight();
-					GrayF32 boofFilterImageInput=new GrayF32(width,height);
-					GrayF32 boofFilterImageOutput=new GrayF32(width,height);
-					/*Transfer ImageProcessor data in place to boofcv image input!*/
+					GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					/* Transfer ImageProcessor data in place to boofcv image input! */
 					ipToBoofCVGray32(ip, boofFilterImageInput);
-					//GrayF32 boofFilterImageInput	 = ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null, GrayF32.class);
-					BlurImageOps.gaussian(boofFilterImageInput,boofFilterImageOutput,sigma,-1,null);
-					FloatProcessor flProcessor=new FloatProcessor(width,height,boofFilterImageOutput.getData());
-					//BufferedImage buff=plus.getBufferedImage();
-					
-					//ImagePlus boofFinal=new ImagePlus(plus.getTitle(),flProcessor);
+					// GrayF32 boofFilterImageInput =
+					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
+					// GrayF32.class);
+					BlurImageOps.gaussian(boofFilterImageInput, boofFilterImageOutput, sigma, -1, null);
+					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+					// BufferedImage buff=plus.getBufferedImage();
+
+					// ImagePlus boofFinal=new ImagePlus(plus.getTitle(),flProcessor);
 					stack.addSlice(plus.getTitle(), flProcessor);
-					//gaussian.blurGaussian(ip, 0.4*sigma,0.4*sigma,0.0002);
-					//stack.addSlice(plus.getTitle(), plus.getProcessor());
+					// gaussian.blurGaussian(ip, 0.4*sigma,0.4*sigma,0.0002);
+					// stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
 			// ImagePlus gaussianFiltered = duplicator.run(image);
 			// IJ.run(gaussianFiltered, "Gaussian Blur...", gui.gaussianOption);
-			
-		}
-		
-		if (gui.median) {		
-			monitor.setTaskName("Apply Median Filter");		
-				/*Split the median option to get all sigmas!*/
-				String[] medianSigma = gui.medianOption.split(",");
-				//final RankFilters ran=new RankFilters();
-				int stackSize=tempStack.getSize();
-				for (int i = 1; i <=stackSize; i++) {
-					
-					for (int j = 0; j < medianSigma.length; j++) {
-						int sigma=Integer.parseInt(medianSigma[j]);
-						ImagePlus plus = new ImagePlus("median_sigma_"+sigma, tempStack.getProcessor(i).duplicate());
-						//IJ.run(plus, "Median...", "radius="+medianSigma[j]); 
-						ImageProcessor ip=plus.getProcessor();
-						//ran.rank(ip, Double.parseDouble(medianSigma[j]), 4);
-						//stack.addSlice(plus.getTitle(), plus.getProcessor());
-						int width = plus.getWidth();
-						int height = plus.getHeight();
-						GrayF32 boofFilterImageInput=new GrayF32(width,height);
-						GrayF32 boofFilterImageOutput=new GrayF32(width,height);
-						/*Transfer ImageProcessor data in place to boofcv image input!*/
-						ipToBoofCVGray32(ip, boofFilterImageInput);
-						//GrayF32 boofFilterImageInput	 = ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null, GrayF32.class);
-						BlurImageOps.median(boofFilterImageInput,boofFilterImageOutput,sigma);
-						FloatProcessor flProcessor=new FloatProcessor(width,height,boofFilterImageOutput.getData());
-						stack.addSlice(plus.getTitle(), flProcessor);
-					}
-				}
-		}
-		
 
-		if (gui.mean) {	
-			monitor.setTaskName("Apply Mean Filter");	
-			/*Split the mean option to get all sigmas!*/
-			String[] meanSigma = gui.meanOption.split(",");
-			//final RankFilters ran=new RankFilters();
-			int stackSize=tempStack.getSize();
-			for (int i = 1; i <=stackSize; i++) {
-				
-				for (int j = 0; j < meanSigma.length; j++) {
-					int sigma=Integer.parseInt(meanSigma[j]);
-					ImagePlus plus = new ImagePlus("mean_sigma_"+meanSigma[j], tempStack.getProcessor(i).duplicate());
-					//IJ.run(plus, "Mean...", "radius="+meanSigma[j]); 
-					ImageProcessor ip=plus.getProcessor();
+		}
+
+		if (gui.median) {
+			monitor.setTaskName("Apply Median Filter");
+			/* Split the median option to get all sigmas! */
+			String[] medianSigma = gui.medianOption.split(",");
+			// final RankFilters ran=new RankFilters();
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+
+				for (int j = 0; j < medianSigma.length; j++) {
+					int sigma = Integer.parseInt(medianSigma[j]);
+					ImagePlus plus = new ImagePlus("median_sigma_" + sigma, tempStack.getProcessor(i).duplicate());
+					// IJ.run(plus, "Median...", "radius="+medianSigma[j]);
+					ImageProcessor ip = plus.getProcessor();
+					// ran.rank(ip, Double.parseDouble(medianSigma[j]), 4);
+					// stack.addSlice(plus.getTitle(), plus.getProcessor());
 					int width = plus.getWidth();
 					int height = plus.getHeight();
-					GrayF32 boofFilterImageInput=new GrayF32(width,height);
-					GrayF32 boofFilterImageOutput=new GrayF32(width,height);
-					/*Transfer ImageProcessor data in place to boofcv image input!*/
+					GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					/* Transfer ImageProcessor data in place to boofcv image input! */
 					ipToBoofCVGray32(ip, boofFilterImageInput);
-					//GrayF32 boofFilterImageInput	 = ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null, GrayF32.class);
-					BlurImageOps.mean(boofFilterImageInput,boofFilterImageOutput,sigma,null,null);
-					FloatProcessor flProcessor=new FloatProcessor(width,height,boofFilterImageOutput.getData());
+					// GrayF32 boofFilterImageInput =
+					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
+					// GrayF32.class);
+					BlurImageOps.median(boofFilterImageInput, boofFilterImageOutput, sigma);
+					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
 					stack.addSlice(plus.getTitle(), flProcessor);
-					
-					//ran.rank(ip, Double.parseDouble(meanSigma[j]), 0);
-					//stack.addSlice(plus.getTitle(), plus.getProcessor());
+				}
+			}
+		}
+
+		if (gui.mean) {
+			monitor.setTaskName("Apply Mean Filter");
+			/* Split the mean option to get all sigmas! */
+			String[] meanSigma = gui.meanOption.split(",");
+			// final RankFilters ran=new RankFilters();
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+
+				for (int j = 0; j < meanSigma.length; j++) {
+					int sigma = Integer.parseInt(meanSigma[j]);
+					ImagePlus plus = new ImagePlus("mean_sigma_" + meanSigma[j], tempStack.getProcessor(i).duplicate());
+					// IJ.run(plus, "Mean...", "radius="+meanSigma[j]);
+					ImageProcessor ip = plus.getProcessor();
+					int width = plus.getWidth();
+					int height = plus.getHeight();
+					GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					/* Transfer ImageProcessor data in place to boofcv image input! */
+					ipToBoofCVGray32(ip, boofFilterImageInput);
+					// GrayF32 boofFilterImageInput =
+					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
+					// GrayF32.class);
+					BlurImageOps.mean(boofFilterImageInput, boofFilterImageOutput, sigma, null, null);
+					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+					stack.addSlice(plus.getTitle(), flProcessor);
+
+					// ran.rank(ip, Double.parseDouble(meanSigma[j]), 0);
+					// stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
 		}
 		if (gui.minimum) {
-			monitor.setTaskName("Apply Minimum Filter");		
-			/*Split the mean option to get all sigmas!*/
+			monitor.setTaskName("Apply Minimum Filter");
+			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
-			final RankFilters ran=new RankFilters();
-			int stackSize=tempStack.getSize();
-			for (int i = 1; i <=stackSize; i++) {
-				
+			final RankFilters ran = new RankFilters();
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+
 				for (int j = 0; j < minimumSigma.length; j++) {
-					ImagePlus plus = new ImagePlus("minimum_sigma_"+minimumSigma[j], tempStack.getProcessor(i).duplicate());
-					//IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]); 
-					ImageProcessor ip=plus.getProcessor();
+					ImagePlus plus = new ImagePlus("minimum_sigma_" + minimumSigma[j],
+							tempStack.getProcessor(i).duplicate());
+					// IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]);
+					ImageProcessor ip = plus.getProcessor();
 					ran.rank(ip, Double.parseDouble(minimumSigma[j]), 1);
 					stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
 		}
-		
+
 		if (gui.maximum) {
 			monitor.setTaskName("Apply Maximum Filter");
-			/*Split the mean option to get all sigmas!*/
-			
+			/* Split the mean option to get all sigmas! */
+
 			String[] maximumSigma = gui.maximumOption.split(",");
-			final RankFilters ran=new RankFilters();
-			int stackSize=tempStack.getSize();
-			for (int i = 1; i <=stackSize; i++) {
-				
+			final RankFilters ran = new RankFilters();
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+
 				for (int j = 0; j < maximumSigma.length; j++) {
-					ImagePlus plus = new ImagePlus("maximum_sigma_"+maximumSigma[j], tempStack.getProcessor(i).duplicate());
-					ImageProcessor ip=plus.getProcessor();
+					ImagePlus plus = new ImagePlus("maximum_sigma_" + maximumSigma[j],
+							tempStack.getProcessor(i).duplicate());
+					ImageProcessor ip = plus.getProcessor();
 					ran.rank(ip, Double.parseDouble(maximumSigma[j]), 2);
-					//IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]); 
-					stack.addSlice(plus.getTitle(),ip); 
+					// IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]);
+					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
 		}
-		
+
 		if (gui.edges) {
 			monitor.setTaskName("Apply Edges");
 			ImagePlus edgesCreated = duplicator.run(image);
@@ -432,7 +465,7 @@ public class Main {
 			}
 
 		}
-		
+
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
 
@@ -440,10 +473,10 @@ public class Main {
 	}
 
 	private void ipToBoofCVGray32(ImageProcessor ip, GrayF32 boofFilterImageInput) {
-		float[][] fl=ip.getFloatArray();
+		float[][] fl = ip.getFloatArray();
 		for (int y = 0; y < ip.getHeight(); y++) {
 			for (int x = 0; x < ip.getWidth(); x++) {
-				float value=fl[x][y];
+				float value = fl[x][y];
 				boofFilterImageInput.set(x, y, value);
 			}
 		}

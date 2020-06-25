@@ -113,9 +113,9 @@ public class LoadAndSaveConfig {
 		buffer.append(sep);
 		buffer.append(modelGui.optionConvolve.getText().replace(System.lineSeparator(), "\\n"));
 		buffer.append(sep);
-		buffer.append(modelGui.getPathTrainingRScript());
+		buffer.append(modelGui.getPathTrainingScript());
 		buffer.append(sep);
-		buffer.append(modelGui.getPathClassificationRScript());
+		buffer.append(modelGui.getPathClassificationScript());
 		buffer.append(sep);
 		// buffer.append(System.getProperty("line.separator"));
 

@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.ScrolledComposite;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -69,6 +70,7 @@ public class ModelGui extends Composite {
 	protected String pathClassificationScript;
 	protected Button checkConvertToHsb;
 	protected boolean toHsb;
+	private ScrolledComposite scrolledComposite;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -82,8 +84,17 @@ public class ModelGui extends Composite {
 		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
 		tabItemFeatures.setText("Features");
 		tabFolder.setSelection(tabItemFeatures);
-		composite = new Composite(tabFolder, SWT.NONE);
-		tabItemFeatures.setControl(composite);
+		
+		
+		//tabItemFeatures.setControl(composite);
+		
+		scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tabItemFeatures.setControl(scrolledComposite);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(false);
+		composite = new Composite(scrolledComposite, SWT.NONE);
+		composite.setSize(300, 800);
+		scrolledComposite.setContent(composite);
 		composite.setLayout(new GridLayout(2, true));
 		
 				Button btnNewButton = new Button(composite, SWT.NONE);
@@ -233,7 +244,7 @@ public class ModelGui extends Composite {
 		GridData gd_btnNewButton_5 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_btnNewButton_5.heightHint = 25;
 		btnNewButton_5.setLayoutData(gd_btnNewButton_5);
-		btnNewButton_5.setText("R Training Script");
+		btnNewButton_5.setText("Training Script");
 
 		txtTrainingRScript = new Text(composite_1, SWT.BORDER);
 		txtTrainingRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -250,7 +261,7 @@ public class ModelGui extends Composite {
 		GridData gd_btnRClassificationScript = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_btnRClassificationScript.heightHint = 25;
 		btnRClassificationScript.setLayoutData(gd_btnRClassificationScript);
-		btnRClassificationScript.setText("R Classification Script");
+		btnRClassificationScript.setText("Classification Script");
 
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
 		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -295,7 +306,7 @@ public class ModelGui extends Composite {
 
 	}
 
-	public String getPathTrainingRScript() {
+	public String getPathTrainingScript() {
 
 		Display display = Util.getDisplay();
 
@@ -309,7 +320,7 @@ public class ModelGui extends Composite {
 		return pathTrainingScript;
 	}
 
-	public String getPathClassificationRScript() {
+	public String getPathClassificationScript() {
 		Display display = Util.getDisplay();
 
 		display.syncExec(new Runnable() {
