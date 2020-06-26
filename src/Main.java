@@ -194,7 +194,7 @@ public class Main {
 						WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
 						gui.layout();
 					}
-					
+
 				}
 			}
 
@@ -417,9 +417,12 @@ public class Main {
 			for (int i = 1; i <= stackSize; i++) {
 
 				for (int j = 0; j < minimumSigma.length; j++) {
+
 					ImagePlus plus = new ImagePlus("minimum_sigma_" + minimumSigma[j],
 							tempStack.getProcessor(i).duplicate());
+
 					// IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]);
+
 					ImageProcessor ip = plus.getProcessor();
 					ran.rank(ip, Double.parseDouble(minimumSigma[j]), 1);
 					stack.addSlice(plus.getTitle(), plus.getProcessor());
@@ -441,7 +444,9 @@ public class Main {
 							tempStack.getProcessor(i).duplicate());
 					ImageProcessor ip = plus.getProcessor();
 					ran.rank(ip, Double.parseDouble(maximumSigma[j]), 2);
+
 					// IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]);
+
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
