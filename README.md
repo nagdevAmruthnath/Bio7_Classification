@@ -14,7 +14,7 @@ are available in the R directory) in a non-blocking job.
  
 Enable/disable/add filters in the 'createStackFeatures' method.
 
-Until now Multichannel images (e.g. RGB) and Grayscale images can be classified.
+Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified.
 
 The 'ModelGui' graphical view interface can be extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
 

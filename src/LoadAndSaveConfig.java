@@ -53,6 +53,12 @@ public class LoadAndSaveConfig {
 
 				modelGui.checkMinimum.setSelection(read(reader));
 				modelGui.optionsMinimum.setText(reader.readLine());
+				
+				modelGui.checkGradientHessian.setSelection(read(reader));
+				modelGui.optionGradientHessian.setText(reader.readLine());
+				
+				modelGui.checkLaplacian.setSelection(read(reader));
+				modelGui.optionLaplacian.setText(reader.readLine());
 
 				modelGui.checkEdges.setSelection(read(reader));
 
@@ -104,6 +110,16 @@ public class LoadAndSaveConfig {
 		buffer.append(modelGui.checkMinimum.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionsMinimum.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkGradientHessian.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionGradientHessian.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkLaplacian.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionLaplacian.getText());
 		buffer.append(sep);
 
 		buffer.append(modelGui.checkEdges.getSelection());

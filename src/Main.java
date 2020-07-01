@@ -29,7 +29,7 @@ import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.struct.border.BorderType;
 import boofcv.struct.image.GrayF32;
 import ij.IJ;
-import ij.ImagePlus;
+import ij.ImagePlus; 
 import ij.ImageStack;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
@@ -451,7 +451,7 @@ public class Main {
 		
 		
 		
-		if (true) {
+		if (gui.gradientHessian) {
 			monitor.setTaskName("Apply Gradient, Hessian Derivative");
 			/* Split the median option to get all sigmas! */
 			//String[] medianSigma = gui.medianOption.split(",");
@@ -505,7 +505,7 @@ public class Main {
 			}
 		}
 		
-		if (true) {
+		if (gui.laplacian) {
 			monitor.setTaskName("Apply Laplacian Derivative");
 			/* Split the median option to get all sigmas! */
 			//String[] medianSigma = gui.medianOption.split(",");

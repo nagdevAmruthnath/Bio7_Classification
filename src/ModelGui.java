@@ -71,6 +71,14 @@ public class ModelGui extends Composite {
 	protected Button checkConvertToHsb;
 	protected boolean toHsb;
 	private ScrolledComposite scrolledComposite;
+	protected Button checkGradientHessian;
+	protected Text optionGradientHessian;
+	protected Button checkLaplacian;
+	protected Text optionLaplacian;
+	protected boolean gradientHessian;
+	protected String gradientHessianOption;
+	protected boolean laplacian;
+	protected String laplacianOption;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -78,16 +86,15 @@ public class ModelGui extends Composite {
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 
 		tabFolder = new CTabFolder(this, SWT.BORDER);
-		//tabFolder.setSelectionBackground(
-				//Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		// tabFolder.setSelectionBackground(
+		// Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
 		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
 		tabItemFeatures.setText("Features");
 		tabFolder.setSelection(tabItemFeatures);
-		
-		
-		//tabItemFeatures.setControl(composite);
-		
+
+		// tabItemFeatures.setControl(composite);
+
 		scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tabItemFeatures.setControl(scrolledComposite);
 		scrolledComposite.setExpandHorizontal(true);
@@ -96,70 +103,70 @@ public class ModelGui extends Composite {
 		composite.setSize(300, 800);
 		scrolledComposite.setContent(composite);
 		composite.setLayout(new GridLayout(2, true));
-		
-				Button btnNewButton = new Button(composite, SWT.NONE);
-				btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				btnNewButton.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						model.executeSelection(1);
-					}
-				});
-				btnNewButton.setText("Create Stack (1)");
-		
-				Button btnNewButton_1 = new Button(composite, SWT.NONE);
-				btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				btnNewButton_1.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						model.executeSelection(2);
-					}
-				});
-				btnNewButton_1.setText("Create Classes (2)");
-		
-				Button btnNewButton_2 = new Button(composite, SWT.NONE);
-				btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				btnNewButton_2.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						model.executeSelection(3);
-					}
-				});
-				btnNewButton_2.setText("Train Script (3)");
-		
-				Button btnNewButton_3 = new Button(composite, SWT.NONE);
-				btnNewButton_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				btnNewButton_3.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						model.executeSelection(4);
-					}
-				});
-				btnNewButton_3.setText("Classify Script (4)");
-		
-				btnLoadConfiguration = new Button(composite, SWT.NONE);
-				btnLoadConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						new LoadAndSaveConfig(ModelGui.this).loadScript();
-					}
-				});
-				btnLoadConfiguration.setText("Load Configuration");
-		
-				btnNewButton_4 = new Button(composite, SWT.NONE);
-				btnNewButton_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				btnNewButton_4.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						new LoadAndSaveConfig(ModelGui.this).saveScript();
-					}
-				});
-				btnNewButton_4.setText("Save Configuration");
-		
-				checkConvertToHsb = new Button(composite, SWT.CHECK);
-				checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-				checkConvertToHsb.setText("Convert to HSB Color Space");
+
+		Button btnNewButton = new Button(composite, SWT.NONE);
+		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.executeSelection(1);
+			}
+		});
+		btnNewButton.setText("Create Stack (1)");
+
+		Button btnNewButton_1 = new Button(composite, SWT.NONE);
+		btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.executeSelection(2);
+			}
+		});
+		btnNewButton_1.setText("Create Classes (2)");
+
+		Button btnNewButton_2 = new Button(composite, SWT.NONE);
+		btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.executeSelection(3);
+			}
+		});
+		btnNewButton_2.setText("Train Script (3)");
+
+		Button btnNewButton_3 = new Button(composite, SWT.NONE);
+		btnNewButton_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				model.executeSelection(4);
+			}
+		});
+		btnNewButton_3.setText("Classify Script (4)");
+
+		btnLoadConfiguration = new Button(composite, SWT.NONE);
+		btnLoadConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				new LoadAndSaveConfig(ModelGui.this).loadScript();
+			}
+		});
+		btnLoadConfiguration.setText("Load Configuration");
+
+		btnNewButton_4 = new Button(composite, SWT.NONE);
+		btnNewButton_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				new LoadAndSaveConfig(ModelGui.this).saveScript();
+			}
+		});
+		btnNewButton_4.setText("Save Configuration");
+
+		checkConvertToHsb = new Button(composite, SWT.CHECK);
+		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		checkConvertToHsb.setText("Convert to HSB Color Space");
 		new Label(composite, SWT.NONE);
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
@@ -176,54 +183,69 @@ public class ModelGui extends Composite {
 
 		checkGaussianFilter = new Button(composite, SWT.CHECK);
 		checkGaussianFilter.setText("Gaussian Blur");
-				
-						checkMedian = new Button(composite, SWT.CHECK);
-						checkMedian.setText("Median");
+
+		checkMedian = new Button(composite, SWT.CHECK);
+		checkMedian.setText("Median");
+
+		optionGaussian = new Text(composite, SWT.BORDER);
+		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionGaussian.setText("2");
+
+		optionMedian = new Text(composite, SWT.BORDER);
+		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionMedian.setText("2");
+
+		checkMean = new Button(composite, SWT.CHECK);
+		checkMean.setText("Mean");
+
+		checkMaximum = new Button(composite, SWT.CHECK);
+		checkMaximum.setText("Maximum");
+
+		optionsMean = new Text(composite, SWT.BORDER);
+		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionsMean.setText("2");
+
+		optionsMaximum = new Text(composite, SWT.BORDER);
+		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionsMaximum.setText("2");
+
+		checkMinimum = new Button(composite, SWT.CHECK);
+		checkMinimum.setText("Minimum");
 		
-				optionGaussian = new Text(composite, SWT.BORDER);
-				optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				optionGaussian.setText("2");
+		checkGradientHessian = new Button(composite, SWT.CHECK);
+		checkGradientHessian.setText("Gradient/Hessian");
+
+		optionsMinimum = new Text(composite, SWT.BORDER);
+		GridData gd_optionsMinimum = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_optionsMinimum.widthHint = 167;
+		optionsMinimum.setLayoutData(gd_optionsMinimum);
+		optionsMinimum.setText("2");
 		
-				optionMedian = new Text(composite, SWT.BORDER);
-				optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				optionMedian.setText("2");
-				
-						checkMean = new Button(composite, SWT.CHECK);
-						checkMean.setText("Mean");
-				
-						checkMaximum = new Button(composite, SWT.CHECK);
-						checkMaximum.setText("Maximum");
+		optionGradientHessian = new Text(composite, SWT.BORDER);
+		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-				optionsMean = new Text(composite, SWT.BORDER);
-				optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				optionsMean.setText("2");
-		
-				optionsMaximum = new Text(composite, SWT.BORDER);
-				optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				optionsMaximum.setText("2");
-		
-				checkMinimum = new Button(composite, SWT.CHECK);
-				checkMinimum.setText("Minimum");
+		checkLaplacian = new Button(composite, SWT.CHECK);
+		checkLaplacian.setText("Laplacian");
 		new Label(composite, SWT.NONE);
-				
-						optionsMinimum = new Text(composite, SWT.BORDER);
-						optionsMinimum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-						optionsMinimum.setText("2");
 		
-				checkEdges = new Button(composite, SWT.CHECK);
-				checkEdges.setText("Edges");
+		optionLaplacian = new Text(composite, SWT.BORDER);
+		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(composite, SWT.NONE);
-				
-						checkConvolve = new Button(composite, SWT.CHECK);
-						checkConvolve.setText("Convolve");
-				new Label(composite, SWT.NONE);
-		
-				optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-				GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-				gd_optionConvolve.widthHint = 248;
-				optionConvolve.setLayoutData(gd_optionConvolve);
-				optionConvolve.setText(
-						"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
+
+		checkEdges = new Button(composite, SWT.CHECK);
+		checkEdges.setText("Edges");
+		new Label(composite, SWT.NONE);
+
+		checkConvolve = new Button(composite, SWT.CHECK);
+		checkConvolve.setText("Convolve");
+		new Label(composite, SWT.NONE);
+
+		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		gd_optionConvolve.widthHint = 248;
+		optionConvolve.setLayoutData(gd_optionConvolve);
+		optionConvolve.setText(
+				"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
 
 		tbtmMore = new CTabItem(tabFolder, SWT.NONE);
 		tbtmMore.setText("Settings");
@@ -300,6 +322,12 @@ public class ModelGui extends Composite {
 
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
+				
+				gradientHessian = checkGradientHessian.getSelection();
+				gradientHessianOption = optionGradientHessian.getText();
+				
+				laplacian = checkLaplacian.getSelection();
+				laplacianOption = optionLaplacian.getText();
 
 			}
 		});
@@ -332,7 +360,7 @@ public class ModelGui extends Composite {
 		});
 		return pathClassificationScript;
 	}
-	
+
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
 		canvasView.updatePlotCanvas();
