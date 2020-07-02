@@ -79,6 +79,10 @@ public class ModelGui extends Composite {
 	protected String gradientHessianOption;
 	protected boolean laplacian;
 	protected String laplacianOption;
+	protected Button checkVariance;
+	protected Text optionsVariance;
+	protected boolean variance;
+	protected String varianceOption;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -197,23 +201,23 @@ public class ModelGui extends Composite {
 
 		checkMean = new Button(composite, SWT.CHECK);
 		checkMean.setText("Mean");
-
-		checkMaximum = new Button(composite, SWT.CHECK);
-		checkMaximum.setText("Maximum");
+		
+		checkVariance = new Button(composite, SWT.CHECK);
+		checkVariance.setText("Variance");
 
 		optionsMean = new Text(composite, SWT.BORDER);
 		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMean.setText("2");
-
-		optionsMaximum = new Text(composite, SWT.BORDER);
-		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionsMaximum.setText("2");
+		
+		optionsVariance = new Text(composite, SWT.BORDER);
+		optionsVariance.setText("2");
+		optionsVariance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkMinimum = new Button(composite, SWT.CHECK);
 		checkMinimum.setText("Minimum");
 		
-		checkGradientHessian = new Button(composite, SWT.CHECK);
-		checkGradientHessian.setText("Gradient/Hessian");
+				checkMaximum = new Button(composite, SWT.CHECK);
+				checkMaximum.setText("Maximum");
 
 		optionsMinimum = new Text(composite, SWT.BORDER);
 		GridData gd_optionsMinimum = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -221,19 +225,26 @@ public class ModelGui extends Composite {
 		optionsMinimum.setLayoutData(gd_optionsMinimum);
 		optionsMinimum.setText("2");
 		
-		optionGradientHessian = new Text(composite, SWT.BORDER);
-		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				optionsMaximum = new Text(composite, SWT.BORDER);
+				optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				optionsMaximum.setText("2");
 		
 		checkLaplacian = new Button(composite, SWT.CHECK);
 		checkLaplacian.setText("Laplacian");
-		new Label(composite, SWT.NONE);
+		
+		checkGradientHessian = new Button(composite, SWT.CHECK);
+		checkGradientHessian.setText("Gradient/Hessian");
 		
 		optionLaplacian = new Text(composite, SWT.BORDER);
+		optionLaplacian.setEnabled(false);
 		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(composite, SWT.NONE);
+		
+		optionGradientHessian = new Text(composite, SWT.BORDER);
+		optionGradientHessian.setEnabled(false);
+		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkEdges = new Button(composite, SWT.CHECK);
-		checkEdges.setText("Edges");
+		checkEdges.setText("Sobel Edge");
 		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
@@ -311,6 +322,9 @@ public class ModelGui extends Composite {
 
 				mean = checkMean.getSelection();
 				meanOption = optionsMean.getText();
+				
+				variance = checkVariance.getSelection();
+				varianceOption = optionsVariance.getText();
 
 				maximum = checkMaximum.getSelection();
 				maximumOption = optionsMaximum.getText();

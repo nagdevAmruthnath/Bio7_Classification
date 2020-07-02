@@ -47,6 +47,9 @@ public class LoadAndSaveConfig {
 
 				modelGui.checkMean.setSelection(read(reader));
 				modelGui.optionsMean.setText(reader.readLine());
+				
+				modelGui.checkVariance.setSelection(read(reader));
+				modelGui.optionsVariance.setText(reader.readLine());
 
 				modelGui.checkMaximum.setSelection(read(reader));
 				modelGui.optionsMaximum.setText(reader.readLine());
@@ -100,6 +103,11 @@ public class LoadAndSaveConfig {
 		buffer.append(modelGui.checkMean.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionsMean.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkVariance.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionsVariance.getText());
 		buffer.append(sep);
 
 		buffer.append(modelGui.checkMaximum.getSelection());

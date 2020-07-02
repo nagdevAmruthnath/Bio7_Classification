@@ -35,6 +35,7 @@ import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
 import ij.plugin.filter.GaussianBlur;
+import ij.plugin.filter.RankFilters;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
@@ -347,29 +348,30 @@ public class Main {
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianSigma = gui.medianOption.split(",");
-			// final RankFilters ran=new RankFilters();
+			 final RankFilters ran=new RankFilters();
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
 				for (int j = 0; j < medianSigma.length; j++) {
 					int sigma = Integer.parseInt(medianSigma[j]);
 					ImagePlus plus = new ImagePlus("median_sigma_" + sigma, tempStack.getProcessor(i).duplicate());
-					// IJ.run(plus, "Median...", "radius="+medianSigma[j]);
+					//IJ.run(plus, "Median...", "radius="+medianSigma[j]);
 					ImageProcessor ip = plus.getProcessor();
-					// ran.rank(ip, Double.parseDouble(medianSigma[j]), 4);
+					 ran.rank(ip, Double.parseDouble(medianSigma[j]),RankFilters.MEDIAN);
+					 
 					// stack.addSlice(plus.getTitle(), plus.getProcessor());
-					int width = plus.getWidth();
-					int height = plus.getHeight();
-					GrayF32 boofFilterImageInput = new GrayF32(width, height);
-					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					//int width = plus.getWidth();
+					//int height = plus.getHeight();
+					//GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					//GrayF32 boofFilterImageOutput = new GrayF32(width, height);
 					/* Transfer ImageProcessor data in place to boofcv image input! */
-					ipToBoofCVGray32(ip, boofFilterImageInput);
+					//ipToBoofCVGray32(ip, boofFilterImageInput);
 					// GrayF32 boofFilterImageInput =
 					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
 					// GrayF32.class);
-					BlurImageOps.median(boofFilterImageInput, boofFilterImageOutput, sigma);
-					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
-					stack.addSlice(plus.getTitle(), flProcessor);
+					//BlurImageOps.median(boofFilterImageInput, boofFilterImageOutput, sigma);
+					//FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
 		}
@@ -405,6 +407,28 @@ public class Main {
 				}
 			}
 		}
+		
+		if (gui.variance) {
+			monitor.setTaskName("Apply Variance Filter");
+			/* Split the mean option to get all sigmas! */
+
+			String[] varianceSigma = gui.varianceOption.split(",");
+			final RankFilters ran = new RankFilters();
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+
+				for (int j = 0; j < varianceSigma.length; j++) {
+					ImagePlus plus = new ImagePlus("variance_sigma_" + varianceSigma[j],
+							tempStack.getProcessor(i).duplicate());
+					ImageProcessor ip = plus.getProcessor();
+					ran.rank(ip, Double.parseDouble(varianceSigma[j]), RankFilters.VARIANCE);
+					//IJ.run(plus, "Variance 3D...", "x="+varianceSigma[j]+" y="+varianceSigma[j]+ " z="+varianceSigma[j]);
+					 //IJ.run(plus, "Variance...", "radius="+varianceSigma[j]);
+             
+					stack.addSlice(plus.getTitle(), ip);
+				}
+			}
+		}
 		if (gui.maximum) {
 			monitor.setTaskName("Apply Maximum Filter");
 			/* Split the mean option to get all sigmas! */
@@ -417,12 +441,13 @@ public class Main {
 				for (int j = 0; j < maximumSigma.length; j++) {
 					ImagePlus plus = new ImagePlus("maximum_sigma_" + maximumSigma[j],
 							tempStack.getProcessor(i).duplicate());
-					//ImageProcessor ip = plus.getProcessor();
-					//ran.rank(ip, Double.parseDouble(maximumSigma[j]), 2);
+					
+					//ran.rank(ip, Double.parseDouble(maximumSigma[j]), RankFilters.MAX);
 					IJ.run(plus, "Maximum 3D...", "x="+maximumSigma[j]+" y="+maximumSigma[j]+"");
+					ImageProcessor ip = plus.getProcessor();
 					// IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]);
-
-					stack.addSlice(plus.getTitle(), plus.getProcessor());
+				
+					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
 		}
@@ -440,11 +465,11 @@ public class Main {
 					ImagePlus plus = new ImagePlus("minimum_sigma_" + minimumSigma[j],
 							tempStack.getProcessor(i).duplicate());
 
-					// IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]);
+					//IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]);
 					IJ.run(plus, "Minimum 3D...", "x="+minimumSigma[j]+" y="+minimumSigma[j]+"");
-					//ImageProcessor ip = plus.getProcessor();
-					//ran.rank(ip, Double.parseDouble(minimumSigma[j]), 1);
-					stack.addSlice(plus.getTitle(), plus.getProcessor());
+					ImageProcessor ip = plus.getProcessor();
+					//ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
+					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
 		}
@@ -540,6 +565,7 @@ public class Main {
 		}
 
 		if (gui.edges) {
+			//see: https://imagejdocu.tudor.lu/faq/technical/what_is_the_algorithm_used_in_find_edges
 			monitor.setTaskName("Apply Edges");
 			ImagePlus edgesCreated = duplicator.run(image);
 			IJ.run(edgesCreated, "Find Edges", "");
