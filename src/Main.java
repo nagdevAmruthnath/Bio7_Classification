@@ -353,11 +353,12 @@ public class Main {
 			for (int i = 1; i <= stackSize; i++) {
 
 				for (int j = 0; j < medianSigma.length; j++) {
-					int sigma = Integer.parseInt(medianSigma[j]);
+					float sigma = Integer.parseInt(medianSigma[j]);
 					ImagePlus plus = new ImagePlus("median_sigma_" + sigma, tempStack.getProcessor(i).duplicate());
 					//IJ.run(plus, "Median...", "radius="+medianSigma[j]);
 					ImageProcessor ip = plus.getProcessor();
-					 ran.rank(ip, Double.parseDouble(medianSigma[j]),RankFilters.MEDIAN);
+					
+					extracted(sigma, ran, ip, RankFilters.MEDIAN);
 					 
 					// stack.addSlice(plus.getTitle(), plus.getProcessor());
 					//int width = plus.getWidth();
@@ -421,10 +422,11 @@ public class Main {
 					ImagePlus plus = new ImagePlus("variance_sigma_" + varianceSigma[j],
 							tempStack.getProcessor(i).duplicate());
 					ImageProcessor ip = plus.getProcessor();
-					ran.rank(ip, Double.parseDouble(varianceSigma[j]), RankFilters.VARIANCE);
+					//ran.rank(ip, Double.parseDouble(varianceSigma[j]), RankFilters.VARIANCE);
 					//IJ.run(plus, "Variance 3D...", "x="+varianceSigma[j]+" y="+varianceSigma[j]+ " z="+varianceSigma[j]);
 					 //IJ.run(plus, "Variance...", "radius="+varianceSigma[j]);
-             
+					float sigma=Float.parseFloat(varianceSigma[j]);
+					extracted(sigma, ran, ip, RankFilters.VARIANCE);
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
@@ -434,7 +436,7 @@ public class Main {
 			/* Split the mean option to get all sigmas! */
 
 			String[] maximumSigma = gui.maximumOption.split(",");
-			//final RankFilters ran = new RankFilters();
+			final RankFilters ran = new RankFilters();
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -443,10 +445,11 @@ public class Main {
 							tempStack.getProcessor(i).duplicate());
 					
 					//ran.rank(ip, Double.parseDouble(maximumSigma[j]), RankFilters.MAX);
-					IJ.run(plus, "Maximum 3D...", "x="+maximumSigma[j]+" y="+maximumSigma[j]+"");
+					//IJ.run(plus, "Maximum 3D...", "x="+maximumSigma[j]+" y="+maximumSigma[j]+"");
 					ImageProcessor ip = plus.getProcessor();
 					// IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]);
-				
+					float sigma=Float.parseFloat(maximumSigma[j]);
+					extracted(sigma, ran, ip, RankFilters.MAX);
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
@@ -456,7 +459,7 @@ public class Main {
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
-			//final RankFilters ran = new RankFilters();
+			final RankFilters ran = new RankFilters();
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -466,8 +469,10 @@ public class Main {
 							tempStack.getProcessor(i).duplicate());
 
 					//IJ.run(plus, "Minimum...", "radius="+minimumSigma[j]);
-					IJ.run(plus, "Minimum 3D...", "x="+minimumSigma[j]+" y="+minimumSigma[j]+"");
+					//IJ.run(plus, "Minimum 3D...", "x="+minimumSigma[j]+" y="+minimumSigma[j]+"");
 					ImageProcessor ip = plus.getProcessor();
+					float sigma=Float.parseFloat(minimumSigma[j]);
+					extracted(sigma, ran, ip, RankFilters.MIN);
 					//ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
 					stack.addSlice(plus.getTitle(), ip);
 				}
@@ -588,6 +593,10 @@ public class Main {
 		imPlus = new ImagePlus(name, stack);
 
 		return imPlus;
+	}
+
+	private synchronized void extracted(float medianSigma, final RankFilters ran, ImageProcessor ip, int FilterType) {
+		ran.rank(ip, medianSigma,FilterType);
 	}
 
 	private void ipToBoofCVGray32(ImageProcessor ip, GrayF32 boofFilterImageInput) {
