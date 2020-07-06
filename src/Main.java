@@ -595,7 +595,7 @@ public class Main {
 		return imPlus;
 	}
 
-	private synchronized void extracted(float medianSigma, final RankFilters ran, ImageProcessor ip, int FilterType) {
+	private void extracted(float medianSigma, final RankFilters ran, ImageProcessor ip, int FilterType) {
 		ran.rank(ip, medianSigma,FilterType);
 	}
 
