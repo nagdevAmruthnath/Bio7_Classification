@@ -83,6 +83,7 @@ public class ModelGui extends Composite {
 	protected Text optionsVariance;
 	protected boolean variance;
 	protected String varianceOption;
+	private Text optionsEdges;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -169,16 +170,14 @@ public class ModelGui extends Composite {
 		btnNewButton_4.setText("Save Configuration");
 
 		checkConvertToHsb = new Button(composite, SWT.CHECK);
-		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		checkConvertToHsb.setText("Convert to HSB Color Space");
-		new Label(composite, SWT.NONE);
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
-		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
+		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
 		gd_lblSelectChannels.widthHint = 279;
 		lblSelectChannels.setLayoutData(gd_lblSelectChannels);
 		lblSelectChannels.setText("Select Channels (1,2,... - Leave blank for all!)\r\n");
-		new Label(composite, SWT.NONE);
 
 		channelSelectionText = new Text(composite, SWT.BORDER);
 		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -245,6 +244,11 @@ public class ModelGui extends Composite {
 
 		checkEdges = new Button(composite, SWT.CHECK);
 		checkEdges.setText("Sobel Edge");
+		new Label(composite, SWT.NONE);
+		
+		optionsEdges = new Text(composite, SWT.BORDER);
+		optionsEdges.setEnabled(false);
+		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
