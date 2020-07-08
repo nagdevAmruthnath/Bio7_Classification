@@ -31,6 +31,7 @@ import boofcv.struct.image.GrayF32;
 import ij.IJ;
 import ij.ImagePlus; 
 import ij.ImageStack;
+import ij.Prefs;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
@@ -298,7 +299,7 @@ public class Main {
 		 * Duplicate the filtered images (our additional features!) and add the filtered
 		 * image copies with specified sigmas to the feature stack!
 		 */
-
+		
 		ImageStack tempStack = stack.duplicate();
 
 		if (gui.gaussian) {
@@ -408,6 +409,8 @@ public class Main {
 		}
 
 		if (gui.median) {
+			int threads=Prefs.getThreads(); 
+			Prefs.setThreads(1); 
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianSigma = gui.medianOption.split(",");
@@ -422,25 +425,15 @@ public class Main {
 					ImageProcessor ip = plus.getProcessor();
 					RankFilters ran=new RankFilters();
 					extracted(sigma, ran, ip, RankFilters.MEDIAN);
-					 
-					// stack.addSlice(plus.getTitle(), plus.getProcessor());
-					//int width = plus.getWidth();
-					//int height = plus.getHeight();
-					//GrayF32 boofFilterImageInput = new GrayF32(width, height);
-					//GrayF32 boofFilterImageOutput = new GrayF32(width, height);
-					/* Transfer ImageProcessor data in place to boofcv image input! */
-					//ipToBoofCVGray32(ip, boofFilterImageInput);
-					// GrayF32 boofFilterImageInput =
-					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
-					// GrayF32.class);
-					//BlurImageOps.median(boofFilterImageInput, boofFilterImageOutput, sigma);
-					//FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
+			Prefs.setThreads(threads); 
 		}
 
 		if (gui.mean) {
+			int threads=Prefs.getThreads(); 
+			Prefs.setThreads(1); 
 			monitor.setTaskName("Apply Mean Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] meanSigma = gui.meanOption.split(",");
@@ -455,10 +448,10 @@ public class Main {
 					ImageProcessor ip = plus.getProcessor();
 					int width = plus.getWidth();
 					int height = plus.getHeight();
-					GrayF32 boofFilterImageInput = new GrayF32(width, height);
-					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					//GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					//GrayF32 boofFilterImageOutput = new GrayF32(width, height);
 					/* Transfer ImageProcessor data in place to boofcv image input! */
-					ipToBoofCVGray32(ip, boofFilterImageInput);
+					//ipToBoofCVGray32(ip, boofFilterImageInput);
 					// GrayF32 boofFilterImageInput =
 					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
 					// GrayF32.class);
@@ -470,9 +463,12 @@ public class Main {
 					stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
+			Prefs.setThreads(threads); 
 		}
 		
 		if (gui.variance) {
+			int threads=Prefs.getThreads(); 
+			Prefs.setThreads(1); 
 			monitor.setTaskName("Apply Variance Filter");
 			/* Split the mean option to get all sigmas! */
 
@@ -494,8 +490,11 @@ public class Main {
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
+			Prefs.setThreads(threads); 
 		}
 		if (gui.maximum) {
+			int threads=Prefs.getThreads(); 
+			Prefs.setThreads(1); 
 			monitor.setTaskName("Apply Maximum Filter");
 			/* Split the mean option to get all sigmas! */
 
@@ -518,9 +517,12 @@ public class Main {
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
+			Prefs.setThreads(threads); 
 		}
 		
 		if (gui.minimum) {
+			int threads=Prefs.getThreads(); 
+			Prefs.setThreads(1); 
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
@@ -543,10 +545,11 @@ public class Main {
 					stack.addSlice(plus.getTitle(), ip);
 				}
 			}
+			Prefs.setThreads(threads); 
 		}
 		
 		
-		
+	
 		if (gui.gradientHessian) {
 			monitor.setTaskName("Apply Gradient, Hessian Derivative");
 			/* Split the median option to get all sigmas! */
