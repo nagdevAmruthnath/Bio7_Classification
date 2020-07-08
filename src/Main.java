@@ -34,6 +34,7 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
+import ij.plugin.ImageCalculator;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
 import ij.process.ColorProcessor;
@@ -303,7 +304,7 @@ public class Main {
 		if (gui.gaussian) {
 			monitor.setTaskName("Apply Gaussian Filter");
 
-			GaussianBlur gaussian = new GaussianBlur();
+			//GaussianBlur gaussian = new GaussianBlur();
 			/* Split the gaussian option to get all sigmas! */
 			String[] gaussianSigma = gui.gaussianOption.split(",");
 			int stackSize = tempStack.getSize();
@@ -343,12 +344,74 @@ public class Main {
 			// IJ.run(gaussianFiltered, "Gaussian Blur...", gui.gaussianOption);
 
 		}
+		
+		if (gui.diffOfGaussian) {
+			monitor.setTaskName("Apply Difference of Gaussian Filters");
+
+			//GaussianBlur gaussian = new GaussianBlur();
+			/* Split the gaussian option to get all sigmas! */
+			String[] gaussianSigma = gui.diffGaussianOption.split(",");
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+                /*Here we have two sigmas to calculate the difference!*/
+				//for (int j = 0; j < 2; j++) {
+					ImagePlus plusSigma1 = new ImagePlus("gaussian_sigma_" + gaussianSigma[0],
+							tempStack.getProcessor(i).duplicate());
+					// IJ.run(plus, "Gaussian Blur...", "radius="+gaussianSigma[j]);
+					ImageProcessor ip = plusSigma1.getProcessor();
+					double sigma1 = Double.parseDouble(gaussianSigma[0]);
+					
+					int width = plusSigma1.getWidth();
+					int height = plusSigma1.getHeight();
+					GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					/* Transfer ImageProcessor data in place to boofcv image input! */
+					ipToBoofCVGray32(ip, boofFilterImageInput);
+					// GrayF32 boofFilterImageInput =
+					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
+					// GrayF32.class);
+					BlurImageOps.gaussian(boofFilterImageInput, boofFilterImageOutput, sigma1, -1, null);
+					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+					
+					
+					//ImagePlus plusSigma2 = new ImagePlus("gaussian_sigma_" + gaussianSigma[1],
+						//	tempStack.getProcessor(i).duplicate());
+					// IJ.run(plus, "Gaussian Blur...", "radius="+gaussianSigma[j]);
+					//ImageProcessor ip2 = plusSigma2.getProcessor();
+					double sigma2 = Double.parseDouble(gaussianSigma[1]);
+					/*
+					 * See:
+					 * https://imagej.nih.gov/ij/developer/api/ij/plugin/filter/GaussianBlur.html#
+					 * blur-ij.process.ImageProcessor-double-
+					 */
+					
+					GrayF32 boofFilterImageInput2 = new GrayF32(width, height);
+					GrayF32 boofFilterImageOutput2 = new GrayF32(width, height);
+					/* Transfer ImageProcessor data in place to boofcv image input! */
+					ipToBoofCVGray32(ip, boofFilterImageInput2);
+					// GrayF32 boofFilterImageInput =
+					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
+					// GrayF32.class);
+					BlurImageOps.gaussian(boofFilterImageInput2, boofFilterImageOutput2, sigma2, -1, null);
+					FloatProcessor flProcessor2 = new FloatProcessor(width, height, boofFilterImageOutput2.getData());
+					
+					ImageCalculator ic = new ImageCalculator();
+					ImagePlus finalDiffGaussian=ic.run("Subtract create 32-bit", new ImagePlus("sigma1",flProcessor), new ImagePlus("sigma2",flProcessor2));
+					
+					
+					stack.addSlice("DiffOfGaussian_"+i, finalDiffGaussian.getProcessor());
+					
+				
+			}
+			
+
+		}
 
 		if (gui.median) {
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianSigma = gui.medianOption.split(",");
-			 final RankFilters ran=new RankFilters();
+			 
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -357,7 +420,7 @@ public class Main {
 					ImagePlus plus = new ImagePlus("median_sigma_" + sigma, tempStack.getProcessor(i).duplicate());
 					//IJ.run(plus, "Median...", "radius="+medianSigma[j]);
 					ImageProcessor ip = plus.getProcessor();
-					
+					RankFilters ran=new RankFilters();
 					extracted(sigma, ran, ip, RankFilters.MEDIAN);
 					 
 					// stack.addSlice(plus.getTitle(), plus.getProcessor());
@@ -381,12 +444,12 @@ public class Main {
 			monitor.setTaskName("Apply Mean Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] meanSigma = gui.meanOption.split(",");
-			// final RankFilters ran=new RankFilters();
+			
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
 				for (int j = 0; j < meanSigma.length; j++) {
-					int sigma = Integer.parseInt(meanSigma[j]);
+					//int sigma = Integer.parseInt(meanSigma[j]);
 					ImagePlus plus = new ImagePlus("mean_sigma_" + meanSigma[j], tempStack.getProcessor(i).duplicate());
 					// IJ.run(plus, "Mean...", "radius="+meanSigma[j]);
 					ImageProcessor ip = plus.getProcessor();
@@ -399,12 +462,12 @@ public class Main {
 					// GrayF32 boofFilterImageInput =
 					// ConvertBufferedImage.convertFromSingle(plus.getBufferedImage(), null,
 					// GrayF32.class);
-					BlurImageOps.mean(boofFilterImageInput, boofFilterImageOutput, sigma, null, null);
-					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
-					stack.addSlice(plus.getTitle(), flProcessor);
-
-					// ran.rank(ip, Double.parseDouble(meanSigma[j]), 0);
-					// stack.addSlice(plus.getTitle(), plus.getProcessor());
+					//BlurImageOps.mean(boofFilterImageInput, boofFilterImageOutput, sigma, null, null);
+					//FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+					//stack.addSlice(plus.getTitle(), flProcessor);
+					 RankFilters ran=new RankFilters();
+					 ran.rank(ip, Double.parseDouble(meanSigma[j]), 0);
+					stack.addSlice(plus.getTitle(), plus.getProcessor());
 				}
 			}
 		}
@@ -414,7 +477,7 @@ public class Main {
 			/* Split the mean option to get all sigmas! */
 
 			String[] varianceSigma = gui.varianceOption.split(",");
-			final RankFilters ran = new RankFilters();
+			
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -426,6 +489,7 @@ public class Main {
 					//IJ.run(plus, "Variance 3D...", "x="+varianceSigma[j]+" y="+varianceSigma[j]+ " z="+varianceSigma[j]);
 					 //IJ.run(plus, "Variance...", "radius="+varianceSigma[j]);
 					float sigma=Float.parseFloat(varianceSigma[j]);
+					RankFilters ran = new RankFilters();
 					extracted(sigma, ran, ip, RankFilters.VARIANCE);
 					stack.addSlice(plus.getTitle(), ip);
 				}
@@ -436,7 +500,7 @@ public class Main {
 			/* Split the mean option to get all sigmas! */
 
 			String[] maximumSigma = gui.maximumOption.split(",");
-			final RankFilters ran = new RankFilters();
+			
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -449,6 +513,7 @@ public class Main {
 					ImageProcessor ip = plus.getProcessor();
 					// IJ.run(plus, "Maximum...", "radius="+maximumSigma[j]);
 					float sigma=Float.parseFloat(maximumSigma[j]);
+					RankFilters ran = new RankFilters();
 					extracted(sigma, ran, ip, RankFilters.MAX);
 					stack.addSlice(plus.getTitle(), ip);
 				}
@@ -459,7 +524,7 @@ public class Main {
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
-			final RankFilters ran = new RankFilters();
+			
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -472,6 +537,7 @@ public class Main {
 					//IJ.run(plus, "Minimum 3D...", "x="+minimumSigma[j]+" y="+minimumSigma[j]+"");
 					ImageProcessor ip = plus.getProcessor();
 					float sigma=Float.parseFloat(minimumSigma[j]);
+					RankFilters ran = new RankFilters();
 					extracted(sigma, ran, ip, RankFilters.MIN);
 					//ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
 					stack.addSlice(plus.getTitle(), ip);

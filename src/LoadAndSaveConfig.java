@@ -41,6 +41,9 @@ public class LoadAndSaveConfig {
 
 				modelGui.checkGaussianFilter.setSelection(read(reader));
 				modelGui.optionGaussian.setText(reader.readLine());
+				
+				modelGui.checkDifferenceOfGaussian.setSelection(read(reader));
+				modelGui.optionDiffGaussian.setText(reader.readLine());
 
 				modelGui.checkMedian.setSelection(read(reader));
 				modelGui.optionMedian.setText(reader.readLine());
@@ -93,6 +96,11 @@ public class LoadAndSaveConfig {
 		buffer.append(modelGui.checkGaussianFilter.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionGaussian.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkDifferenceOfGaussian.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionDiffGaussian.getText());
 		buffer.append(sep);
 
 		buffer.append(modelGui.checkMedian.getSelection());
