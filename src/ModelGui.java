@@ -231,45 +231,45 @@ public class ModelGui extends Composite {
 		optionsVariance = new Text(composite, SWT.BORDER);
 		optionsVariance.setText("2");
 		optionsVariance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				
+						checkMaximum = new Button(composite, SWT.CHECK);
+						checkMaximum.setText("Maximum");
+				
+				checkGradientHessian = new Button(composite, SWT.CHECK);
+				checkGradientHessian.setText("Gradient/Hessian");
+				
+						optionsMaximum = new Text(composite, SWT.BORDER);
+						optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+						optionsMaximum.setText("2");
 		
-		checkLaplacian = new Button(composite, SWT.CHECK);
-		checkLaplacian.setText("Laplacian");
+		optionGradientHessian = new Text(composite, SWT.BORDER);
+		optionGradientHessian.setEnabled(false);
+		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				
+				checkLaplacian = new Button(composite, SWT.CHECK);
+				checkLaplacian.setText("Laplacian");
 		
-				checkMaximum = new Button(composite, SWT.CHECK);
-				checkMaximum.setText("Maximum");
+				checkEdges = new Button(composite, SWT.CHECK);
+				checkEdges.setText("Sobel Edge");
 		
 		optionLaplacian = new Text(composite, SWT.BORDER);
 		optionLaplacian.setEnabled(false);
 		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-				optionsMaximum = new Text(composite, SWT.BORDER);
-				optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				optionsMaximum.setText("2");
-
-		checkEdges = new Button(composite, SWT.CHECK);
-		checkEdges.setText("Sobel Edge");
-		
-		checkGradientHessian = new Button(composite, SWT.CHECK);
-		checkGradientHessian.setText("Gradient/Hessian");
-		
 		optionsEdges = new Text(composite, SWT.BORDER);
 		optionsEdges.setEnabled(false);
 		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		optionGradientHessian = new Text(composite, SWT.BORDER);
-		optionGradientHessian.setEnabled(false);
-		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		checkConvolve = new Button(composite, SWT.CHECK);
-		checkConvolve.setText("Convolve");
+				checkConvolve = new Button(composite, SWT.CHECK);
+				checkConvolve.setText("Convolve");
 		new Label(composite, SWT.NONE);
-
-		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-		gd_optionConvolve.widthHint = 248;
-		optionConvolve.setLayoutData(gd_optionConvolve);
-		optionConvolve.setText(
-				"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
+		
+				optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+				GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+				gd_optionConvolve.widthHint = 189;
+				optionConvolve.setLayoutData(gd_optionConvolve);
+				optionConvolve.setText(
+						"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
 
 		tbtmMore = new CTabItem(tabFolder, SWT.NONE);
 		tbtmMore.setText("Settings");
