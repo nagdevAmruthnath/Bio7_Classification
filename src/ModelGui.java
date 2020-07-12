@@ -88,6 +88,14 @@ public class ModelGui extends Composite {
 	protected Button checkDifferenceOfGaussian;
 	protected boolean diffOfGaussian;
 	protected String diffGaussianOption;
+	protected Button checkLipschitz;
+	protected Text optionLipschitz;
+	protected Button checkGabor;
+	protected Text optionGabor;
+	protected boolean lipschitz;
+	protected String lipschitzOption;
+	protected boolean gabor;
+	protected String gaborOption;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -190,35 +198,35 @@ public class ModelGui extends Composite {
 
 		checkGaussianFilter = new Button(composite, SWT.CHECK);
 		checkGaussianFilter.setText("Gaussian Blur");
-		
+
 		checkDifferenceOfGaussian = new Button(composite, SWT.CHECK);
 		checkDifferenceOfGaussian.setText("Difference of Gaussian");
 
 		optionGaussian = new Text(composite, SWT.BORDER);
 		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionGaussian.setText("2");
-		
+
 		optionDiffGaussian = new Text(composite, SWT.BORDER);
 		optionDiffGaussian.setText("2,4");
 		optionDiffGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkMean = new Button(composite, SWT.CHECK);
 		checkMean.setText("Mean");
-		
-				checkMedian = new Button(composite, SWT.CHECK);
-				checkMedian.setText("Median");
+
+		checkMedian = new Button(composite, SWT.CHECK);
+		checkMedian.setText("Median");
 
 		optionsMean = new Text(composite, SWT.BORDER);
 		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMean.setText("2");
-		
-				optionMedian = new Text(composite, SWT.BORDER);
-				optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				optionMedian.setText("2");
+
+		optionMedian = new Text(composite, SWT.BORDER);
+		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionMedian.setText("2");
 
 		checkMinimum = new Button(composite, SWT.CHECK);
 		checkMinimum.setText("Minimum");
-		
+
 		checkVariance = new Button(composite, SWT.CHECK);
 		checkVariance.setText("Variance");
 
@@ -227,49 +235,68 @@ public class ModelGui extends Composite {
 		gd_optionsMinimum.widthHint = 167;
 		optionsMinimum.setLayoutData(gd_optionsMinimum);
 		optionsMinimum.setText("2");
-		
+
 		optionsVariance = new Text(composite, SWT.BORDER);
 		optionsVariance.setText("2");
 		optionsVariance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				
-						checkMaximum = new Button(composite, SWT.CHECK);
-						checkMaximum.setText("Maximum");
-				
-				checkGradientHessian = new Button(composite, SWT.CHECK);
-				checkGradientHessian.setText("Gradient/Hessian");
-				
-						optionsMaximum = new Text(composite, SWT.BORDER);
-						optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-						optionsMaximum.setText("2");
-		
+
+		checkMaximum = new Button(composite, SWT.CHECK);
+		checkMaximum.setText("Maximum");
+
+		checkGradientHessian = new Button(composite, SWT.CHECK);
+		checkGradientHessian.setText("Gradient/Hessian");
+
+		optionsMaximum = new Text(composite, SWT.BORDER);
+		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionsMaximum.setText("2");
+
 		optionGradientHessian = new Text(composite, SWT.BORDER);
 		optionGradientHessian.setEnabled(false);
 		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				
-				checkLaplacian = new Button(composite, SWT.CHECK);
-				checkLaplacian.setText("Laplacian");
-		
-				checkEdges = new Button(composite, SWT.CHECK);
-				checkEdges.setText("Sobel Edge");
-		
+
+		checkLaplacian = new Button(composite, SWT.CHECK);
+		checkLaplacian.setText("Laplacian");
+
+		checkEdges = new Button(composite, SWT.CHECK);
+		checkEdges.setText("Sobel Edge");
+
 		optionLaplacian = new Text(composite, SWT.BORDER);
 		optionLaplacian.setEnabled(false);
 		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		optionsEdges = new Text(composite, SWT.BORDER);
 		optionsEdges.setEnabled(false);
 		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
-				checkConvolve = new Button(composite, SWT.CHECK);
-				checkConvolve.setText("Convolve");
+
+		checkLipschitz = new Button(composite, SWT.CHECK);
+		checkLipschitz.setText("Lipschitz");
+
+		checkGabor = new Button(composite, SWT.CHECK);
+		checkGabor.setText("Gabor");
+
+		optionLipschitz = new Text(composite, SWT.BORDER);
+		optionLipschitz.setText("true,true,10");
+		optionLipschitz.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		optionGabor = new Text(composite, SWT.BORDER);
+		optionGabor.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+
+			}
+		});
+		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		checkConvolve = new Button(composite, SWT.CHECK);
+		checkConvolve.setText("Convolve");
 		new Label(composite, SWT.NONE);
-		
-				optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-				GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-				gd_optionConvolve.widthHint = 189;
-				optionConvolve.setLayoutData(gd_optionConvolve);
-				optionConvolve.setText(
-						"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
+
+		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		gd_optionConvolve.widthHint = 189;
+		optionConvolve.setLayoutData(gd_optionConvolve);
+		optionConvolve.setText(
+				"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
 
 		tbtmMore = new CTabItem(tabFolder, SWT.NONE);
 		tbtmMore.setText("Settings");
@@ -329,7 +356,7 @@ public class ModelGui extends Composite {
 
 				gaussian = checkGaussianFilter.getSelection();
 				gaussianOption = optionGaussian.getText();
-				
+
 				diffOfGaussian = checkDifferenceOfGaussian.getSelection();
 				diffGaussianOption = optionDiffGaussian.getText();
 
@@ -338,7 +365,7 @@ public class ModelGui extends Composite {
 
 				mean = checkMean.getSelection();
 				meanOption = optionsMean.getText();
-				
+
 				variance = checkVariance.getSelection();
 				varianceOption = optionsVariance.getText();
 
@@ -352,12 +379,18 @@ public class ModelGui extends Composite {
 
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
-				
+
 				gradientHessian = checkGradientHessian.getSelection();
 				gradientHessianOption = optionGradientHessian.getText();
-				
+
 				laplacian = checkLaplacian.getSelection();
 				laplacianOption = optionLaplacian.getText();
+
+				lipschitz = checkLipschitz.getSelection();
+				lipschitzOption = optionLipschitz.getText();
+
+				gabor = checkGabor.getSelection();
+				gaborOption = optionGabor.getText();
 
 			}
 		});

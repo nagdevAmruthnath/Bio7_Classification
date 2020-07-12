@@ -67,6 +67,12 @@ public class LoadAndSaveConfig {
 				modelGui.optionLaplacian.setText(reader.readLine());
 
 				modelGui.checkEdges.setSelection(read(reader));
+				
+				modelGui.checkLipschitz.setSelection(read(reader));
+				modelGui.optionLipschitz.setText(reader.readLine());
+				
+				modelGui.checkGabor.setSelection(read(reader));
+				modelGui.optionGabor.setText(reader.readLine());
 
 				modelGui.checkConvolve.setSelection(read(reader));
 				modelGui.optionConvolve.setText(reader.readLine().replace("\\n", System.lineSeparator()));
@@ -136,6 +142,16 @@ public class LoadAndSaveConfig {
 		buffer.append(modelGui.checkLaplacian.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionLaplacian.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkLipschitz.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionLipschitz.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkGabor.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionGabor.getText());
 		buffer.append(sep);
 
 		buffer.append(modelGui.checkEdges.getSelection());
