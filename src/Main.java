@@ -25,12 +25,15 @@ import com.eco.bio7.image.Util;
 import com.eco.bio7.rbridge.RServe;
 import com.eco.bio7.rbridge.RServeUtil;
 import com.eco.bio7.rbridge.RState;
+
+import Catalano.Imaging.FastBitmap;
+import Catalano.Imaging.Filters.GaborFilter;
+import Catalano.Imaging.Filters.Grayscale;
 import boofcv.alg.filter.derivative.DerivativeLaplacian;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.struct.border.BorderType;
 import boofcv.struct.image.GrayF32;
-import filter.GaborFilter;
 import filter.Lipschitz_;
 import ij.IJ;
 import ij.ImagePlus;
@@ -550,14 +553,24 @@ public class Main {
 			monitor.setTaskName("Apply Gabor Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 				/* Split the mean option to get all sigmas! */
-				BufferedImage buff=new ImagePlus("tempGabor",ip).getBufferedImage();
 				String[] gaborOptions = gui.gaborOption.split(",");
-				GaborFilter gabFilter=new GaborFilter(64, new double[] {0, Math.PI/4, Math.PI}, 0, 0.5, 1, 3, 3);	
-				gabFilter.filter(buff, null);
-				ImageProcessor ipFinal=new ImagePlus("",buff).getProcessor().convertToFloat();
-				stack.addSlice("Gabor", ipFinal);
+				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+				/*Will work with 8-bit only!*/
+				BufferedImage buff=new ImagePlus("tempGabor",ip).getBufferedImage();
+				FastBitmap fb = new FastBitmap(buff);
+
+				double wavelength=Double.parseDouble(gaborOptions[0]);
+				double orientation=Double.parseDouble(gaborOptions[1]);
+				double phaseOffset=Double.parseDouble(gaborOptions[2]);
+				double gaussianVar=Double.parseDouble(gaborOptions[3]);
+				double aspectRation=Double.parseDouble(gaborOptions[4]);
+				GaborFilter gabor=new GaborFilter(wavelength,orientation,phaseOffset,gaussianVar,aspectRation);
+				gabor.applyInPlace(fb);
+                float[] imArray=fb.toArrayGrayAsFloat();
+                int width = ip.getWidth();
+				int height = ip.getHeight();
+				stack.addSlice("Gabor", new FloatProcessor(width,height,imArray));
 			}
 		}
 
