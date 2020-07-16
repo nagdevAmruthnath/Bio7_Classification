@@ -212,18 +212,29 @@ public class Main {
 
 	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
-		ImagePlus image;
-
-		if (files != null) {
-			image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
-																	// display!
+		ImagePlus image = null;
+		/* Important call to get the features and feature options from the GUI! */
+		gui.getFeatureOptions();
+		
+		if (gui.useBioformats) {
+			
+			IJ.runMacro(gui.getMacroTextOption());
+			
 		} else {
-			image = IJ.openImage(singleFile);
+			if (files != null) {
+				image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
+																		// display!
+			} else {
+				image = IJ.openImage(singleFile);
+			}
 		}
-
+		if(image==null) {
+			image=WindowManager.getCurrentWindow().getImagePlus();
+			System.out.println(image.getTitle());
+		}
 		/* Duplicate the image! */
 		Duplicator duplicator = new Duplicator();
-		/* Duplicate original for the RGB channels! */
+		/* Duplicate original! */
 		ImagePlus rgb = duplicator.run(image);
 		ImageStack stack = null;
 		/*
@@ -231,8 +242,7 @@ public class Main {
 		 * images!
 		 */
 		image.setProcessor(image.getProcessor().convertToFloat());
-		/* Important to call to get the features and feature options from the GUI! */
-		gui.getFeatureOptions();
+		
 		/* If we have a RGB! */
 		if (rgb.getProcessor() instanceof ColorProcessor) {
 
@@ -531,15 +541,15 @@ public class Main {
 		}
 
 		if (gui.lipschitz) {
-			
+
 			monitor.setTaskName("Apply Lipschitz Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 				ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
 				/* Split the mean option to get all sigmas! */
 				String[] lipschitzOptions = gui.lipschitzOption.split(",");
-				
-				Lipschitz_ filter = new Lipschitz_();	
+
+				Lipschitz_ filter = new Lipschitz_();
 				Lipschitz_.setDownHatFilter(Boolean.parseBoolean(lipschitzOptions[0]));
 				Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
 				Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
@@ -556,21 +566,21 @@ public class Main {
 				/* Split the mean option to get all sigmas! */
 				String[] gaborOptions = gui.gaborOption.split(",");
 				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				/*Will work with 8-bit only!*/
-				BufferedImage buff=new ImagePlus("tempGabor",ip).getBufferedImage();
+				/* Will work with 8-bit only! */
+				BufferedImage buff = new ImagePlus("tempGabor", ip).getBufferedImage();
 				FastBitmap fb = new FastBitmap(buff);
 
-				double wavelength=Double.parseDouble(gaborOptions[0]);
-				double orientation=Double.parseDouble(gaborOptions[1]);
-				double phaseOffset=Double.parseDouble(gaborOptions[2]);
-				double gaussianVar=Double.parseDouble(gaborOptions[3]);
-				double aspectRation=Double.parseDouble(gaborOptions[4]);
-				GaborFilter gabor=new GaborFilter(wavelength,orientation,phaseOffset,gaussianVar,aspectRation);
+				double wavelength = Double.parseDouble(gaborOptions[0]);
+				double orientation = Double.parseDouble(gaborOptions[1]);
+				double phaseOffset = Double.parseDouble(gaborOptions[2]);
+				double gaussianVar = Double.parseDouble(gaborOptions[3]);
+				double aspectRation = Double.parseDouble(gaborOptions[4]);
+				GaborFilter gabor = new GaborFilter(wavelength, orientation, phaseOffset, gaussianVar, aspectRation);
 				gabor.applyInPlace(fb);
-                float[] imArray=fb.toArrayGrayAsFloat();
-                int width = ip.getWidth();
+				float[] imArray = fb.toArrayGrayAsFloat();
+				int width = ip.getWidth();
 				int height = ip.getHeight();
-				stack.addSlice("Gabor", new FloatProcessor(width,height,imArray));
+				stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
 			}
 		}
 

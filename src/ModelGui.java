@@ -96,6 +96,11 @@ public class ModelGui extends Composite {
 	protected String lipschitzOption;
 	protected boolean gabor;
 	protected String gaborOption;
+	protected Button checkUseBioformats;
+	protected Text textImageJMacro;
+	protected boolean useBioformats;
+	protected String textOptionMacro;
+	private Button buttonMacro;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -305,6 +310,31 @@ public class ModelGui extends Composite {
 		composite_1 = new Composite(tabFolder, SWT.NONE);
 		tbtmMore.setControl(composite_1);
 		composite_1.setLayout(new GridLayout(2, true));
+		
+		checkUseBioformats = new Button(composite_1, SWT.CHECK);
+		checkUseBioformats.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		checkUseBioformats.setText("Use Bio-Formats library");
+		new Label(composite_1, SWT.NONE);
+		
+		buttonMacro = new Button(composite_1, SWT.NONE);
+		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
+		buttonMacro.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = Bio7Dialog.openFile();
+				path = path.replace("\\", "/");
+				textImageJMacro.setText(path);
+			}
+		});
+		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		buttonMacro.setText("New Button");
+		
+		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
+		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {
@@ -352,6 +382,8 @@ public class ModelGui extends Composite {
 			public void run() {
 
 				toHsb = checkConvertToHsb.getSelection();
+				
+				useBioformats = checkUseBioformats.getSelection();
 
 				channelOption = channelSelectionText.getText();
 
@@ -424,6 +456,20 @@ public class ModelGui extends Composite {
 		});
 		return pathClassificationScript;
 	}
+	
+	public String getMacroTextOption() {
+		Display display = Util.getDisplay();
+
+		display.syncExec(new Runnable() {
+
+			public void run() {
+
+				textOptionMacro = textImageJMacro.getText();
+			}
+		});
+		return textOptionMacro;
+	}
+	
 
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
