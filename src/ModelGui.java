@@ -317,11 +317,10 @@ public class ModelGui extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
-		checkUseBioformats.setText("Use Bio-Formats library");
+		checkUseBioformats.setText("Use ImageJ Macro at Import");
 		new Label(composite_1, SWT.NONE);
 		
 		buttonMacro = new Button(composite_1, SWT.NONE);
-		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
 		buttonMacro.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -331,10 +330,14 @@ public class ModelGui extends Composite {
 			}
 		});
 		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		buttonMacro.setText("New Button");
+		buttonMacro.setText("Macro");
+		
 		
 		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
 		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
+		
+		
 
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {

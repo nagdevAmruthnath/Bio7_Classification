@@ -217,8 +217,8 @@ public class Main {
 		gui.getFeatureOptions();
 		
 		if (gui.useBioformats) {
-			
-			IJ.runMacro(gui.getMacroTextOption());
+			/*Call ImageJ macro with option (file path)!*/
+			IJ.runMacroFile(gui.getMacroTextOption(),singleFile);
 			
 		} else {
 			if (files != null) {
@@ -228,9 +228,9 @@ public class Main {
 				image = IJ.openImage(singleFile);
 			}
 		}
-		if(image==null) {
-			image=WindowManager.getCurrentWindow().getImagePlus();
-			System.out.println(image.getTitle());
+		/*We must avoid a null reference!*/
+		if(gui.useBioformats&&image==null) {
+			image=WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */
 		Duplicator duplicator = new Duplicator();
