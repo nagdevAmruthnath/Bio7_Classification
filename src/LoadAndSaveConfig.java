@@ -18,12 +18,11 @@ public class LoadAndSaveConfig {
 		try {
 			value = Boolean.parseBoolean(reader.readLine());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return value;
 	}
-
+    /*For each value follow the sequence of the GUI. Load and save actions must follow the same sequence (simple text file)!*/
 	public void loadScript() {
 
 		String file = Bio7Dialog.openFile(new String[] { "*.txt", "*" });
@@ -79,7 +78,7 @@ public class LoadAndSaveConfig {
 				
 				/*Second tab. Settings for the script paths!*/
 				
-				modelGui.checkUseBioformats.setSelection(read(reader));
+				modelGui.checkUseImportMacro.setSelection(read(reader));
 				
 				modelGui.textImageJMacro.setText(reader.readLine());
 
@@ -96,7 +95,7 @@ public class LoadAndSaveConfig {
 
 		}
 	}
-
+    /*For each value follow the sequence of the GUI. Load and save actions must follow the same sequence (simple text file)!*/
 	public void saveScript() {
 		StringBuffer buffer = new StringBuffer();
 		String sep = System.getProperty("line.separator");
@@ -171,7 +170,7 @@ public class LoadAndSaveConfig {
 		
 		/*Second tab. Settings for the script paths!*/
 		
-		buffer.append(modelGui.checkUseBioformats.getSelection());
+		buffer.append(modelGui.checkUseImportMacro.getSelection());
 		buffer.append(sep);
 		
 		buffer.append(modelGui.getMacroTextOption());

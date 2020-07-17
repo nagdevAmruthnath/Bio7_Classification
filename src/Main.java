@@ -215,7 +215,7 @@ public class Main {
 		 */
 		gui.getFeatureOptions();
 
-		if (gui.useBioformats) {
+		if (gui.useImportMacro) {
 			/* Call ImageJ macro with option (file path)! */
 			IJ.runMacroFile(gui.getMacroTextOption(), singleFile);
 
@@ -228,7 +228,7 @@ public class Main {
 			}
 		}
 		/* We must avoid a null reference! */
-		if (gui.useBioformats && image == null) {
+		if (gui.useImportMacro && image == null) {
 			image = WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */

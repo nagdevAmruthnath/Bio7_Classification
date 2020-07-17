@@ -1,29 +1,21 @@
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
-
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.custom.ScrolledComposite;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -96,9 +88,9 @@ public class ModelGui extends Composite {
 	protected String lipschitzOption;
 	protected boolean gabor;
 	protected String gaborOption;
-	protected Button checkUseBioformats;
+	protected Button checkUseImportMacro;
 	protected Text textImageJMacro;
-	protected boolean useBioformats;
+	protected boolean useImportMacro;
 	protected String textOptionMacro;
 	private Button buttonMacro;
 
@@ -114,9 +106,6 @@ public class ModelGui extends Composite {
 		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
 		tabItemFeatures.setText("Features");
 		tabFolder.setSelection(tabItemFeatures);
-
-		// tabItemFeatures.setControl(composite);
-
 		scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tabItemFeatures.setControl(scrolledComposite);
 		scrolledComposite.setExpandHorizontal(true);
@@ -310,16 +299,16 @@ public class ModelGui extends Composite {
 		composite_1 = new Composite(tabFolder, SWT.NONE);
 		tbtmMore.setControl(composite_1);
 		composite_1.setLayout(new GridLayout(2, true));
-		
-		checkUseBioformats = new Button(composite_1, SWT.CHECK);
-		checkUseBioformats.addSelectionListener(new SelectionAdapter() {
+
+		checkUseImportMacro = new Button(composite_1, SWT.CHECK);
+		checkUseImportMacro.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
-		checkUseBioformats.setText("Use ImageJ Macro at Import");
+		checkUseImportMacro.setText("Use ImageJ Macro at Import");
 		new Label(composite_1, SWT.NONE);
-		
+
 		buttonMacro = new Button(composite_1, SWT.NONE);
 		buttonMacro.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -331,13 +320,10 @@ public class ModelGui extends Composite {
 		});
 		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		buttonMacro.setText("Macro");
-		
-		
+
 		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
 		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
-		
-		
 
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {
@@ -385,8 +371,8 @@ public class ModelGui extends Composite {
 			public void run() {
 
 				toHsb = checkConvertToHsb.getSelection();
-				
-				useBioformats = checkUseBioformats.getSelection();
+
+				useImportMacro = checkUseImportMacro.getSelection();
 
 				channelOption = channelSelectionText.getText();
 
@@ -459,7 +445,7 @@ public class ModelGui extends Composite {
 		});
 		return pathClassificationScript;
 	}
-	
+
 	public String getMacroTextOption() {
 		Display display = Util.getDisplay();
 
@@ -472,8 +458,7 @@ public class ModelGui extends Composite {
 		});
 		return textOptionMacro;
 	}
-	
-
+   /*Here we layout the ImageJ panel!*/
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
 		canvasView.updatePlotCanvas();
