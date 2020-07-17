@@ -4,9 +4,7 @@ import static com.eco.bio7.image.ImageMethods.imageFeatureStackToR;
 import static com.eco.bio7.image.ImageMethods.imageFromR;
 import static com.eco.bio7.rbridge.RServeUtil.evalRScript;
 import static com.eco.bio7.rbridge.RServeUtil.listRObjects;
-
 import java.awt.image.BufferedImage;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,10 +23,8 @@ import com.eco.bio7.image.Util;
 import com.eco.bio7.rbridge.RServe;
 import com.eco.bio7.rbridge.RServeUtil;
 import com.eco.bio7.rbridge.RState;
-
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Filters.GaborFilter;
-import Catalano.Imaging.Filters.Grayscale;
 import boofcv.alg.filter.derivative.DerivativeLaplacian;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
@@ -213,13 +209,16 @@ public class Main {
 	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image = null;
-		/* Important call to get the features and feature options from the GUI! */
+		/*
+		 * Important call to get the features and feature options from the GUI (syncExec
+		 * wrapped for SWT)!
+		 */
 		gui.getFeatureOptions();
-		
+
 		if (gui.useBioformats) {
-			/*Call ImageJ macro with option (file path)!*/
-			IJ.runMacroFile(gui.getMacroTextOption(),singleFile);
-			
+			/* Call ImageJ macro with option (file path)! */
+			IJ.runMacroFile(gui.getMacroTextOption(), singleFile);
+
 		} else {
 			if (files != null) {
 				image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
@@ -228,9 +227,9 @@ public class Main {
 				image = IJ.openImage(singleFile);
 			}
 		}
-		/*We must avoid a null reference!*/
-		if(gui.useBioformats&&image==null) {
-			image=WindowManager.getCurrentImage();
+		/* We must avoid a null reference! */
+		if (gui.useBioformats && image == null) {
+			image = WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */
 		Duplicator duplicator = new Duplicator();
@@ -242,7 +241,7 @@ public class Main {
 		 * images!
 		 */
 		image.setProcessor(image.getProcessor().convertToFloat());
-		
+
 		/* If we have a RGB! */
 		if (rgb.getProcessor() instanceof ColorProcessor) {
 
@@ -535,9 +534,13 @@ public class Main {
 			// see:
 			// https://imagejdocu.tudor.lu/faq/technical/what_is_the_algorithm_used_in_find_edges
 			monitor.setTaskName("Apply Edges");
-			ImagePlus edgesCreated = duplicator.run(image);
-			IJ.run(edgesCreated, "Find Edges", "");
-			stack.addSlice("Edges", edgesCreated.getProcessor());
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+				IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
+				stack.addSlice("Edges_layer" + i, ip);
+			}
+
 		}
 
 		if (gui.lipschitz) {
@@ -588,9 +591,12 @@ public class Main {
 			monitor.setTaskName("Apply Convolve");
 			String[] matrices = gui.convolveOption.split(";");
 			for (int i = 0; i < matrices.length; i++) {
-				ImagePlus convolvedFiltered = duplicator.run(image);
-				IJ.run(convolvedFiltered, "Convolve...", matrices[i]);
-				stack.addSlice("Convolved_" + i, convolvedFiltered.getProcessor());
+				int stackSize = tempStack.getSize();
+				for (int u = 1; u <= stackSize; u++) {
+					ImageProcessor ip = tempStack.getProcessor(u).duplicate();
+					IJ.run(new ImagePlus("Convolved_" + i + "_layer" + u + "_temp", ip), "Convolve...", matrices[i]);
+					stack.addSlice("Convolved_" + i + "_layer" + u, ip);
+				}
 			}
 
 		}
@@ -602,7 +608,9 @@ public class Main {
 	}
 
 	private void extracted(double radius, final RankFilters ran, ImageProcessor ip, int FilterType) {
+
 		ran.rank(ip, radius, FilterType);
+
 	}
 
 	private void ipToBoofCVGray32(ImageProcessor ip, GrayF32 boofFilterImageInput) {
