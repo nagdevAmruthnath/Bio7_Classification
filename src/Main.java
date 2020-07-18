@@ -23,7 +23,7 @@ import com.eco.bio7.image.Util;
 import com.eco.bio7.rbridge.RServe;
 import com.eco.bio7.rbridge.RServeUtil;
 import com.eco.bio7.rbridge.RState;
-import Catalano.Imaging.FastBitmap;
+import Catalano.Imaging.FastBitmap; 
 import Catalano.Imaging.Filters.GaborFilter;
 import boofcv.alg.filter.derivative.DerivativeLaplacian;
 import boofcv.alg.filter.derivative.DerivativeType;
@@ -32,7 +32,7 @@ import boofcv.struct.border.BorderType;
 import boofcv.struct.image.GrayF32;
 import filter.Lipschitz_;
 import ij.IJ;
-import ij.ImagePlus;
+import ij.ImagePlus; 
 import ij.ImageStack; 
 import ij.Prefs;
 import ij.WindowManager;
@@ -46,14 +46,14 @@ import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
-public class Main {
+public class Main { 
 
 	private ModelGui gui;
-	private int useAmountOfThreads = 1;
+	private int useAmountOfThreads = 1; 
 
-	public Main() {
+	public Main() { 
  
-		CustomView view = new CustomView();
+		CustomView view = new CustomView(); 
 
 		Display display = Util.getDisplay();
 
@@ -69,8 +69,8 @@ public class Main {
 
 				parent.layout(true);
 			}
-		});
-	}
+		}); 
+	} 
 
 	/* Called from the GUI class! */
 	public void executeSelection(int choice) {
@@ -232,29 +232,29 @@ public class Main {
 			image = WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */
-		Duplicator duplicator = new Duplicator();
+		//Duplicator duplicator = new Duplicator();
 		/* Duplicate original! */
-		ImagePlus rgb = duplicator.run(image);
+		//ImagePlus rgb = duplicator.run(image);
 		ImageStack stack = null;
 		/*
 		 * Convert original to float for the filter (and grayscale layer if not color)
 		 * images!
 		 */
-		image.setProcessor(image.getProcessor().convertToFloat());
+		//image.setProcessor(image.getProcessor().convertToFloat());
 
 		/* If we have a RGB! */
-		if (rgb.getProcessor() instanceof ColorProcessor) {
+		if (image.getProcessor() instanceof ColorProcessor) {
 
 			if (gui.toHsb) {
 				monitor.setTaskName("Convert RGB To HSB Color Space");
-				ImageConverter con = new ImageConverter(rgb);
+				ImageConverter con = new ImageConverter(image);
 				con.convertToHSB();
 
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
 
 				// IJ.run(rgb, "HSB Stack", "");
-				ImageStack hsbStack = rgb.getStack();
+				ImageStack hsbStack = image.getStack();
 				/* Create a feature stack from all available channels (e.g., R,G,B) images! */
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
@@ -269,13 +269,13 @@ public class Main {
 					}
 				} else {
 					/* Use all slices. Important to convert to Float! */
-					stack = rgb.getStack().convertToFloat();
+					stack = image.getStack().convertToFloat();
 				}
 
 			} else {
 
 				/* Split original to R,G,B channels! */
-				ImagePlus[] channels = ChannelSplitter.split(rgb);
+				ImagePlus[] channels = ChannelSplitter.split(image);
 
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
