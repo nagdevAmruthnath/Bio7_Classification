@@ -33,7 +33,7 @@ import boofcv.struct.image.GrayF32;
 import filter.Lipschitz_;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
+import ij.ImageStack; 
 import ij.Prefs;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
