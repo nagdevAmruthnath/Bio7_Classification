@@ -284,7 +284,7 @@ public class Main {
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/* Add RGB channels to the stack! */
+						/* Add selected RGB channels to the new stack! */
 						/* Convert original to float to have a float image stack for the filters! */
 						int sel = Integer.parseInt(channelToInclude[j]) - 1;//Channels index starts with 0 so we correct here with -1!
 						ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
@@ -309,6 +309,7 @@ public class Main {
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					stack = new ImageStack(image.getWidth(), image.getHeight());
 					for (int j = 0; j < channelToInclude.length; j++) {
+						/*Add selected slices to a new stack!*/
 						int sel = Integer.parseInt(channelToInclude[j]);//Stack starts with 1 no correction necessary!
 						stack.addSlice("grayscale",image.getStack().getProcessor(sel).convertToFloat());
 					}
