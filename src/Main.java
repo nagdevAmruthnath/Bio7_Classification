@@ -308,7 +308,8 @@ public class Main {
 			} else {
 
 				stack = new ImageStack(image.getWidth(), image.getHeight());
-				stack.addSlice("grayscale", image.getProcessor());
+				/* Convert original to float to have a float image stack for the filters! */
+				stack.addSlice("grayscale", image.getProcessor().convertToFloat());
 			}
 		}
 

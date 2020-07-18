@@ -2,7 +2,6 @@ file = getArgument() //We can call this macro from Java with an argument!
 
 /*Simply open a file with the Bio Formats library!*/
 run("Bio-Formats (Windowless)", "open=["+file+"]");
-run
 /*
 Landsat 8 example to open a group of selected layers. Example dataset from article:
 https://earthobservatory.nasa.gov/blogs/elegantfigures/2013/10/22/how-to-make-a-true-color-landsat-8-image/
