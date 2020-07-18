@@ -1,24 +1,21 @@
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
-
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -57,7 +54,6 @@ public class ModelGui extends Composite {
 	private Composite composite_1;
 	private Button btnLoadConfiguration;
 	private Button btnNewButton_4;
-	private Label label;
 	protected Text txtTrainingRScript;
 	private Button btnNewButton_5;
 	private Button btnRClassificationScript;
@@ -66,67 +62,101 @@ public class ModelGui extends Composite {
 	protected String pathClassificationScript;
 	protected Button checkConvertToHsb;
 	protected boolean toHsb;
+	private ScrolledComposite scrolledComposite;
+	protected Button checkGradientHessian;
+	protected Text optionGradientHessian;
+	protected Button checkLaplacian;
+	protected Text optionLaplacian;
+	protected boolean gradientHessian;
+	protected String gradientHessianOption;
+	protected boolean laplacian;
+	protected String laplacianOption;
+	protected Button checkVariance;
+	protected Text optionsVariance;
+	protected boolean variance;
+	protected String varianceOption;
+	private Text optionsEdges;
+	protected Text optionDiffGaussian;
+	protected Button checkDifferenceOfGaussian;
+	protected boolean diffOfGaussian;
+	protected String diffGaussianOption;
+	protected Button checkLipschitz;
+	protected Text optionLipschitz;
+	protected Button checkGabor;
+	protected Text optionGabor;
+	protected boolean lipschitz;
+	protected String lipschitzOption;
+	protected boolean gabor;
+	protected String gaborOption;
+	protected Button checkUseImportMacro;
+	protected Text textImageJMacro;
+	protected boolean useImportMacro;
+	protected String textOptionMacro;
+	private Button buttonMacro;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
 		this.model = model;
-		setLayout(new GridLayout(2, true));
+		setLayout(new FillLayout(SWT.HORIZONTAL));
 
-		Button btnNewButton = new Button(this, SWT.NONE);
+		tabFolder = new CTabFolder(this, SWT.BORDER);
+		// tabFolder.setSelectionBackground(
+		// Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+
+		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
+		tabItemFeatures.setText("Features");
+		tabFolder.setSelection(tabItemFeatures);
+		scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tabItemFeatures.setControl(scrolledComposite);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(false);
+		composite = new Composite(scrolledComposite, SWT.NONE);
+		composite.setSize(300, 800);
+		scrolledComposite.setContent(composite);
+		composite.setLayout(new GridLayout(2, true));
+
+		Button btnNewButton = new Button(composite, SWT.NONE);
+		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				model.executeSelection(1);
 			}
 		});
-		GridData gd_btnNewButton = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_btnNewButton.heightHint = 30;
-		btnNewButton.setLayoutData(gd_btnNewButton);
 		btnNewButton.setText("Create Stack (1)");
 
-		Button btnNewButton_1 = new Button(this, SWT.NONE);
+		Button btnNewButton_1 = new Button(composite, SWT.NONE);
+		btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				model.executeSelection(2);
 			}
 		});
-		GridData gd_btnNewButton_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_1.heightHint = 30;
-		btnNewButton_1.setLayoutData(gd_btnNewButton_1);
 		btnNewButton_1.setText("Create Classes (2)");
 
-		Button btnNewButton_2 = new Button(this, SWT.NONE);
+		Button btnNewButton_2 = new Button(composite, SWT.NONE);
+		btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				model.executeSelection(3);
 			}
 		});
-		GridData gd_btnNewButton_2 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_2.heightHint = 30;
-		btnNewButton_2.setLayoutData(gd_btnNewButton_2);
 		btnNewButton_2.setText("Train Script (3)");
 
-		Button btnNewButton_3 = new Button(this, SWT.NONE);
+		Button btnNewButton_3 = new Button(composite, SWT.NONE);
+		btnNewButton_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				model.executeSelection(4);
 			}
 		});
-		GridData gd_btnNewButton_3 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_3.heightHint = 30;
-		btnNewButton_3.setLayoutData(gd_btnNewButton_3);
 		btnNewButton_3.setText("Classify Script (4)");
 
-		label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-
-		btnLoadConfiguration = new Button(this, SWT.NONE);
-		GridData gd_btnLoadConfiguration = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnLoadConfiguration.heightHint = 30;
-		btnLoadConfiguration.setLayoutData(gd_btnLoadConfiguration);
+		btnLoadConfiguration = new Button(composite, SWT.NONE);
+		btnLoadConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -135,10 +165,8 @@ public class ModelGui extends Composite {
 		});
 		btnLoadConfiguration.setText("Load Configuration");
 
-		btnNewButton_4 = new Button(this, SWT.NONE);
-		GridData gd_btnNewButton_4 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_btnNewButton_4.heightHint = 30;
-		btnNewButton_4.setLayoutData(gd_btnNewButton_4);
+		btnNewButton_4 = new Button(composite, SWT.NONE);
+		btnNewButton_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -147,19 +175,9 @@ public class ModelGui extends Composite {
 		});
 		btnNewButton_4.setText("Save Configuration");
 
-		tabFolder = new CTabFolder(this, SWT.BORDER);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-		gd_tabFolder.heightHint = 349;
-		tabFolder.setLayoutData(gd_tabFolder);
-		//tabFolder.setSelectionBackground(
-				//Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-
-		tabItemFeatures = new CTabItem(tabFolder, SWT.NONE);
-		tabItemFeatures.setText("Features");
-		tabFolder.setSelection(tabItemFeatures);
-		composite = new Composite(tabFolder, SWT.NONE);
-		tabItemFeatures.setControl(composite);
-		composite.setLayout(new GridLayout(2, true));
+		checkConvertToHsb = new Button(composite, SWT.CHECK);
+		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		checkConvertToHsb.setText("Convert to HSB Color Space");
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
 		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
@@ -169,55 +187,100 @@ public class ModelGui extends Composite {
 
 		channelSelectionText = new Text(composite, SWT.BORDER);
 		channelSelectionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-
-		checkConvertToHsb = new Button(composite, SWT.CHECK);
-		checkConvertToHsb.setText("Convert to HSB Color Space");
 		new Label(composite, SWT.NONE);
-
-		Label lblFilter = new Label(composite, SWT.NONE);
-		lblFilter.setText("Filter");
-
-		Label lblOption = new Label(composite, SWT.NONE);
-		lblOption.setText("Sigma");
+		new Label(composite, SWT.NONE);
 
 		checkGaussianFilter = new Button(composite, SWT.CHECK);
 		checkGaussianFilter.setText("Gaussian Blur");
+
+		checkDifferenceOfGaussian = new Button(composite, SWT.CHECK);
+		checkDifferenceOfGaussian.setText("Difference of Gaussian");
 
 		optionGaussian = new Text(composite, SWT.BORDER);
 		optionGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionGaussian.setText("2");
 
-		checkMedian = new Button(composite, SWT.CHECK);
-		checkMedian.setText("Median");
-
-		optionMedian = new Text(composite, SWT.BORDER);
-		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		optionMedian.setText("2");
+		optionDiffGaussian = new Text(composite, SWT.BORDER);
+		optionDiffGaussian.setText("2,4");
+		optionDiffGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkMean = new Button(composite, SWT.CHECK);
 		checkMean.setText("Mean");
+
+		checkMedian = new Button(composite, SWT.CHECK);
+		checkMedian.setText("Median");
 
 		optionsMean = new Text(composite, SWT.BORDER);
 		optionsMean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMean.setText("2");
 
+		optionMedian = new Text(composite, SWT.BORDER);
+		optionMedian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		optionMedian.setText("2");
+
+		checkMinimum = new Button(composite, SWT.CHECK);
+		checkMinimum.setText("Minimum");
+
+		checkVariance = new Button(composite, SWT.CHECK);
+		checkVariance.setText("Variance");
+
+		optionsMinimum = new Text(composite, SWT.BORDER);
+		GridData gd_optionsMinimum = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_optionsMinimum.widthHint = 167;
+		optionsMinimum.setLayoutData(gd_optionsMinimum);
+		optionsMinimum.setText("2");
+
+		optionsVariance = new Text(composite, SWT.BORDER);
+		optionsVariance.setText("2");
+		optionsVariance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
 		checkMaximum = new Button(composite, SWT.CHECK);
 		checkMaximum.setText("Maximum");
+
+		checkGradientHessian = new Button(composite, SWT.CHECK);
+		checkGradientHessian.setText("Gradient/Hessian");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
 		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMaximum.setText("2");
 
-		checkMinimum = new Button(composite, SWT.CHECK);
-		checkMinimum.setText("Minimum");
+		optionGradientHessian = new Text(composite, SWT.BORDER);
+		optionGradientHessian.setEnabled(false);
+		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		optionsMinimum = new Text(composite, SWT.BORDER);
-		optionsMinimum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		optionsMinimum.setText("2");
+		checkLaplacian = new Button(composite, SWT.CHECK);
+		checkLaplacian.setText("Laplacian");
 
 		checkEdges = new Button(composite, SWT.CHECK);
-		checkEdges.setText("Edges");
-		new Label(composite, SWT.NONE);
+		checkEdges.setText("Sobel Edge");
+
+		optionLaplacian = new Text(composite, SWT.BORDER);
+		optionLaplacian.setEnabled(false);
+		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		optionsEdges = new Text(composite, SWT.BORDER);
+		optionsEdges.setEnabled(false);
+		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		checkLipschitz = new Button(composite, SWT.CHECK);
+		checkLipschitz.setText("Lipschitz");
+
+		checkGabor = new Button(composite, SWT.CHECK);
+		checkGabor.setText("Gabor");
+
+		optionLipschitz = new Text(composite, SWT.BORDER);
+		optionLipschitz.setText("true,true,10");
+		optionLipschitz.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		optionGabor = new Text(composite, SWT.BORDER);
+		optionGabor.setText("32,45,0,0,1");
+		optionGabor.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+
+			}
+		});
+		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkConvolve = new Button(composite, SWT.CHECK);
 		checkConvolve.setText("Convolve");
@@ -225,7 +288,7 @@ public class ModelGui extends Composite {
 
 		optionConvolve = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		GridData gd_optionConvolve = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-		gd_optionConvolve.widthHint = 248;
+		gd_optionConvolve.widthHint = 189;
 		optionConvolve.setLayoutData(gd_optionConvolve);
 		optionConvolve.setText(
 				"text1=[\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n] normalize");
@@ -237,6 +300,31 @@ public class ModelGui extends Composite {
 		tbtmMore.setControl(composite_1);
 		composite_1.setLayout(new GridLayout(2, true));
 
+		checkUseImportMacro = new Button(composite_1, SWT.CHECK);
+		checkUseImportMacro.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		checkUseImportMacro.setText("Use ImageJ Macro at Import");
+		new Label(composite_1, SWT.NONE);
+
+		buttonMacro = new Button(composite_1, SWT.NONE);
+		buttonMacro.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = Bio7Dialog.openFile();
+				path = path.replace("\\", "/");
+				textImageJMacro.setText(path);
+			}
+		});
+		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		buttonMacro.setText("Macro");
+
+		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
+		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
+
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -247,9 +335,9 @@ public class ModelGui extends Composite {
 			}
 		});
 		GridData gd_btnNewButton_5 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton_5.heightHint = 30;
+		gd_btnNewButton_5.heightHint = 25;
 		btnNewButton_5.setLayoutData(gd_btnNewButton_5);
-		btnNewButton_5.setText("R Training Script");
+		btnNewButton_5.setText("Training Script");
 
 		txtTrainingRScript = new Text(composite_1, SWT.BORDER);
 		txtTrainingRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -264,14 +352,12 @@ public class ModelGui extends Composite {
 			}
 		});
 		GridData gd_btnRClassificationScript = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnRClassificationScript.heightHint = 30;
+		gd_btnRClassificationScript.heightHint = 25;
 		btnRClassificationScript.setLayoutData(gd_btnRClassificationScript);
-		btnRClassificationScript.setText("R Classification Script");
+		btnRClassificationScript.setText("Classification Script");
 
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
-		GridData gd_txtClassificationRScript = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_txtClassificationRScript.heightHint = 30;
-		txtClassificationRScript.setLayoutData(gd_txtClassificationRScript);
+		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify_RandomForest.R");
 
 	}
@@ -286,16 +372,24 @@ public class ModelGui extends Composite {
 
 				toHsb = checkConvertToHsb.getSelection();
 
+				useImportMacro = checkUseImportMacro.getSelection();
+
 				channelOption = channelSelectionText.getText();
 
 				gaussian = checkGaussianFilter.getSelection();
 				gaussianOption = optionGaussian.getText();
+
+				diffOfGaussian = checkDifferenceOfGaussian.getSelection();
+				diffGaussianOption = optionDiffGaussian.getText();
 
 				median = checkMedian.getSelection();
 				medianOption = optionMedian.getText();
 
 				mean = checkMean.getSelection();
 				meanOption = optionsMean.getText();
+
+				variance = checkVariance.getSelection();
+				varianceOption = optionsVariance.getText();
 
 				maximum = checkMaximum.getSelection();
 				maximumOption = optionsMaximum.getText();
@@ -308,12 +402,24 @@ public class ModelGui extends Composite {
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
 
+				gradientHessian = checkGradientHessian.getSelection();
+				gradientHessianOption = optionGradientHessian.getText();
+
+				laplacian = checkLaplacian.getSelection();
+				laplacianOption = optionLaplacian.getText();
+
+				lipschitz = checkLipschitz.getSelection();
+				lipschitzOption = optionLipschitz.getText();
+
+				gabor = checkGabor.getSelection();
+				gaborOption = optionGabor.getText();
+
 			}
 		});
 
 	}
 
-	public String getPathTrainingRScript() {
+	public String getPathTrainingScript() {
 
 		Display display = Util.getDisplay();
 
@@ -327,7 +433,7 @@ public class ModelGui extends Composite {
 		return pathTrainingScript;
 	}
 
-	public String getPathClassificationRScript() {
+	public String getPathClassificationScript() {
 		Display display = Util.getDisplay();
 
 		display.syncExec(new Runnable() {
@@ -339,10 +445,23 @@ public class ModelGui extends Composite {
 		});
 		return pathClassificationScript;
 	}
-	
+
+	public String getMacroTextOption() {
+		Display display = Util.getDisplay();
+
+		display.syncExec(new Runnable() {
+
+			public void run() {
+
+				textOptionMacro = textImageJMacro.getText();
+			}
+		});
+		return textOptionMacro;
+	}
+   /*Here we layout the ImageJ panel!*/
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
-		canvasView.recalculateLayout();
+		canvasView.updatePlotCanvas();
 	}
 
 }

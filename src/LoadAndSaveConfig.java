@@ -18,12 +18,11 @@ public class LoadAndSaveConfig {
 		try {
 			value = Boolean.parseBoolean(reader.readLine());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return value;
 	}
-
+    /*For each value follow the sequence of the GUI. Load and save actions must follow the same sequence (simple text file)!*/
 	public void loadScript() {
 
 		String file = Bio7Dialog.openFile(new String[] { "*.txt", "*" });
@@ -41,27 +40,52 @@ public class LoadAndSaveConfig {
 
 				modelGui.checkGaussianFilter.setSelection(read(reader));
 				modelGui.optionGaussian.setText(reader.readLine());
-
-				modelGui.checkMedian.setSelection(read(reader));
-				modelGui.optionMedian.setText(reader.readLine());
-
+				
+				modelGui.checkDifferenceOfGaussian.setSelection(read(reader));
+				modelGui.optionDiffGaussian.setText(reader.readLine());
+				
 				modelGui.checkMean.setSelection(read(reader));
 				modelGui.optionsMean.setText(reader.readLine());
 
-				modelGui.checkMaximum.setSelection(read(reader));
-				modelGui.optionsMaximum.setText(reader.readLine());
-
+				modelGui.checkMedian.setSelection(read(reader));
+				modelGui.optionMedian.setText(reader.readLine());	
+				
 				modelGui.checkMinimum.setSelection(read(reader));
 				modelGui.optionsMinimum.setText(reader.readLine());
+				
+				modelGui.checkVariance.setSelection(read(reader));
+				modelGui.optionsVariance.setText(reader.readLine());
+
+				modelGui.checkMaximum.setSelection(read(reader));
+				modelGui.optionsMaximum.setText(reader.readLine());			
+				
+				modelGui.checkGradientHessian.setSelection(read(reader));
+				modelGui.optionGradientHessian.setText(reader.readLine());
+				
+				modelGui.checkLaplacian.setSelection(read(reader));
+				modelGui.optionLaplacian.setText(reader.readLine());
 
 				modelGui.checkEdges.setSelection(read(reader));
+				
+				modelGui.checkLipschitz.setSelection(read(reader));
+				modelGui.optionLipschitz.setText(reader.readLine());
+				
+				modelGui.checkGabor.setSelection(read(reader));
+				modelGui.optionGabor.setText(reader.readLine());
 
 				modelGui.checkConvolve.setSelection(read(reader));
 				modelGui.optionConvolve.setText(reader.readLine().replace("\\n", System.lineSeparator()));
+				
+				/*Second tab. Settings for the script paths!*/
+				
+				modelGui.checkUseImportMacro.setSelection(read(reader));
+				
+				modelGui.textImageJMacro.setText(reader.readLine());
 
 				modelGui.txtTrainingRScript.setText(reader.readLine());
 
 				modelGui.txtClassificationRScript.setText(reader.readLine());
+				
 
 				reader.close();
 
@@ -71,7 +95,7 @@ public class LoadAndSaveConfig {
 
 		}
 	}
-
+    /*For each value follow the sequence of the GUI. Load and save actions must follow the same sequence (simple text file)!*/
 	public void saveScript() {
 		StringBuffer buffer = new StringBuffer();
 		String sep = System.getProperty("line.separator");
@@ -85,39 +109,81 @@ public class LoadAndSaveConfig {
 		buffer.append(sep);
 		buffer.append(modelGui.optionGaussian.getText());
 		buffer.append(sep);
-
-		buffer.append(modelGui.checkMedian.getSelection());
+		
+		buffer.append(modelGui.checkDifferenceOfGaussian.getSelection());
 		buffer.append(sep);
-		buffer.append(modelGui.optionMedian.getText());
+		buffer.append(modelGui.optionDiffGaussian.getText());
 		buffer.append(sep);
-
+		
 		buffer.append(modelGui.checkMean.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionsMean.getText());
 		buffer.append(sep);
 
-		buffer.append(modelGui.checkMaximum.getSelection());
+		buffer.append(modelGui.checkMedian.getSelection());
 		buffer.append(sep);
-		buffer.append(modelGui.optionsMaximum.getText());
-		buffer.append(sep);
-
+		buffer.append(modelGui.optionMedian.getText());
+		buffer.append(sep);	
+		
 		buffer.append(modelGui.checkMinimum.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionsMinimum.getText());
 		buffer.append(sep);
+		
+		buffer.append(modelGui.checkVariance.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionsVariance.getText());
+		buffer.append(sep);
 
+		buffer.append(modelGui.checkMaximum.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionsMaximum.getText());
+		buffer.append(sep);	
+		
+		buffer.append(modelGui.checkGradientHessian.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionGradientHessian.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkLaplacian.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionLaplacian.getText());
+		buffer.append(sep);
+		
 		buffer.append(modelGui.checkEdges.getSelection());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkLipschitz.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionLipschitz.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkGabor.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionGabor.getText());
 		buffer.append(sep);
 
 		buffer.append(modelGui.checkConvolve.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionConvolve.getText().replace(System.lineSeparator(), "\\n"));
 		buffer.append(sep);
-		buffer.append(modelGui.getPathTrainingRScript());
+		
+		/*Second tab. Settings for the script paths!*/
+		
+		buffer.append(modelGui.checkUseImportMacro.getSelection());
 		buffer.append(sep);
-		buffer.append(modelGui.getPathClassificationRScript());
+		
+		buffer.append(modelGui.getMacroTextOption());
 		buffer.append(sep);
-		// buffer.append(System.getProperty("line.separator"));
+		
+		buffer.append(modelGui.getPathTrainingScript());
+		buffer.append(sep);
+		
+		
+		buffer.append(modelGui.getPathClassificationScript());
+		buffer.append(sep);
+		
+		
 
 		String file = Bio7Dialog.saveFile("*.txt");
 		if (file != null) {

@@ -106,7 +106,7 @@
 	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/org.eclipse.jface_3.18.0.v20191122-2109.jar"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7_3.1.0/bin" sourcepath="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7_3.1.0/src"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javaedit_2.0.0/bin"/>
-	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.image_1.53.125/bin" sourcepath="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.image_1.53.125/src"/>
+	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.image_1.53.303/bin" sourcepath="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.image_1.53.303/src"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.WorldWind_2.1.0/bin" sourcepath="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.WorldWind_2.1.0/src"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/Bundled_R_3.6.2/bin" sourcepath="/Applications/Bio7.app/Contents/eclipse/plugins/Bundled_R_3.6.2/src"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/MacOS/jdk/Contents/Home/javafx/lib/javafx.base.jar/"/>
