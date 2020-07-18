@@ -93,6 +93,12 @@
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.libs_2.5.0/libs/jogl-all.jar"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.libs_2.5.0/math/gdal.jar"/>
 	<classpathentry kind="lib" path="/Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.browser_2.0.0/bin/"/>
+	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javacv_1.4.5.202007131224/libs/boofcv-ip-0.36.1.jar"/>
+	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javacv_1.4.5.202007131224/libs/boofcv-core-0.36.1.jar"/>
+	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javacv_1.4.5.202007131224/libs/boofcv-sfm-0.36.1.jar"/>
+	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javacv_1.4.5.202007131224/libs/Catalano.Core.jar"/>
+	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javacv_1.4.5.202007131224/libs/Catalano.Image.jar"/>
+	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/com.eco.bio7.javacv_1.4.5.202007131224/libs/boofcv-types-0.36.1.jar"/>
 	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/org.eclipse.core.commands_3.9.600.v20191122-2109.jar"/>
 	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/org.eclipse.ui.workbench_3.117.0.v20191126-1131.jar"/>
 	<classpathentry kind="lib" path="//Applications/Bio7.app/Contents/eclipse/plugins/org.eclipse.ui_3.115.0.v20191127-1056.jar"/>
