@@ -48,7 +48,7 @@ import ij.process.ImageProcessor;
 public class Main { 
 
 	private ModelGui gui;
-	private int useAmountOfThreads = 1; 
+	//private int useAmountOfThreads = 8; 
 
 	public Main() { 
  
@@ -69,7 +69,7 @@ public class Main {
 				parent.layout(true);
 			}
 		}); 
-	} 
+	}  
 
 	/* Called from the GUI class! */
 	public void executeSelection(int choice) {
@@ -380,8 +380,8 @@ public class Main {
 		}
 
 		if (gui.median) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
+			//int threads = Prefs.getThreads();
+			//Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianRadius = gui.medianOption.split(",");
@@ -397,12 +397,12 @@ public class Main {
 					stack.addSlice("Median_" + radius, ip);
 				}
 			}
-			Prefs.setThreads(threads);
+			//Prefs.setThreads(threads);
 		}
 
 		if (gui.mean) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
+			//int threads = Prefs.getThreads();
+			//Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Mean Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] meanRadius = gui.meanOption.split(",");
@@ -417,12 +417,12 @@ public class Main {
 					stack.addSlice("Mean_" + radius, ip);
 				}
 			}
-			Prefs.setThreads(threads);
+			//Prefs.setThreads(threads);
 		}
 
 		if (gui.variance) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
+			//int threads = Prefs.getThreads();
+			//Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Variance Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] varianceSigma = gui.varianceOption.split(",");
@@ -436,11 +436,11 @@ public class Main {
 					stack.addSlice("Variance_" + radius, ip);
 				}
 			}
-			Prefs.setThreads(threads);
+			//Prefs.setThreads(threads);
 		}
 		if (gui.maximum) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
+			//int threads = Prefs.getThreads();
+			//Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Maximum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] maximumSigma = gui.maximumOption.split(",");
@@ -454,12 +454,12 @@ public class Main {
 					stack.addSlice("Maximum_" + radius, ip);
 				}
 			}
-			Prefs.setThreads(threads);
+			//Prefs.setThreads(threads);
 		}
 
 		if (gui.minimum) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
+			//int threads = Prefs.getThreads();
+			//Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
@@ -476,7 +476,7 @@ public class Main {
 					stack.addSlice("Minimum_" + radius, ip);
 				}
 			}
-			Prefs.setThreads(threads);
+			//Prefs.setThreads(threads);
 		}
 
 		if (gui.gradientHessian) {
