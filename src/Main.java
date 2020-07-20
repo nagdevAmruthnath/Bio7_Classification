@@ -37,7 +37,6 @@ import ij.ImageStack;
 import ij.Prefs;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
-import ij.plugin.Duplicator;
 import ij.plugin.ImageCalculator;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
@@ -46,14 +45,14 @@ import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
-public class Main {
+public class Main { 
 
 	private ModelGui gui;
-	private int useAmountOfThreads = 1;
+	private int useAmountOfThreads = 1; 
 
-	public Main() {
-
-		CustomView view = new CustomView();
+	public Main() { 
+ 
+		CustomView view = new CustomView(); 
 
 		Display display = Util.getDisplay();
 
@@ -69,8 +68,8 @@ public class Main {
 
 				parent.layout(true);
 			}
-		});
-	}
+		}); 
+	} 
 
 	/* Called from the GUI class! */
 	public void executeSelection(int choice) {
@@ -232,29 +231,29 @@ public class Main {
 			image = WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */
-		Duplicator duplicator = new Duplicator();
+		//Duplicator duplicator = new Duplicator();
 		/* Duplicate original! */
-		ImagePlus rgb = duplicator.run(image);
+		//ImagePlus rgb = duplicator.run(image);
 		ImageStack stack = null;
 		/*
 		 * Convert original to float for the filter (and grayscale layer if not color)
 		 * images!
 		 */
-		image.setProcessor(image.getProcessor().convertToFloat());
+		//image.setProcessor(image.getProcessor().convertToFloat());
 
 		/* If we have a RGB! */
-		if (rgb.getProcessor() instanceof ColorProcessor) {
+		if (image.getProcessor() instanceof ColorProcessor) {
 
 			if (gui.toHsb) {
 				monitor.setTaskName("Convert RGB To HSB Color Space");
-				ImageConverter con = new ImageConverter(rgb);
+				ImageConverter con = new ImageConverter(image);
 				con.convertToHSB();
 
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
 
 				// IJ.run(rgb, "HSB Stack", "");
-				ImageStack hsbStack = rgb.getStack();
+				ImageStack hsbStack = image.getStack();
 				/* Create a feature stack from all available channels (e.g., R,G,B) images! */
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
@@ -269,13 +268,13 @@ public class Main {
 					}
 				} else {
 					/* Use all slices. Important to convert to Float! */
-					stack = rgb.getStack().convertToFloat();
+					stack = image.getStack().convertToFloat();
 				}
 
 			} else {
 
 				/* Split original to R,G,B channels! */
-				ImagePlus[] channels = ChannelSplitter.split(rgb);
+				ImagePlus[] channels = ChannelSplitter.split(image);
 
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
@@ -284,9 +283,9 @@ public class Main {
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/* Add RGB channels to the stack! */
+						/* Add selected RGB channels to the new stack! */
 						/* Convert original to float to have a float image stack for the filters! */
-						int sel = Integer.parseInt(channelToInclude[j]) - 1;
+						int sel = Integer.parseInt(channelToInclude[j]) - 1;//Channels index starts with 0 so we correct here with -1!
 						ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
 						stack.addSlice("Channel" + j, floatProcessor);
 					}
@@ -301,14 +300,28 @@ public class Main {
 				}
 			}
 		} else {/* Grayscale images (8-bit, 16-bit, 32-bit) */
-			/* If we have a multichannel image! */
+			/* If we have a grayscale stack image! */
 			if (image.getStackSize() > 1) {
+				String opt = gui.channelOption;
+				String[] channelToInclude = opt.split(",");
+				/*Only include slice numbers!*/
+				if (opt.isEmpty() == false && channelToInclude.length > 0) {
+					stack = new ImageStack(image.getWidth(), image.getHeight());
+					for (int j = 0; j < channelToInclude.length; j++) {
+						/*Add selected slices to a new stack!*/
+						int sel = Integer.parseInt(channelToInclude[j]);//Stack starts with 1 no correction necessary!
+						stack.addSlice("grayscale",image.getStack().getProcessor(sel).convertToFloat());
+					}
+				}
+				else {
 				/* Convert original to float to have a float image stack for the filters! */
 				stack = image.getStack().convertToFloat();
+				}
 			} else {
 
 				stack = new ImageStack(image.getWidth(), image.getHeight());
-				stack.addSlice("grayscale", image.getProcessor());
+				/* Convert original to float to have a float image stack for the filters! */
+				stack.addSlice("grayscale", image.getProcessor().convertToFloat());
 			}
 		}
 
