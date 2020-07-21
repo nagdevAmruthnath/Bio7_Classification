@@ -93,6 +93,14 @@ public class ModelGui extends Composite {
 	protected boolean useImportMacro;
 	protected String textOptionMacro;
 	private Button buttonMacro;
+	protected Button checkTopHat;
+	protected Text optionsTopHat;
+	protected boolean topHat;
+	protected String topHatOption;
+	protected Button checkKuwahara;
+	protected Text optionsKuwahara;
+	protected boolean kuwahara;
+	protected String kuwaharaOption;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -281,6 +289,22 @@ public class ModelGui extends Composite {
 			}
 		});
 		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		checkTopHat = new Button(composite, SWT.CHECK);
+		checkTopHat.setText("Top Hat");
+		
+		checkKuwahara = new Button(composite, SWT.CHECK);
+		checkKuwahara.setText("Kuwahara");
+		
+		optionsTopHat = new Text(composite, SWT.BORDER);
+		optionsTopHat.setText("2");
+		optionsTopHat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		optionsKuwahara = new Text(composite, SWT.BORDER);
+		optionsKuwahara.setText("2");
+		optionsKuwahara.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
 		checkConvolve.setText("Convolve");
@@ -318,7 +342,9 @@ public class ModelGui extends Composite {
 				textImageJMacro.setText(path);
 			}
 		});
-		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridData gd_buttonMacro = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_buttonMacro.heightHint = 25;
+		buttonMacro.setLayoutData(gd_buttonMacro);
 		buttonMacro.setText("Macro");
 
 		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
@@ -413,6 +439,12 @@ public class ModelGui extends Composite {
 
 				gabor = checkGabor.getSelection();
 				gaborOption = optionGabor.getText();
+				
+				topHat = checkTopHat.getSelection();
+				topHatOption = optionsTopHat.getText();
+				
+				kuwahara = checkKuwahara.getSelection();
+				kuwaharaOption = optionsKuwahara.getText();
 
 			}
 		});

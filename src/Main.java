@@ -25,6 +25,7 @@ import com.eco.bio7.rbridge.RServeUtil;
 import com.eco.bio7.rbridge.RState;
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Filters.GaborFilter;
+import Catalano.Imaging.Filters.Kuwahara;
 import boofcv.alg.filter.derivative.DerivativeLaplacian;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
@@ -45,14 +46,14 @@ import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
-public class Main { 
+public class Main {
 
 	private ModelGui gui;
-	//private int useAmountOfThreads = 8; 
+	// private int useAmountOfThreads = 8;
 
-	public Main() { 
- 
-		CustomView view = new CustomView(); 
+	public Main() {
+
+		CustomView view = new CustomView();
 
 		Display display = Util.getDisplay();
 
@@ -68,8 +69,8 @@ public class Main {
 
 				parent.layout(true);
 			}
-		}); 
-	}  
+		});
+	}
 
 	/* Called from the GUI class! */
 	public void executeSelection(int choice) {
@@ -231,15 +232,15 @@ public class Main {
 			image = WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */
-		//Duplicator duplicator = new Duplicator();
+		// Duplicator duplicator = new Duplicator();
 		/* Duplicate original! */
-		//ImagePlus rgb = duplicator.run(image);
+		// ImagePlus rgb = duplicator.run(image);
 		ImageStack stack = null;
 		/*
 		 * Convert original to float for the filter (and grayscale layer if not color)
 		 * images!
 		 */
-		//image.setProcessor(image.getProcessor().convertToFloat());
+		// image.setProcessor(image.getProcessor().convertToFloat());
 
 		/* If we have a RGB! */
 		if (image.getProcessor() instanceof ColorProcessor) {
@@ -285,7 +286,8 @@ public class Main {
 					for (int j = 0; j < channelToInclude.length; j++) {
 						/* Add selected RGB channels to the new stack! */
 						/* Convert original to float to have a float image stack for the filters! */
-						int sel = Integer.parseInt(channelToInclude[j]) - 1;//Channels index starts with 0 so we correct here with -1!
+						int sel = Integer.parseInt(channelToInclude[j]) - 1;// Channels index starts with 0 so we
+																			// correct here with -1!
 						ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
 						stack.addSlice("Channel" + j, floatProcessor);
 					}
@@ -304,18 +306,17 @@ public class Main {
 			if (image.getStackSize() > 1) {
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
-				/*Only include slice numbers!*/
+				/* Only include slice numbers! */
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					stack = new ImageStack(image.getWidth(), image.getHeight());
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/*Add selected slices to a new stack!*/
-						int sel = Integer.parseInt(channelToInclude[j]);//Stack starts with 1 no correction necessary!
-						stack.addSlice("grayscale",image.getStack().getProcessor(sel).convertToFloat());
+						/* Add selected slices to a new stack! */
+						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with 1 no correction necessary!
+						stack.addSlice("grayscale", image.getStack().getProcessor(sel).convertToFloat());
 					}
-				}
-				else {
-				/* Convert original to float to have a float image stack for the filters! */
-				stack = image.getStack().convertToFloat();
+				} else {
+					/* Convert original to float to have a float image stack for the filters! */
+					stack = image.getStack().convertToFloat();
 				}
 			} else {
 
@@ -380,8 +381,8 @@ public class Main {
 		}
 
 		if (gui.median) {
-			//int threads = Prefs.getThreads();
-			//Prefs.setThreads(useAmountOfThreads);
+			// int threads = Prefs.getThreads();
+			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianRadius = gui.medianOption.split(",");
@@ -397,12 +398,12 @@ public class Main {
 					stack.addSlice("Median_" + radius, ip);
 				}
 			}
-			//Prefs.setThreads(threads);
+			// Prefs.setThreads(threads);
 		}
 
 		if (gui.mean) {
-			//int threads = Prefs.getThreads();
-			//Prefs.setThreads(useAmountOfThreads);
+			// int threads = Prefs.getThreads();
+			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Mean Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] meanRadius = gui.meanOption.split(",");
@@ -413,16 +414,16 @@ public class Main {
 					// IJ.run(plus, "Mean...", "radius="+meanSigma[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
-					ran.rank(ip, radius, 0);
+					ran.rank(ip, radius, RankFilters.MEAN);
 					stack.addSlice("Mean_" + radius, ip);
 				}
 			}
-			//Prefs.setThreads(threads);
+			// Prefs.setThreads(threads);
 		}
 
 		if (gui.variance) {
-			//int threads = Prefs.getThreads();
-			//Prefs.setThreads(useAmountOfThreads);
+			// int threads = Prefs.getThreads();
+			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Variance Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] varianceSigma = gui.varianceOption.split(",");
@@ -436,11 +437,11 @@ public class Main {
 					stack.addSlice("Variance_" + radius, ip);
 				}
 			}
-			//Prefs.setThreads(threads);
+			// Prefs.setThreads(threads);
 		}
 		if (gui.maximum) {
-			//int threads = Prefs.getThreads();
-			//Prefs.setThreads(useAmountOfThreads);
+			// int threads = Prefs.getThreads();
+			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Maximum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] maximumSigma = gui.maximumOption.split(",");
@@ -454,12 +455,12 @@ public class Main {
 					stack.addSlice("Maximum_" + radius, ip);
 				}
 			}
-			//Prefs.setThreads(threads);
+			// Prefs.setThreads(threads);
 		}
 
 		if (gui.minimum) {
-			//int threads = Prefs.getThreads();
-			//Prefs.setThreads(useAmountOfThreads);
+			// int threads = Prefs.getThreads();
+			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
@@ -476,7 +477,7 @@ public class Main {
 					stack.addSlice("Minimum_" + radius, ip);
 				}
 			}
-			//Prefs.setThreads(threads);
+			// Prefs.setThreads(threads);
 		}
 
 		if (gui.gradientHessian) {
@@ -570,7 +571,7 @@ public class Main {
 				Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
 				Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
 				filter.Lipschitz2D(ip);
-				stack.addSlice("Edges", ip.convertToFloat());
+				stack.addSlice("Lipschitz", ip.convertToFloat());
 			}
 		}
 
@@ -597,6 +598,47 @@ public class Main {
 				int width = ip.getWidth();
 				int height = ip.getHeight();
 				stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
+			}
+		}
+
+		if (gui.topHat) {
+			// int threads = Prefs.getThreads();
+			// Prefs.setThreads(useAmountOfThreads);
+			monitor.setTaskName("Apply Top Hat Filter");
+			/* Split the mean option to get all sigmas! */
+			String[] topHatRadius = gui.topHatOption.split(",");
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+				for (int j = 0; j < topHatRadius.length; j++) {
+					double radius = Double.parseDouble(topHatRadius[j]);
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					RankFilters ran = new RankFilters();
+					ran.rank(ip, radius, RankFilters.TOP_HAT);
+					stack.addSlice("Top_Hat_" + radius, ip);
+				}
+			}
+			// Prefs.setThreads(threads);
+		}
+
+		if (gui.kuwahara) {
+			monitor.setTaskName("Apply Kuwahara Filter");
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+				/* Split the mean option to get all sigmas! */
+				String[] kuwaharaOptions = gui.kuwaharaOption.split(",");
+				for (int j = 0; j < kuwaharaOptions.length; j++) {
+					int radius = Integer.parseInt(kuwaharaOptions[j]);
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					/* Will work with 8-bit only! */
+					BufferedImage buff = new ImagePlus("tempKuwahara", ip).getBufferedImage();
+					FastBitmap fb = new FastBitmap(buff);
+					Kuwahara kuwahara = new Kuwahara(radius);
+					kuwahara.applyInPlace(fb);
+					float[] imArray = fb.toArrayGrayAsFloat();
+					int width = ip.getWidth();
+					int height = ip.getHeight();
+					stack.addSlice("Kuwahara", new FloatProcessor(width, height, imArray));
+				}
 			}
 		}
 
