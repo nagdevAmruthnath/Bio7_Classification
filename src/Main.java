@@ -562,16 +562,24 @@ public class Main {
 			monitor.setTaskName("Apply Lipschitz Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
-				/* Split the mean option to get all sigmas! */
-				String[] lipschitzOptions = gui.lipschitzOption.split(",");
 
-				Lipschitz_ filter = new Lipschitz_();
-				Lipschitz_.setDownHatFilter(Boolean.parseBoolean(lipschitzOptions[0]));
-				Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
-				Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
-				filter.Lipschitz2D(ip);
-				stack.addSlice("Lipschitz", ip.convertToFloat());
+				/* See if we have several Lipschitz filter settings! */
+				String[] libschitzOptionsSet = gui.lipschitzOption.split(";");
+				for (int j = 0; j < libschitzOptionsSet.length; j++) {
+
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
+					
+
+					String opLipschitz = libschitzOptionsSet[j];
+					/* Split the Lipschitz set for one filter! */
+					String[] lipschitzOptions = opLipschitz.split(",");
+					Lipschitz_ filter = new Lipschitz_();
+					Lipschitz_.setDownHatFilter(Boolean.parseBoolean(lipschitzOptions[0]));
+					Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
+					Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
+					filter.Lipschitz2D(ip);
+					stack.addSlice("Lipschitz", ip.convertToFloat());
+				}
 			}
 		}
 
@@ -580,24 +588,34 @@ public class Main {
 			monitor.setTaskName("Apply Gabor Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				/* Split the mean option to get all sigmas! */
-				String[] gaborOptions = gui.gaborOption.split(",");
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				/* Will work with 8-bit only! */
-				BufferedImage buff = new ImagePlus("tempGabor", ip).getBufferedImage();
-				FastBitmap fb = new FastBitmap(buff);
 
-				double wavelength = Double.parseDouble(gaborOptions[0]);
-				double orientation = Double.parseDouble(gaborOptions[1]);
-				double phaseOffset = Double.parseDouble(gaborOptions[2]);
-				double gaussianVar = Double.parseDouble(gaborOptions[3]);
-				double aspectRation = Double.parseDouble(gaborOptions[4]);
-				GaborFilter gabor = new GaborFilter(wavelength, orientation, phaseOffset, gaussianVar, aspectRation);
-				gabor.applyInPlace(fb);
-				float[] imArray = fb.toArrayGrayAsFloat();
-				int width = ip.getWidth();
-				int height = ip.getHeight();
-				stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
+				/* See if we have several Gabor filter settings! */
+				String[] gaborOptionsSet = gui.gaborOption.split(";");
+
+				for (int j = 0; j < gaborOptionsSet.length; j++) {
+
+					String opGabor = gaborOptionsSet[j];
+					/* Split the Gabor set for one filter! */
+					String[] gaborOptions = opGabor.split(",");
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					/* Will work with 8-bit only! */
+					BufferedImage buff = new ImagePlus("tempGabor", ip).getBufferedImage();
+					FastBitmap fb = new FastBitmap(buff);
+					/* Extract the arguments for one filter for the different layers! */
+					double wavelength = Double.parseDouble(gaborOptions[0]);
+					double orientation = Double.parseDouble(gaborOptions[1]);
+					double phaseOffset = Double.parseDouble(gaborOptions[2]);
+					double gaussianVar = Double.parseDouble(gaborOptions[3]);
+					double aspectRation = Double.parseDouble(gaborOptions[4]);
+
+					GaborFilter gabor = new GaborFilter(wavelength, orientation, phaseOffset, gaussianVar,
+							aspectRation);
+					gabor.applyInPlace(fb);
+					float[] imArray = fb.toArrayGrayAsFloat();
+					int width = ip.getWidth();
+					int height = ip.getHeight();
+					stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
+				}
 			}
 		}
 
