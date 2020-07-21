@@ -358,23 +358,33 @@ public class Main {
 			monitor.setTaskName("Apply Difference of Gaussian Filters");
 
 			GaussianBlur gaussian = new GaussianBlur();
-			/* Split the gaussian option to get all sigmas! */
-			String[] gaussianSigma = gui.diffGaussianOption.split(",");
+
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				/* Here we have two sigmas to calculate the difference! */
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				double sigma1 = Double.parseDouble(gaussianSigma[0]);
-				gaussian.blurGaussian(ip, sigma1, sigma1, 0.0002);
 
-				ImageProcessor ip2 = tempStack.getProcessor(i).duplicate();
-				double sigma2 = Double.parseDouble(gaussianSigma[1]);
-				gaussian.blurGaussian(ip2, sigma2, sigma2, 0.0002);
+				/* See if we have several Gaussian Difference filter settings! */
+				String[] gaussianDiffOptionSet = gui.diffGaussianOption.split(";");
+				for (int j = 0; j < gaussianDiffOptionSet.length; j++) {
+					
+					String opGaussianDiff = gaussianDiffOptionSet[j];
+					/* Split the gaussian option to get all sigmas! */
+					String[] gaussianSigma = opGaussianDiff.split(",");
 
-				ImageCalculator ic = new ImageCalculator();
-				ImagePlus finalDiffGaussian = ic.run("Subtract create 32-bit", new ImagePlus("sigma1", ip),
-						new ImagePlus("sigma2", ip2));
-				stack.addSlice("DiffOfGaussian_" + i, finalDiffGaussian.getProcessor());
+					/* Here we have two sigmas to calculate the difference! */
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					double sigma1 = Double.parseDouble(gaussianSigma[0]);
+					gaussian.blurGaussian(ip, sigma1, sigma1, 0.0002);
+
+					ImageProcessor ip2 = tempStack.getProcessor(i).duplicate();
+					double sigma2 = Double.parseDouble(gaussianSigma[1]);
+					gaussian.blurGaussian(ip2, sigma2, sigma2, 0.0002);
+
+					ImageCalculator ic = new ImageCalculator();
+					ImagePlus finalDiffGaussian = ic.run("Subtract create 32-bit", new ImagePlus("sigma1", ip),
+							new ImagePlus("sigma2", ip2));
+					stack.addSlice("DiffOfGaussian_" + i, finalDiffGaussian.getProcessor());
+
+				}
 
 			}
 
@@ -568,7 +578,6 @@ public class Main {
 				for (int j = 0; j < libschitzOptionsSet.length; j++) {
 
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
-					
 
 					String opLipschitz = libschitzOptionsSet[j];
 					/* Split the Lipschitz set for one filter! */
