@@ -49,7 +49,6 @@ import ij.process.ImageProcessor;
 public class Main {
 
 	private ModelGui gui;
-	// private int useAmountOfThreads = 8;
 
 	public Main() {
 
@@ -62,7 +61,7 @@ public class Main {
 			public void run() {
 				Composite parent = view.getComposite("Classification");
 				/*
-				 * Create the GUI and transfer a reference to this class thus that the GUI can
+				 * Create the GUI and transfer a reference to this class that the GUI can
 				 * execute methods from this class!
 				 */
 				gui = new ModelGui(parent, Main.this, SWT.NONE);
@@ -339,7 +338,6 @@ public class Main {
 		 */
 		if (gui.gaussian) {
 			monitor.setTaskName("Apply Gaussian Filter");
-
 			GaussianBlur gaussian = new GaussianBlur();
 			/* Split the gaussian option to get all sigmas! */
 			String[] gaussianSigma = gui.gaussianOption.split(",");
@@ -356,9 +354,7 @@ public class Main {
 
 		if (gui.diffOfGaussian) {
 			monitor.setTaskName("Apply Difference of Gaussian Filters");
-
 			GaussianBlur gaussian = new GaussianBlur();
-
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 
@@ -390,15 +386,12 @@ public class Main {
 
 		}
 
-		if (gui.median) {
-			// int threads = Prefs.getThreads();
-			// Prefs.setThreads(useAmountOfThreads);
+		if (gui.median) {		
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianRadius = gui.medianOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-
 				for (int j = 0; j < medianRadius.length; j++) {
 					double radius = Double.parseDouble(medianRadius[j]);
 					// IJ.run(plus, "Median...", "radius="+medianSigma[j]);
@@ -408,12 +401,9 @@ public class Main {
 					stack.addSlice("Median_" + radius, ip);
 				}
 			}
-			// Prefs.setThreads(threads);
 		}
 
-		if (gui.mean) {
-			// int threads = Prefs.getThreads();
-			// Prefs.setThreads(useAmountOfThreads);
+		if (gui.mean) {			
 			monitor.setTaskName("Apply Mean Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] meanRadius = gui.meanOption.split(",");
@@ -428,12 +418,9 @@ public class Main {
 					stack.addSlice("Mean_" + radius, ip);
 				}
 			}
-			// Prefs.setThreads(threads);
 		}
 
 		if (gui.variance) {
-			// int threads = Prefs.getThreads();
-			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Variance Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] varianceSigma = gui.varianceOption.split(",");
@@ -447,11 +434,8 @@ public class Main {
 					stack.addSlice("Variance_" + radius, ip);
 				}
 			}
-			// Prefs.setThreads(threads);
 		}
 		if (gui.maximum) {
-			// int threads = Prefs.getThreads();
-			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Maximum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] maximumSigma = gui.maximumOption.split(",");
@@ -465,19 +449,14 @@ public class Main {
 					stack.addSlice("Maximum_" + radius, ip);
 				}
 			}
-			// Prefs.setThreads(threads);
 		}
 
 		if (gui.minimum) {
-			// int threads = Prefs.getThreads();
-			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
-
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-
 				for (int j = 0; j < minimumSigma.length; j++) {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					double radius = Double.parseDouble(minimumSigma[j]);
@@ -487,7 +466,6 @@ public class Main {
 					stack.addSlice("Minimum_" + radius, ip);
 				}
 			}
-			// Prefs.setThreads(threads);
 		}
 
 		if (gui.gradientHessian) {
@@ -538,7 +516,6 @@ public class Main {
 
 		if (gui.laplacian) {
 			monitor.setTaskName("Apply Laplacian Derivative");
-
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
 				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
@@ -576,9 +553,7 @@ public class Main {
 				/* See if we have several Lipschitz filter settings! */
 				String[] libschitzOptionsSet = gui.lipschitzOption.split(";");
 				for (int j = 0; j < libschitzOptionsSet.length; j++) {
-
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
-
 					String opLipschitz = libschitzOptionsSet[j];
 					/* Split the Lipschitz set for one filter! */
 					String[] lipschitzOptions = opLipschitz.split(",");
@@ -593,11 +568,10 @@ public class Main {
 		}
 
 		if (gui.gabor) {
-			// see:
+			
 			monitor.setTaskName("Apply Gabor Filter");
-			int stackSize = tempStack.getSize();
+			int stackSize = tempStack.getSize();		
 			for (int i = 1; i <= stackSize; i++) {
-
 				/* See if we have several Gabor filter settings! */
 				String[] gaborOptionsSet = gui.gaborOption.split(";");
 
@@ -629,8 +603,6 @@ public class Main {
 		}
 
 		if (gui.topHat) {
-			// int threads = Prefs.getThreads();
-			// Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Top Hat Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] topHatRadius = gui.topHatOption.split(",");
@@ -644,7 +616,6 @@ public class Main {
 					stack.addSlice("Top_Hat_" + radius, ip);
 				}
 			}
-			// Prefs.setThreads(threads);
 		}
 
 		if (gui.kuwahara) {
@@ -685,7 +656,8 @@ public class Main {
 
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
-
+		stack=null;
+		tempStack=null;
 		return imPlus;
 	}
 
