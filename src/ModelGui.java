@@ -349,7 +349,7 @@ public class ModelGui extends Composite {
 
 		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
 		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
+		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/IJMacro.ijm");
 
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {
