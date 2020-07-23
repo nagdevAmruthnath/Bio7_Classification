@@ -16,6 +16,7 @@ import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -347,7 +348,7 @@ public class ModelGui extends Composite {
 		buttonMacro.setLayoutData(gd_buttonMacro);
 		buttonMacro.setText("Macro");
 
-		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
+		textImageJMacro = new Text(composite_1, SWT.BORDER);
 		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/IJMacro.ijm");
 

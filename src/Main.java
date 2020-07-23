@@ -208,6 +208,7 @@ public class Main {
 	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image = null;
+		ImageStack stack = null;
 		/*
 		 * Important call to get the features and feature options from the GUI (syncExec
 		 * wrapped for SWT)!
@@ -234,7 +235,7 @@ public class Main {
 		// Duplicator duplicator = new Duplicator();
 		/* Duplicate original! */
 		// ImagePlus rgb = duplicator.run(image);
-		ImageStack stack = null;
+		
 		/*
 		 * Convert original to float for the filter (and grayscale layer if not color)
 		 * images!
@@ -656,6 +657,7 @@ public class Main {
 
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
+		image=null;
 		stack=null;
 		tempStack=null;
 		return imPlus;
