@@ -290,17 +290,17 @@ public class ModelGui extends Composite {
 			}
 		});
 		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		checkTopHat = new Button(composite, SWT.CHECK);
 		checkTopHat.setText("Top Hat");
-		
+
 		checkKuwahara = new Button(composite, SWT.CHECK);
 		checkKuwahara.setText("Kuwahara");
-		
+
 		optionsTopHat = new Text(composite, SWT.BORDER);
 		optionsTopHat.setText("2");
 		optionsTopHat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		optionsKuwahara = new Text(composite, SWT.BORDER);
 		optionsKuwahara.setText("2");
 		optionsKuwahara.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -440,10 +440,10 @@ public class ModelGui extends Composite {
 
 				gabor = checkGabor.getSelection();
 				gaborOption = optionGabor.getText();
-				
+
 				topHat = checkTopHat.getSelection();
 				topHatOption = optionsTopHat.getText();
-				
+
 				kuwahara = checkKuwahara.getSelection();
 				kuwaharaOption = optionsKuwahara.getText();
 
@@ -491,7 +491,8 @@ public class ModelGui extends Composite {
 		});
 		return textOptionMacro;
 	}
-   /*Here we layout the ImageJ panel!*/
+
+	/* Here we layout the ImageJ panel! */
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
 		canvasView.updatePlotCanvas();
