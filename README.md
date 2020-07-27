@@ -17,6 +17,8 @@ text argument adds filter images of different radius or applies special settings
 For some edge detection methods a ';' separator can be set, too, for different sets of edge settings (Difference of Gaussian, Lipschitz, Gabor, Convolve) resulting
 in one image layer each.
 
+All settings for classification can be stored or reopened with the 'Load/Save Configuration' actions in a simple text file.
+
 In the Settings tab the path to the R and ImageJ macro scripts can be set if necessary (or easier simply change the default scripts).
 
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
