@@ -19,3 +19,16 @@ to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!
 
 The 'ModelGui' graphical view interface can be modified or extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
 
+##Installation
+
+With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update Site:
+
+https://bio7.github.io/javacv/
+
+To make the libraries accessible for the dynamic Java compiler add the following libs to the
+compiler classpath (you find them find them in the new installed Java CV plugin:
+
+![image](libs.png)
+
+In addition you have to recalculate the projects classpath (Context Menu->Fix Project Classpath).
+
