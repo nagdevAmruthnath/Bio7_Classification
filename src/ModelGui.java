@@ -368,7 +368,7 @@ public class ModelGui extends Composite {
 
 		txtTrainingRScript = new Text(composite_1, SWT.BORDER);
 		txtTrainingRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		txtTrainingRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Train_RandomForest.R");
+		txtTrainingRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Train.R");
 		btnRClassificationScript = new Button(composite_1, SWT.NONE);
 		btnRClassificationScript.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -385,7 +385,7 @@ public class ModelGui extends Composite {
 
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
 		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify_RandomForest.R");
+		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify.R");
 
 	}
 
