@@ -282,7 +282,7 @@ public class ModelGui extends Composite {
 		optionLipschitz.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		optionGabor = new Text(composite, SWT.BORDER);
-		optionGabor.setText("32,45,0,0,1");
+		optionGabor.setText("3,4.0,0.6,1.0,2.0,0.3");
 		optionGabor.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {

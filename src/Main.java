@@ -31,6 +31,7 @@ import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.struct.border.BorderType;
 import boofcv.struct.image.GrayF32;
+import filter.Kuwahara_Filter;
 import filter.Lipschitz_;
 import ij.IJ;
 import ij.ImagePlus;
@@ -585,20 +586,23 @@ public class Main {
 					/* Will work with 8-bit only! */
 					BufferedImage buff = new ImagePlus("tempGabor", ip).getBufferedImage();
 					FastBitmap fb = new FastBitmap(buff);
+					
+					GaborFilter gabor = new GaborFilter();
 					/* Extract the arguments for one filter for the different layers! */
-					double wavelength = Double.parseDouble(gaborOptions[0]);
-					double orientation = Double.parseDouble(gaborOptions[1]);
-					double phaseOffset = Double.parseDouble(gaborOptions[2]);
-					double gaussianVar = Double.parseDouble(gaborOptions[3]);
-					double aspectRation = Double.parseDouble(gaborOptions[4]);
-
-					GaborFilter gabor = new GaborFilter(wavelength, orientation, phaseOffset, gaussianVar,
-							aspectRation);
+					gabor.setSize(Integer.parseInt(gaborOptions[0]));
+					gabor.setWavelength(Double.parseDouble(gaborOptions[1]));
+					gabor.setOrientation(Double.parseDouble(gaborOptions[2]));
+					gabor.setPhaseOffset(Double.parseDouble(gaborOptions[3]));
+					gabor.setGaussianVar(Double.parseDouble(gaborOptions[4]));
+					gabor.setAspectRatio(Double.parseDouble(gaborOptions[5]));
+										
 					gabor.applyInPlace(fb);
 					float[] imArray = fb.toArrayGrayAsFloat();
 					int width = ip.getWidth();
 					int height = ip.getHeight();
 					stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
+				   //new Gabor_Filter(ip,stack);
+				
 				}
 			}
 		}
@@ -629,14 +633,10 @@ public class Main {
 					int radius = Integer.parseInt(kuwaharaOptions[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					/* Will work with 8-bit only! */
-					BufferedImage buff = new ImagePlus("tempKuwahara", ip).getBufferedImage();
-					FastBitmap fb = new FastBitmap(buff);
-					Kuwahara kuwahara = new Kuwahara(radius);
-					kuwahara.applyInPlace(fb);
-					float[] imArray = fb.toArrayGrayAsFloat();
-					int width = ip.getWidth();
-					int height = ip.getHeight();
-					stack.addSlice("Kuwahara", new FloatProcessor(width, height, imArray));
+					Kuwahara_Filter kuw=new Kuwahara_Filter();
+					Kuwahara_Filter.size=radius;
+					kuw.filter(ip);
+					stack.addSlice("Kuwahara", ip);
 				}
 			}
 		}
