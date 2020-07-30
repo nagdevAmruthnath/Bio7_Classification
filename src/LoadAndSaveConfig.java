@@ -66,6 +66,7 @@ public class LoadAndSaveConfig {
 				modelGui.optionLaplacian.setText(reader.readLine());
 
 				modelGui.checkEdges.setSelection(read(reader));
+				modelGui.optionsEdges.setText(reader.readLine());
 				
 				modelGui.checkLipschitz.setSelection(read(reader));
 				modelGui.optionLipschitz.setText(reader.readLine());
@@ -157,6 +158,8 @@ public class LoadAndSaveConfig {
 		buffer.append(sep);
 		
 		buffer.append(modelGui.checkEdges.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionsEdges.getText());
 		buffer.append(sep);
 		
 		buffer.append(modelGui.checkLipschitz.getSelection());

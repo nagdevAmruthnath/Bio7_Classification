@@ -76,7 +76,7 @@ public class ModelGui extends Composite {
 	protected Text optionsVariance;
 	protected boolean variance;
 	protected String varianceOption;
-	private Text optionsEdges;
+	protected Text optionsEdges;
 	protected Text optionDiffGaussian;
 	protected Button checkDifferenceOfGaussian;
 	protected boolean diffOfGaussian;
@@ -102,6 +102,7 @@ public class ModelGui extends Composite {
 	protected Text optionsKuwahara;
 	protected boolean kuwahara;
 	protected String kuwaharaOption;
+	protected String edgesOption;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -247,14 +248,13 @@ public class ModelGui extends Composite {
 		checkMaximum.setText("Maximum");
 
 		checkGradientHessian = new Button(composite, SWT.CHECK);
-		checkGradientHessian.setText("Gradient/Hessian");
+		checkGradientHessian.setText("Gradient");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
 		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMaximum.setText("2");
 
 		optionGradientHessian = new Text(composite, SWT.BORDER);
-		optionGradientHessian.setEnabled(false);
 		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLaplacian = new Button(composite, SWT.CHECK);
@@ -264,11 +264,9 @@ public class ModelGui extends Composite {
 		checkEdges.setText("Sobel Edge");
 
 		optionLaplacian = new Text(composite, SWT.BORDER);
-		optionLaplacian.setEnabled(false);
 		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		optionsEdges = new Text(composite, SWT.BORDER);
-		optionsEdges.setEnabled(false);
 		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLipschitz = new Button(composite, SWT.CHECK);
@@ -425,7 +423,8 @@ public class ModelGui extends Composite {
 				minimumOption = optionsMinimum.getText();
 
 				edges = checkEdges.getSelection();
-
+                edgesOption=optionsEdges.getText();
+                
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
 
