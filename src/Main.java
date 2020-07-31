@@ -349,7 +349,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					double sigma = Double.parseDouble(gaussianSigma[j]);
 					gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
-					stack.addSlice("Gaussian_" + "Layer_"+i+"Sigma_"+sigma, ip);
+					stack.addSlice("Gaussian_" + "Layer_" + i + "Sigma_" + sigma, ip);
 				}
 			}
 		}
@@ -400,7 +400,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MEDIAN);
-					stack.addSlice("Median_" + "Layer_"+i+"Radius_"+radius, ip);
+					stack.addSlice("Median_" + "Layer_" + i + "Radius_" + radius, ip);
 				}
 			}
 		}
@@ -417,7 +417,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					ran.rank(ip, radius, RankFilters.MEAN);
-					stack.addSlice("Mean_" + "Layer_"+i+"Radius_"+radius, ip);
+					stack.addSlice("Mean_" + "Layer_" + i + "Radius_" + radius, ip);
 				}
 			}
 		}
@@ -433,7 +433,7 @@ public class Main {
 					double radius = Double.parseDouble(varianceSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.VARIANCE);
-					stack.addSlice("Variance_" + "Layer_"+i+"Radius_"+radius, ip);
+					stack.addSlice("Variance_" + "Layer_" + i + "Radius_" + radius, ip);
 				}
 			}
 		}
@@ -448,7 +448,7 @@ public class Main {
 					double radius = Double.parseDouble(maximumSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MAX);
-					stack.addSlice("Maximum_" + "Layer_"+i+"Radius_"+radius, ip);
+					stack.addSlice("Maximum_" + "Layer_" + i + "Radius_" + radius, ip);
 				}
 			}
 		}
@@ -465,7 +465,7 @@ public class Main {
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MIN);
 					// ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
-					stack.addSlice("Minimum_" + "Layer_"+i+"Radius_"+radius, ip);
+					stack.addSlice("Minimum_" + "Layer_" + i + "Radius_" + radius, ip);
 				}
 			}
 		}
@@ -587,7 +587,7 @@ public class Main {
 				}
 			}
 		}
-        
+
 		if (gui.gabor) {
 
 			monitor.setTaskName("Apply Gabor Filter");
@@ -655,7 +655,7 @@ public class Main {
 					Kuwahara_Filter kuw = new Kuwahara_Filter();
 					Kuwahara_Filter.size = radius;
 					kuw.filter(ip);
-					stack.addSlice("Kuwahara_"+radius, ip);
+					stack.addSlice("Kuwahara_" + radius, ip);
 				}
 			}
 		}
@@ -694,8 +694,7 @@ public class Main {
 		GrayF32 derivX = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
 		GrayF32 derivY = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
 
-		GImageDerivativeOps.gradient(DerivativeType.SOBEL, boofFilterImageInput, derivX, derivY,
-				BorderType.EXTENDED);
+		GImageDerivativeOps.gradient(DerivativeType.SOBEL, boofFilterImageInput, derivX, derivY, BorderType.EXTENDED);
 
 		// Second order derivative, also known as the Hessian
 		// GrayF32 derivXX = new GrayF32(boofFilterImageInput.width,
