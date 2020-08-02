@@ -313,7 +313,7 @@ public class Main {
 					for (int j = 0; j < channelToInclude.length; j++) {
 						/* Add selected slices to a new stack! */
 						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with 1 no correction necessary!
-						stack.addSlice("grayscale", image.getStack().getProcessor(sel).convertToFloat());
+						stack.addSlice("Grayscale", image.getStack().getProcessor(sel).convertToFloat());
 					}
 				} else {
 					/* Convert original to float to have a float image stack for the filters! */
@@ -323,7 +323,7 @@ public class Main {
 
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				/* Convert original to float to have a float image stack for the filters! */
-				stack.addSlice("grayscale", image.getProcessor().convertToFloat());
+				stack.addSlice("Grayscale", image.getProcessor().convertToFloat());
 			}
 		}
 
@@ -349,7 +349,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					double sigma = Double.parseDouble(gaussianSigma[j]);
 					gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
-					stack.addSlice("Gaussian_" + "Layer_" + i + "Sigma_" + sigma, ip);
+					stack.addSlice("Gaussian_" + "Sigma_" + sigma + "Layer_" + i, ip);
 				}
 			}
 		}
@@ -380,7 +380,7 @@ public class Main {
 					ImageCalculator ic = new ImageCalculator();
 					ImagePlus finalDiffGaussian = ic.run("Subtract create 32-bit", new ImagePlus("sigma1", ip),
 							new ImagePlus("sigma2", ip2));
-					stack.addSlice("DiffOfGaussian_" + i, finalDiffGaussian.getProcessor());
+					stack.addSlice("DiffOfGaussian_Set_" + j + "_Layer" + i, finalDiffGaussian.getProcessor());
 
 				}
 
@@ -400,7 +400,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MEDIAN);
-					stack.addSlice("Median_" + "Layer_" + i + "Radius_" + radius, ip);
+					stack.addSlice("Median_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
 		}
@@ -417,7 +417,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					ran.rank(ip, radius, RankFilters.MEAN);
-					stack.addSlice("Mean_" + "Layer_" + i + "Radius_" + radius, ip);
+					stack.addSlice("Mean_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
 		}
@@ -433,7 +433,7 @@ public class Main {
 					double radius = Double.parseDouble(varianceSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.VARIANCE);
-					stack.addSlice("Variance_" + "Layer_" + i + "Radius_" + radius, ip);
+					stack.addSlice("Variance_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
 		}
@@ -448,7 +448,7 @@ public class Main {
 					double radius = Double.parseDouble(maximumSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MAX);
-					stack.addSlice("Maximum_" + "Layer_" + i + "Radius_" + radius, ip);
+					stack.addSlice("Maximum_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
 		}
@@ -465,7 +465,7 @@ public class Main {
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MIN);
 					// ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
-					stack.addSlice("Minimum_" + "Layer_" + i + "Radius_" + radius, ip);
+					stack.addSlice("Minimum_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
 		}
@@ -518,7 +518,7 @@ public class Main {
 						ipToBoofCVGray32(ip, boofFilterImageInput);
 						DerivativeLaplacian.process(boofFilterImageInput, boofFilterImageOutput, null);
 						FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
-						stack.addSlice("Laplacian Derivative from Gaussian_" + sigma, flProcessor);
+						stack.addSlice("Laplacian_Derivative_From_Gaussian_" + sigma + "_Layer" + i, flProcessor);
 					}
 				} else {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
@@ -530,7 +530,7 @@ public class Main {
 					ipToBoofCVGray32(ip, boofFilterImageInput);
 					DerivativeLaplacian.process(boofFilterImageInput, boofFilterImageOutput, null);
 					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
-					stack.addSlice("Laplacian Derivative", flProcessor);
+					stack.addSlice("Laplacian Derivative_" + "Layer_" + i, flProcessor);
 
 				}
 			}
@@ -551,14 +551,14 @@ public class Main {
 						ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 						gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
 						IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
-						stack.addSlice("Edges_layer from Gaussian", ip);
+						stack.addSlice("Edges_Layer_From_Gaussian_" + j + "_Layer_" + i, ip);
 
 					}
 
 				} else {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
-					stack.addSlice("Edges_layer", ip);
+					stack.addSlice("Edges_" + "Layer_" + i, ip);
 
 				}
 			}
@@ -583,7 +583,7 @@ public class Main {
 					Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
 					Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
 					filter.Lipschitz2D(ip);
-					stack.addSlice("Lipschitz", ip.convertToFloat());
+					stack.addSlice("Lipschitz_Set_" + j + "_Layer_" + i, ip.convertToFloat());
 				}
 			}
 		}
@@ -619,7 +619,7 @@ public class Main {
 					float[] imArray = fb.toArrayGrayAsFloat();
 					int width = ip.getWidth();
 					int height = ip.getHeight();
-					stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
+					stack.addSlice("Gabor_Set_" + j + "_Layer_" + i, new FloatProcessor(width, height, imArray));
 					// new Gabor_Filter(ip,stack);
 
 				}
@@ -637,7 +637,7 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					ran.rank(ip, radius, RankFilters.TOP_HAT);
-					stack.addSlice("Top_Hat_" + radius, ip);
+					stack.addSlice("Top_Hat_" + radius + "_Layer_" + i, ip);
 				}
 			}
 		}
@@ -655,7 +655,7 @@ public class Main {
 					Kuwahara_Filter kuw = new Kuwahara_Filter();
 					Kuwahara_Filter.size = radius;
 					kuw.filter(ip);
-					stack.addSlice("Kuwahara_" + radius, ip);
+					stack.addSlice("Kuwahara_" + radius + "_Layer_" + i, ip);
 				}
 			}
 		}
@@ -668,7 +668,7 @@ public class Main {
 				for (int u = 1; u <= stackSize; u++) {
 					ImageProcessor ip = tempStack.getProcessor(u).duplicate();
 					IJ.run(new ImagePlus("Convolved_" + i + "_layer" + u + "_temp", ip), "Convolve...", matrices[i]);
-					stack.addSlice("Convolved_" + i + "_layer" + u, ip);
+					stack.addSlice("Convolved_" + i + "_Layer_" + u, ip);
 				}
 			}
 
