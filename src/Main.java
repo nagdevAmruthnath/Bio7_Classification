@@ -137,10 +137,12 @@ public class Main {
 		}
 		/* Create ROI Classes! */
 		else if (choice == 2) {
-			Bio7Dialog.message(
-					"Add selections to the ROI Manager and transfer the ROI selections with the 'Pixel RM Stack action'\n\n'"
-							+ "Create class names with an underscore (class_1, class_2... etc.) and select the option 'Create signature form ROI Manager name'\n"
-							+ "in the 'Pixel RM Stack action'!");
+			Bio7Dialog.message("Add selections (ROI's = specific class) to the ROI Manager.\n\n"
+					+ "Rename the ROI's to identify the classes - at the end of the string use an underscore followed by the class"
+					+ "number (class_1, class_2 or cell_1, cell_2..., etc.).\n\n"
+					+ "Open the 'Pixel RM Stack action'\n\n"
+					+ "Select the option 'Create signature from ROI Manager name' and transfer the ROI's!");
+			/* Opens the ROI Manager of ImageJ! */
 			IJ.run("ROI Manager...", "");
 
 		}
@@ -213,10 +215,12 @@ public class Main {
 		 * wrapped for SWT)!
 		 */
 		gui.getFeatureOptions();
-        /*If we want to use an import macro, e.g., using the BioFormats library commands which can be
-         *recorded with the ImageJ macro recorder!*/
+		/*
+		 * If we want to use an import macro, e.g., using the BioFormats library
+		 * commands which can be recorded with the ImageJ macro recorder!
+		 */
 		if (gui.useImportMacro) {
-			/*Multiple files selected!*/
+			/* Multiple files selected! */
 			if (files != null) {
 				IJ.runMacroFile(gui.getMacroTextOption(), getCurrentPath() + "/" + files);
 
@@ -226,7 +230,7 @@ public class Main {
 			}
 
 		} else {
-			/*Multiple files selected!*/
+			/* Multiple files selected! */
 			if (files != null) {
 				image = IJ.openImage(getCurrentPath() + "/" + files);
 
