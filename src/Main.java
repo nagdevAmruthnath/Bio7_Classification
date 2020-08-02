@@ -23,21 +23,22 @@ import com.eco.bio7.image.Util;
 import com.eco.bio7.rbridge.RServe;
 import com.eco.bio7.rbridge.RServeUtil;
 import com.eco.bio7.rbridge.RState;
-import Catalano.Imaging.FastBitmap; 
+import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Filters.GaborFilter;
+import Catalano.Imaging.Filters.Kuwahara;
 import boofcv.alg.filter.derivative.DerivativeLaplacian;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
 import boofcv.struct.border.BorderType;
 import boofcv.struct.image.GrayF32;
+import filter.Kuwahara_Filter;
 import filter.Lipschitz_;
 import ij.IJ;
-import ij.ImagePlus; 
-import ij.ImageStack; 
+import ij.ImagePlus;
+import ij.ImageStack;
 import ij.Prefs;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
-import ij.plugin.Duplicator;
 import ij.plugin.ImageCalculator;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
@@ -46,14 +47,13 @@ import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 
-public class Main { 
+public class Main {
 
 	private ModelGui gui;
-	private int useAmountOfThreads = 1; 
 
-	public Main() { 
- 
-		CustomView view = new CustomView(); 
+	public Main() {
+
+		CustomView view = new CustomView();
 
 		Display display = Util.getDisplay();
 
@@ -62,15 +62,15 @@ public class Main {
 			public void run() {
 				Composite parent = view.getComposite("Classification");
 				/*
-				 * Create the GUI and transfer a reference to this class thus that the GUI can
+				 * Create the GUI and transfer a reference to this class that the GUI can
 				 * execute methods from this class!
 				 */
 				gui = new ModelGui(parent, Main.this, SWT.NONE);
 
 				parent.layout(true);
 			}
-		}); 
-	} 
+		});
+	}
 
 	/* Called from the GUI class! */
 	public void executeSelection(int choice) {
@@ -209,6 +209,7 @@ public class Main {
 	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image = null;
+		ImageStack stack = null;
 		/*
 		 * Important call to get the features and feature options from the GUI (syncExec
 		 * wrapped for SWT)!
@@ -232,15 +233,15 @@ public class Main {
 			image = WindowManager.getCurrentImage();
 		}
 		/* Duplicate the image! */
-		//Duplicator duplicator = new Duplicator();
+		// Duplicator duplicator = new Duplicator();
 		/* Duplicate original! */
-		//ImagePlus rgb = duplicator.run(image);
-		ImageStack stack = null;
+		// ImagePlus rgb = duplicator.run(image);
+
 		/*
 		 * Convert original to float for the filter (and grayscale layer if not color)
 		 * images!
 		 */
-		//image.setProcessor(image.getProcessor().convertToFloat());
+		// image.setProcessor(image.getProcessor().convertToFloat());
 
 		/* If we have a RGB! */
 		if (image.getProcessor() instanceof ColorProcessor) {
@@ -265,7 +266,7 @@ public class Main {
 						int sel = Integer.parseInt(channelToInclude[j]);
 						/* Use selected slices. Important to convert to Float! */
 						ImageProcessor floatProcessor = hsbStack.getProcessor(sel).convertToFloat();
-						stack.addSlice("Channel" + j, floatProcessor);
+						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				} else {
 					/* Use all slices. Important to convert to Float! */
@@ -284,11 +285,12 @@ public class Main {
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/* Add RGB channels to the stack! */
+						/* Add selected RGB channels to the new stack! */
 						/* Convert original to float to have a float image stack for the filters! */
-						int sel = Integer.parseInt(channelToInclude[j]) - 1;
+						int sel = Integer.parseInt(channelToInclude[j]) - 1;// Channels index starts with 0 so we
+																			// correct here with -1!
 						ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
-						stack.addSlice("Channel" + j, floatProcessor);
+						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 
 				} else {
@@ -296,20 +298,32 @@ public class Main {
 						/* Add RGB channels to the stack! */
 						/* Convert original to float to have a float image stack for the filters! */
 						ImageProcessor floatProcessor = channels[j].getProcessor().convertToFloat();
-						stack.addSlice("Channel" + j, floatProcessor);
+						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				}
 			}
 		} else {/* Grayscale images (8-bit, 16-bit, 32-bit) */
-			/* If we have a multichannel image! */
+			/* If we have a grayscale stack image! */
 			if (image.getStackSize() > 1) {
-				/* Convert original to float to have a float image stack for the filters! */
-				stack = image.getStack().convertToFloat();
+				String opt = gui.channelOption;
+				String[] channelToInclude = opt.split(",");
+				/* Check if we only want to include certain slices! */
+				if (opt.isEmpty() == false && channelToInclude.length > 0) {
+					stack = new ImageStack(image.getWidth(), image.getHeight());
+					for (int j = 0; j < channelToInclude.length; j++) {
+						/* Add selected slices to a new stack! */
+						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with index 1 no correction necessary!
+						stack.addSlice("Grayscale_Layer_"+j, image.getStack().getProcessor(sel).convertToFloat());
+					}
+				} else {
+					/* Convert original to float to have a float image stack for the filters! */
+					stack = image.getStack().convertToFloat();
+				}
 			} else {
 
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				/* Convert original to float to have a float image stack for the filters! */
-				stack.addSlice("grayscale", image.getProcessor().convertToFloat());
+				stack.addSlice("Grayscale", image.getProcessor().convertToFloat());
 			}
 		}
 
@@ -326,7 +340,6 @@ public class Main {
 		 */
 		if (gui.gaussian) {
 			monitor.setTaskName("Apply Gaussian Filter");
-
 			GaussianBlur gaussian = new GaussianBlur();
 			/* Split the gaussian option to get all sigmas! */
 			String[] gaussianSigma = gui.gaussianOption.split(",");
@@ -336,61 +349,63 @@ public class Main {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					double sigma = Double.parseDouble(gaussianSigma[j]);
 					gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
-					stack.addSlice("Gaussian_" + sigma, ip);
+					stack.addSlice("Gaussian_" + "Sigma_" + sigma + "Layer_" + i, ip);
 				}
 			}
 		}
 
 		if (gui.diffOfGaussian) {
 			monitor.setTaskName("Apply Difference of Gaussian Filters");
-
 			GaussianBlur gaussian = new GaussianBlur();
-			/* Split the gaussian option to get all sigmas! */
-			String[] gaussianSigma = gui.diffGaussianOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				/* Here we have two sigmas to calculate the difference! */
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				double sigma1 = Double.parseDouble(gaussianSigma[0]);
-				gaussian.blurGaussian(ip, sigma1, sigma1, 0.0002);
 
-				ImageProcessor ip2 = tempStack.getProcessor(i).duplicate();
-				double sigma2 = Double.parseDouble(gaussianSigma[1]);
-				gaussian.blurGaussian(ip2, sigma2, sigma2, 0.0002);
+				/* See if we have several Gaussian Difference filter settings! */
+				String[] gaussianDiffOptionSet = gui.diffGaussianOption.split(";");
+				for (int j = 0; j < gaussianDiffOptionSet.length; j++) {
 
-				ImageCalculator ic = new ImageCalculator();
-				ImagePlus finalDiffGaussian = ic.run("Subtract create 32-bit", new ImagePlus("sigma1", ip),
-						new ImagePlus("sigma2", ip2));
-				stack.addSlice("DiffOfGaussian_" + i, finalDiffGaussian.getProcessor());
+					String opGaussianDiff = gaussianDiffOptionSet[j];
+					/* Split the gaussian option to get all sigmas! */
+					String[] gaussianSigma = opGaussianDiff.split(",");
+
+					/* Here we have two sigmas to calculate the difference! */
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					double sigma1 = Double.parseDouble(gaussianSigma[0]);
+					gaussian.blurGaussian(ip, sigma1, sigma1, 0.0002);
+
+					ImageProcessor ip2 = tempStack.getProcessor(i).duplicate();
+					double sigma2 = Double.parseDouble(gaussianSigma[1]);
+					gaussian.blurGaussian(ip2, sigma2, sigma2, 0.0002);
+
+					ImageCalculator ic = new ImageCalculator();
+					ImagePlus finalDiffGaussian = ic.run("Subtract create 32-bit", new ImagePlus("sigma1", ip),
+							new ImagePlus("sigma2", ip2));
+					stack.addSlice("DiffOfGaussian_Set_" + j + "_Layer" + i, finalDiffGaussian.getProcessor());
+
+				}
 
 			}
 
 		}
 
 		if (gui.median) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Median Filter");
 			/* Split the median option to get all sigmas! */
 			String[] medianRadius = gui.medianOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-
 				for (int j = 0; j < medianRadius.length; j++) {
 					double radius = Double.parseDouble(medianRadius[j]);
 					// IJ.run(plus, "Median...", "radius="+medianSigma[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MEDIAN);
-					stack.addSlice("Median_" + radius, ip);
+					stack.addSlice("Median_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
-			Prefs.setThreads(threads);
 		}
 
 		if (gui.mean) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Mean Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] meanRadius = gui.meanOption.split(",");
@@ -401,16 +416,13 @@ public class Main {
 					// IJ.run(plus, "Mean...", "radius="+meanSigma[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
-					ran.rank(ip, radius, 0);
-					stack.addSlice("Mean_" + radius, ip);
+					ran.rank(ip, radius, RankFilters.MEAN);
+					stack.addSlice("Mean_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
-			Prefs.setThreads(threads);
 		}
 
 		if (gui.variance) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Variance Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] varianceSigma = gui.varianceOption.split(",");
@@ -421,14 +433,11 @@ public class Main {
 					double radius = Double.parseDouble(varianceSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.VARIANCE);
-					stack.addSlice("Variance_" + radius, ip);
+					stack.addSlice("Variance_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
-			Prefs.setThreads(threads);
 		}
 		if (gui.maximum) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Maximum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] maximumSigma = gui.maximumOption.split(",");
@@ -439,95 +448,91 @@ public class Main {
 					double radius = Double.parseDouble(maximumSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MAX);
-					stack.addSlice("Maximum_" + radius, ip);
+					stack.addSlice("Maximum_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
-			Prefs.setThreads(threads);
 		}
 
 		if (gui.minimum) {
-			int threads = Prefs.getThreads();
-			Prefs.setThreads(useAmountOfThreads);
 			monitor.setTaskName("Apply Minimum Filter");
 			/* Split the mean option to get all sigmas! */
 			String[] minimumSigma = gui.minimumOption.split(",");
-
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-
 				for (int j = 0; j < minimumSigma.length; j++) {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					double radius = Double.parseDouble(minimumSigma[j]);
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MIN);
 					// ran.rank(ip, Double.parseDouble(minimumSigma[j]), RankFilters.MIN);
-					stack.addSlice("Minimum_" + radius, ip);
+					stack.addSlice("Minimum_" + "Radius_" + radius + "Layer_" + i, ip);
 				}
 			}
-			Prefs.setThreads(threads);
 		}
 
 		if (gui.gradientHessian) {
 			monitor.setTaskName("Apply Gradient, Hessian Derivative");
-			/* Split the median option to get all sigmas! */
-
+			/*  */
+			GaussianBlur gaussian = new GaussianBlur();
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 
-				int width = ip.getWidth();
-				int height = ip.getHeight();
-				GrayF32 boofFilterImageInput = new GrayF32(width, height);
+				String[] gradientHessian = gui.gradientHessianOption.split(",");
+				/* Apply a Gaussian blur if we have double arguments! */
+				if (gradientHessian[0].isEmpty() == false) {
+					for (int j = 0; j < gradientHessian.length; j++) {
+						double sigma = Double.parseDouble(gradientHessian[j]);
 
-				/* Transfer ImageProcessor data in place to boofcv image input! */
-				ipToBoofCVGray32(ip, boofFilterImageInput);
+						ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 
-				// First order derivative, also known as the gradient
-				GrayF32 derivX = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
-				GrayF32 derivY = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
+						gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
 
-				GImageDerivativeOps.gradient(DerivativeType.SOBEL, boofFilterImageInput, derivX, derivY,
-						BorderType.EXTENDED);
+						gradient(stack, ip);
 
-				// Second order derivative, also known as the Hessian
-				GrayF32 derivXX = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
-				GrayF32 derivXY = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
-				GrayF32 derivYY = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
+					}
+				} else {
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 
-				GImageDerivativeOps.hessian(DerivativeType.SOBEL, derivX, derivY, derivXX, derivXY, derivYY,
-						BorderType.EXTENDED);
-
-				FloatProcessor flxProcessor = new FloatProcessor(width, height, derivX.getData());
-				FloatProcessor flyProcessor = new FloatProcessor(width, height, derivY.getData());
-
-				FloatProcessor flxxProcessor = new FloatProcessor(width, height, derivXX.getData());
-				FloatProcessor flxyProcessor = new FloatProcessor(width, height, derivXY.getData());
-				FloatProcessor flyyProcessor = new FloatProcessor(width, height, derivYY.getData());
-
-				stack.addSlice("Gradient_Sobel X", flxProcessor);
-				stack.addSlice("Gradient_Sobel Y", flyProcessor);
-
-				stack.addSlice("Hessian_Sobel XX", flxxProcessor);
-				stack.addSlice("Hessian_Sobel XY", flxyProcessor);
-				stack.addSlice("Hessian_Sobel YY", flyyProcessor);
+					gradient(stack, ip);
+				}
 			}
 		}
 
 		if (gui.laplacian) {
 			monitor.setTaskName("Apply Laplacian Derivative");
-
 			int stackSize = tempStack.getSize();
+			GaussianBlur gaussian = new GaussianBlur();
 			for (int i = 1; i <= stackSize; i++) {
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				int width = ip.getWidth();
-				int height = ip.getHeight();
-				GrayF32 boofFilterImageInput = new GrayF32(width, height);
-				GrayF32 boofFilterImageOutput = new GrayF32(width, height);
-				/* Transfer ImageProcessor data in place to boofcv image input! */
-				ipToBoofCVGray32(ip, boofFilterImageInput);
-				DerivativeLaplacian.process(boofFilterImageInput, boofFilterImageOutput, null);
-				FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
-				stack.addSlice("Laplacian Derivative", flProcessor);
+				String[] laplacianSigma = gui.laplacianOption.split(",");
+				/* Apply a Gaussian blur if we have double arguments! */
+				if (laplacianSigma[0].isEmpty() == false) {
+					for (int j = 0; j < laplacianSigma.length; j++) {
+						double sigma = Double.parseDouble(laplacianSigma[j]);
+						ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+						gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
+						int width = ip.getWidth();
+						int height = ip.getHeight();
+						GrayF32 boofFilterImageInput = new GrayF32(width, height);
+						GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+						/* Transfer ImageProcessor data in place to boofcv image input! */
+						ipToBoofCVGray32(ip, boofFilterImageInput);
+						DerivativeLaplacian.process(boofFilterImageInput, boofFilterImageOutput, null);
+						FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+						stack.addSlice("Laplacian_Derivative_From_Gaussian_" + sigma + "_Layer" + i, flProcessor);
+					}
+				} else {
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					int width = ip.getWidth();
+					int height = ip.getHeight();
+					GrayF32 boofFilterImageInput = new GrayF32(width, height);
+					GrayF32 boofFilterImageOutput = new GrayF32(width, height);
+					/* Transfer ImageProcessor data in place to boofcv image input! */
+					ipToBoofCVGray32(ip, boofFilterImageInput);
+					DerivativeLaplacian.process(boofFilterImageInput, boofFilterImageOutput, null);
+					FloatProcessor flProcessor = new FloatProcessor(width, height, boofFilterImageOutput.getData());
+					stack.addSlice("Laplacian Derivative_" + "Layer_" + i, flProcessor);
+
+				}
 			}
 		}
 
@@ -536,10 +541,26 @@ public class Main {
 			// https://imagejdocu.tudor.lu/faq/technical/what_is_the_algorithm_used_in_find_edges
 			monitor.setTaskName("Apply Edges");
 			int stackSize = tempStack.getSize();
+			GaussianBlur gaussian = new GaussianBlur();
 			for (int i = 1; i <= stackSize; i++) {
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
-				stack.addSlice("Edges_layer" + i, ip);
+				String[] edgesSigma = gui.edgesOption.split(",");
+				/* Apply a Gaussian blur if we have double arguments! */
+				if (edgesSigma[0].isEmpty() == false) {
+					for (int j = 0; j < edgesSigma.length; j++) {
+						double sigma = Double.parseDouble(edgesSigma[j]);
+						ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+						gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
+						IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
+						stack.addSlice("Edges_Layer_From_Gaussian_" + j + "_Layer_" + i, ip);
+
+					}
+
+				} else {
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
+					stack.addSlice("Edges_" + "Layer_" + i, ip);
+
+				}
 			}
 
 		}
@@ -549,42 +570,93 @@ public class Main {
 			monitor.setTaskName("Apply Lipschitz Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
-				/* Split the mean option to get all sigmas! */
-				String[] lipschitzOptions = gui.lipschitzOption.split(",");
 
-				Lipschitz_ filter = new Lipschitz_();
-				Lipschitz_.setDownHatFilter(Boolean.parseBoolean(lipschitzOptions[0]));
-				Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
-				Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
-				filter.Lipschitz2D(ip);
-				stack.addSlice("Edges", ip.convertToFloat());
+				/* See if we have several Lipschitz filter settings! */
+				String[] libschitzOptionsSet = gui.lipschitzOption.split(";");
+				for (int j = 0; j < libschitzOptionsSet.length; j++) {
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate().convertToByte(true);
+					String opLipschitz = libschitzOptionsSet[j];
+					/* Split the Lipschitz set for one filter! */
+					String[] lipschitzOptions = opLipschitz.split(",");
+					Lipschitz_ filter = new Lipschitz_();
+					Lipschitz_.setDownHatFilter(Boolean.parseBoolean(lipschitzOptions[0]));
+					Lipschitz_.setTopHatFilter(Boolean.parseBoolean(lipschitzOptions[1]));
+					Lipschitz_.setSlopeFilter(Double.parseDouble(lipschitzOptions[2]));
+					filter.Lipschitz2D(ip);
+					stack.addSlice("Lipschitz_Set_" + j + "_Layer_" + i, ip.convertToFloat());
+				}
 			}
 		}
 
 		if (gui.gabor) {
-			// see:
+
 			monitor.setTaskName("Apply Gabor Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				/* Split the mean option to get all sigmas! */
-				String[] gaborOptions = gui.gaborOption.split(",");
-				ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-				/* Will work with 8-bit only! */
-				BufferedImage buff = new ImagePlus("tempGabor", ip).getBufferedImage();
-				FastBitmap fb = new FastBitmap(buff);
+				/* See if we have several Gabor filter settings! */
+				String[] gaborOptionsSet = gui.gaborOption.split(";");
 
-				double wavelength = Double.parseDouble(gaborOptions[0]);
-				double orientation = Double.parseDouble(gaborOptions[1]);
-				double phaseOffset = Double.parseDouble(gaborOptions[2]);
-				double gaussianVar = Double.parseDouble(gaborOptions[3]);
-				double aspectRation = Double.parseDouble(gaborOptions[4]);
-				GaborFilter gabor = new GaborFilter(wavelength, orientation, phaseOffset, gaussianVar, aspectRation);
-				gabor.applyInPlace(fb);
-				float[] imArray = fb.toArrayGrayAsFloat();
-				int width = ip.getWidth();
-				int height = ip.getHeight();
-				stack.addSlice("Gabor", new FloatProcessor(width, height, imArray));
+				for (int j = 0; j < gaborOptionsSet.length; j++) {
+
+					String opGabor = gaborOptionsSet[j];
+					/* Split the Gabor set for one filter! */
+					String[] gaborOptions = opGabor.split(",");
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					/* Will work with 8-bit only! */
+					BufferedImage buff = new ImagePlus("tempGabor", ip).getBufferedImage();
+					FastBitmap fb = new FastBitmap(buff);
+
+					GaborFilter gabor = new GaborFilter();
+					/* Extract the arguments for one filter for the different layers! */
+					gabor.setSize(Integer.parseInt(gaborOptions[0]));
+					gabor.setWavelength(Double.parseDouble(gaborOptions[1]));
+					gabor.setOrientation(Double.parseDouble(gaborOptions[2]));
+					gabor.setPhaseOffset(Double.parseDouble(gaborOptions[3]));
+					gabor.setGaussianVar(Double.parseDouble(gaborOptions[4]));
+					gabor.setAspectRatio(Double.parseDouble(gaborOptions[5]));
+
+					gabor.applyInPlace(fb);
+					float[] imArray = fb.toArrayGrayAsFloat();
+					int width = ip.getWidth();
+					int height = ip.getHeight();
+					stack.addSlice("Gabor_Set_" + j + "_Layer_" + i, new FloatProcessor(width, height, imArray));
+					// new Gabor_Filter(ip,stack);
+
+				}
+			}
+		}
+
+		if (gui.topHat) {
+			monitor.setTaskName("Apply Top Hat Filter");
+			/* Split the mean option to get all sigmas! */
+			String[] topHatRadius = gui.topHatOption.split(",");
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+				for (int j = 0; j < topHatRadius.length; j++) {
+					double radius = Double.parseDouble(topHatRadius[j]);
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					RankFilters ran = new RankFilters();
+					ran.rank(ip, radius, RankFilters.TOP_HAT);
+					stack.addSlice("Top_Hat_" + radius + "_Layer_" + i, ip);
+				}
+			}
+		}
+
+		if (gui.kuwahara) {
+			monitor.setTaskName("Apply Kuwahara Filter");
+			int stackSize = tempStack.getSize();
+			for (int i = 1; i <= stackSize; i++) {
+				/* Split the mean option to get all sigmas! */
+				String[] kuwaharaOptions = gui.kuwaharaOption.split(",");
+				for (int j = 0; j < kuwaharaOptions.length; j++) {
+					int radius = Integer.parseInt(kuwaharaOptions[j]);
+					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
+					/* Will work with 8-bit only! */
+					Kuwahara_Filter kuw = new Kuwahara_Filter();
+					Kuwahara_Filter.size = radius;
+					kuw.filter(ip);
+					stack.addSlice("Kuwahara_" + radius + "_Layer_" + i, ip);
+				}
 			}
 		}
 
@@ -596,7 +668,7 @@ public class Main {
 				for (int u = 1; u <= stackSize; u++) {
 					ImageProcessor ip = tempStack.getProcessor(u).duplicate();
 					IJ.run(new ImagePlus("Convolved_" + i + "_layer" + u + "_temp", ip), "Convolve...", matrices[i]);
-					stack.addSlice("Convolved_" + i + "_layer" + u, ip);
+					stack.addSlice("Convolved_" + i + "_Layer_" + u, ip);
 				}
 			}
 
@@ -604,8 +676,54 @@ public class Main {
 
 		String name = image.getShortTitle();
 		imPlus = new ImagePlus(name, stack);
-
+		image = null;
+		stack = null;
+		tempStack = null;
 		return imPlus;
+	}
+
+	private void gradient(ImageStack stack, ImageProcessor ip) {
+		int width = ip.getWidth();
+		int height = ip.getHeight();
+		GrayF32 boofFilterImageInput = new GrayF32(width, height);
+
+		/* Transfer ImageProcessor data in place to boofcv image input! */
+		ipToBoofCVGray32(ip, boofFilterImageInput);
+
+		// First order derivative, also known as the gradient
+		GrayF32 derivX = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
+		GrayF32 derivY = new GrayF32(boofFilterImageInput.width, boofFilterImageInput.height);
+
+		GImageDerivativeOps.gradient(DerivativeType.SOBEL, boofFilterImageInput, derivX, derivY, BorderType.EXTENDED);
+
+		// Second order derivative, also known as the Hessian
+		// GrayF32 derivXX = new GrayF32(boofFilterImageInput.width,
+		// boofFilterImageInput.height);
+		// GrayF32 derivXY = new GrayF32(boofFilterImageInput.width,
+		// boofFilterImageInput.height);
+		// GrayF32 derivYY = new GrayF32(boofFilterImageInput.width,
+		// boofFilterImageInput.height);
+
+		// GImageDerivativeOps.hessian(DerivativeType.SOBEL, derivX, derivY, derivXX,
+		// derivXY, derivYY,
+		// BorderType.EXTENDED);
+
+		FloatProcessor flxProcessor = new FloatProcessor(width, height, derivX.getData());
+		FloatProcessor flyProcessor = new FloatProcessor(width, height, derivY.getData());
+
+		// FloatProcessor flxxProcessor = new FloatProcessor(width, height,
+		// derivXX.getData());
+		// FloatProcessor flxyProcessor = new FloatProcessor(width, height,
+		// derivXY.getData());
+		// FloatProcessor flyyProcessor = new FloatProcessor(width, height,
+		// derivYY.getData());
+
+		stack.addSlice("Gradient_Sobel X", flxProcessor);
+		stack.addSlice("Gradient_Sobel Y", flyProcessor);
+
+		// stack.addSlice("Hessian_Sobel XX", flxxProcessor);
+		// stack.addSlice("Hessian_Sobel XY", flxyProcessor);
+		// stack.addSlice("Hessian_Sobel YY", flyyProcessor);
 	}
 
 	private void extracted(double radius, final RankFilters ran, ImageProcessor ip, int FilterType) {

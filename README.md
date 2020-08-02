@@ -12,9 +12,30 @@ When you import the project from a local file location or *.zip file the classpa
 Follow Button 1-4 for a classification workflow which trains and classifies images with R (scripts
 are available in the R directory) in a non-blocking job.
  
-Enable/disable/add filters in the 'createStackFeatures' method.
+Several features can be enabled in the default tab which will be added to the default image layers. A comma separated
+text argument adds filter images of different radius or applies special settings for edge algorithms like Difference of Gaussian, Lipschitz, Gabor, Convolve. 
+For some edge detection methods a ';' separator can be set, too, for different sets of edge settings (Difference of Gaussian, Lipschitz, Gabor, Convolve) resulting
+in one image layer each.
 
-Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified.
+All settings for classification can be stored or reopened with the 'Load/Save Configuration' actions in a simple text file.
 
-The 'ModelGui' graphical view interface can be extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
+In the Settings tab the path to the R and ImageJ macro scripts can be set if necessary (or easier simply change the default scripts).
+
+Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
+to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!)
+
+The 'ModelGui' graphical view interface can be modified or extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
+
+## Installation
+
+With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update Site:
+
+https://bio7.github.io/javacv/
+
+To make the libraries accessible for the dynamic Java compiler add the following libs to the
+compiler classpath (you find them find them in the new installed Java CV plugin - see MacOSX screenshot below)
+
+![image](libs.png)
+
+In addition you have to recalculate the projects classpath (Context Menu->Fix Project Classpath).
 

@@ -66,12 +66,19 @@ public class LoadAndSaveConfig {
 				modelGui.optionLaplacian.setText(reader.readLine());
 
 				modelGui.checkEdges.setSelection(read(reader));
+				modelGui.optionsEdges.setText(reader.readLine());
 				
 				modelGui.checkLipschitz.setSelection(read(reader));
 				modelGui.optionLipschitz.setText(reader.readLine());
 				
 				modelGui.checkGabor.setSelection(read(reader));
 				modelGui.optionGabor.setText(reader.readLine());
+				
+				modelGui.checkTopHat.setSelection(read(reader));
+				modelGui.optionsTopHat.setText(reader.readLine());
+				
+				modelGui.checkKuwahara.setSelection(read(reader));
+				modelGui.optionsKuwahara.setText(reader.readLine());
 
 				modelGui.checkConvolve.setSelection(read(reader));
 				modelGui.optionConvolve.setText(reader.readLine().replace("\\n", System.lineSeparator()));
@@ -152,6 +159,8 @@ public class LoadAndSaveConfig {
 		
 		buffer.append(modelGui.checkEdges.getSelection());
 		buffer.append(sep);
+		buffer.append(modelGui.optionsEdges.getText());
+		buffer.append(sep);
 		
 		buffer.append(modelGui.checkLipschitz.getSelection());
 		buffer.append(sep);
@@ -161,6 +170,16 @@ public class LoadAndSaveConfig {
 		buffer.append(modelGui.checkGabor.getSelection());
 		buffer.append(sep);
 		buffer.append(modelGui.optionGabor.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkTopHat.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionsTopHat.getText());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkKuwahara.getSelection());
+		buffer.append(sep);
+		buffer.append(modelGui.optionsKuwahara.getText());
 		buffer.append(sep);
 
 		buffer.append(modelGui.checkConvolve.getSelection());

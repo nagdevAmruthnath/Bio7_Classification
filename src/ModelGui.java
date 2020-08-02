@@ -16,6 +16,7 @@ import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -75,7 +76,7 @@ public class ModelGui extends Composite {
 	protected Text optionsVariance;
 	protected boolean variance;
 	protected String varianceOption;
-	private Text optionsEdges;
+	protected Text optionsEdges;
 	protected Text optionDiffGaussian;
 	protected Button checkDifferenceOfGaussian;
 	protected boolean diffOfGaussian;
@@ -93,6 +94,15 @@ public class ModelGui extends Composite {
 	protected boolean useImportMacro;
 	protected String textOptionMacro;
 	private Button buttonMacro;
+	protected Button checkTopHat;
+	protected Text optionsTopHat;
+	protected boolean topHat;
+	protected String topHatOption;
+	protected Button checkKuwahara;
+	protected Text optionsKuwahara;
+	protected boolean kuwahara;
+	protected String kuwaharaOption;
+	protected String edgesOption;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -238,14 +248,13 @@ public class ModelGui extends Composite {
 		checkMaximum.setText("Maximum");
 
 		checkGradientHessian = new Button(composite, SWT.CHECK);
-		checkGradientHessian.setText("Gradient/Hessian");
+		checkGradientHessian.setText("Gradient");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
 		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMaximum.setText("2");
 
 		optionGradientHessian = new Text(composite, SWT.BORDER);
-		optionGradientHessian.setEnabled(false);
 		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLaplacian = new Button(composite, SWT.CHECK);
@@ -255,11 +264,9 @@ public class ModelGui extends Composite {
 		checkEdges.setText("Sobel Edge");
 
 		optionLaplacian = new Text(composite, SWT.BORDER);
-		optionLaplacian.setEnabled(false);
 		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		optionsEdges = new Text(composite, SWT.BORDER);
-		optionsEdges.setEnabled(false);
 		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLipschitz = new Button(composite, SWT.CHECK);
@@ -273,7 +280,7 @@ public class ModelGui extends Composite {
 		optionLipschitz.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		optionGabor = new Text(composite, SWT.BORDER);
-		optionGabor.setText("32,45,0,0,1");
+		optionGabor.setText("3,4.0,0.6,1.0,2.0,0.3");
 		optionGabor.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -281,6 +288,22 @@ public class ModelGui extends Composite {
 			}
 		});
 		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		checkTopHat = new Button(composite, SWT.CHECK);
+		checkTopHat.setText("Top Hat");
+
+		checkKuwahara = new Button(composite, SWT.CHECK);
+		checkKuwahara.setText("Kuwahara");
+
+		optionsTopHat = new Text(composite, SWT.BORDER);
+		optionsTopHat.setText("2");
+		optionsTopHat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		optionsKuwahara = new Text(composite, SWT.BORDER);
+		optionsKuwahara.setText("2");
+		optionsKuwahara.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
 		checkConvolve.setText("Convolve");
@@ -318,12 +341,14 @@ public class ModelGui extends Composite {
 				textImageJMacro.setText(path);
 			}
 		});
-		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridData gd_buttonMacro = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_buttonMacro.heightHint = 25;
+		buttonMacro.setLayoutData(gd_buttonMacro);
 		buttonMacro.setText("Macro");
 
-		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
+		textImageJMacro = new Text(composite_1, SWT.BORDER);
 		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
+		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/IJMacro.ijm");
 
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {
@@ -341,7 +366,7 @@ public class ModelGui extends Composite {
 
 		txtTrainingRScript = new Text(composite_1, SWT.BORDER);
 		txtTrainingRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		txtTrainingRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Train_RandomForest.R");
+		txtTrainingRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Train.R");
 		btnRClassificationScript = new Button(composite_1, SWT.NONE);
 		btnRClassificationScript.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -358,7 +383,7 @@ public class ModelGui extends Composite {
 
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
 		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify_RandomForest.R");
+		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify.R");
 
 	}
 
@@ -398,7 +423,8 @@ public class ModelGui extends Composite {
 				minimumOption = optionsMinimum.getText();
 
 				edges = checkEdges.getSelection();
-
+                edgesOption=optionsEdges.getText();
+                
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
 
@@ -413,6 +439,12 @@ public class ModelGui extends Composite {
 
 				gabor = checkGabor.getSelection();
 				gaborOption = optionGabor.getText();
+
+				topHat = checkTopHat.getSelection();
+				topHatOption = optionsTopHat.getText();
+
+				kuwahara = checkKuwahara.getSelection();
+				kuwaharaOption = optionsKuwahara.getText();
 
 			}
 		});
@@ -458,7 +490,8 @@ public class ModelGui extends Composite {
 		});
 		return textOptionMacro;
 	}
-   /*Here we layout the ImageJ panel!*/
+
+	/* Here we layout the ImageJ panel! */
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
 		canvasView.updatePlotCanvas();
