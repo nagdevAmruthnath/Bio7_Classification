@@ -128,12 +128,10 @@ public class Main {
 		if (choice == 1) {
 			String files = Bio7Dialog.openFile();
 			if (files != null) {
-				// System.out.println(files);
-				// for (int i = 0; i < files.length; i++) {
 				ImagePlus imPlus = createStackFeatures(null, files, monitor);
 				imPlus.show();
 				gui.layout();
-				// }
+
 			}
 
 		}
@@ -215,20 +213,31 @@ public class Main {
 		 * wrapped for SWT)!
 		 */
 		gui.getFeatureOptions();
-
+        /*If we want to use an import macro, e.g., using the BioFormats library commands which can be
+         *recorded with the ImageJ macro recorder!*/
 		if (gui.useImportMacro) {
-			/* Call ImageJ macro with option (file path)! */
-			IJ.runMacroFile(gui.getMacroTextOption(), singleFile);
+			/*Multiple files selected!*/
+			if (files != null) {
+				IJ.runMacroFile(gui.getMacroTextOption(), getCurrentPath() + "/" + files);
+
+			} else {
+				/* Call ImageJ macro with option (file path)! */
+				IJ.runMacroFile(gui.getMacroTextOption(), singleFile);
+			}
 
 		} else {
+			/*Multiple files selected!*/
 			if (files != null) {
-				image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
-																		// display!
+				image = IJ.openImage(getCurrentPath() + "/" + files);
+
 			} else {
 				image = IJ.openImage(singleFile);
 			}
 		}
-		/* We must avoid a null reference! */
+		/*
+		 * We must avoid a null reference when using the BioFormats library with the
+		 * macro import option!
+		 */
 		if (gui.useImportMacro && image == null) {
 			image = WindowManager.getCurrentImage();
 		}
@@ -312,8 +321,9 @@ public class Main {
 					stack = new ImageStack(image.getWidth(), image.getHeight());
 					for (int j = 0; j < channelToInclude.length; j++) {
 						/* Add selected slices to a new stack! */
-						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with index 1 no correction necessary!
-						stack.addSlice("Grayscale_Layer_"+j, image.getStack().getProcessor(sel).convertToFloat());
+						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with index 1 no correction
+																		// necessary!
+						stack.addSlice("Grayscale_Layer_" + j, image.getStack().getProcessor(sel).convertToFloat());
 					}
 				} else {
 					/* Convert original to float to have a float image stack for the filters! */
