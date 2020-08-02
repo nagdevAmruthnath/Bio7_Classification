@@ -266,7 +266,7 @@ public class Main {
 						int sel = Integer.parseInt(channelToInclude[j]);
 						/* Use selected slices. Important to convert to Float! */
 						ImageProcessor floatProcessor = hsbStack.getProcessor(sel).convertToFloat();
-						stack.addSlice("Channel" + j, floatProcessor);
+						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				} else {
 					/* Use all slices. Important to convert to Float! */
@@ -290,7 +290,7 @@ public class Main {
 						int sel = Integer.parseInt(channelToInclude[j]) - 1;// Channels index starts with 0 so we
 																			// correct here with -1!
 						ImageProcessor floatProcessor = channels[sel].getProcessor().convertToFloat();
-						stack.addSlice("Channel" + j, floatProcessor);
+						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 
 				} else {
@@ -298,7 +298,7 @@ public class Main {
 						/* Add RGB channels to the stack! */
 						/* Convert original to float to have a float image stack for the filters! */
 						ImageProcessor floatProcessor = channels[j].getProcessor().convertToFloat();
-						stack.addSlice("Channel" + j, floatProcessor);
+						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				}
 			}
@@ -307,13 +307,13 @@ public class Main {
 			if (image.getStackSize() > 1) {
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
-				/* Only include slice numbers! */
+				/* Check if we only want to include certain slices! */
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					stack = new ImageStack(image.getWidth(), image.getHeight());
 					for (int j = 0; j < channelToInclude.length; j++) {
 						/* Add selected slices to a new stack! */
-						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with 1 no correction necessary!
-						stack.addSlice("Grayscale", image.getStack().getProcessor(sel).convertToFloat());
+						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with index 1 no correction necessary!
+						stack.addSlice("Grayscale_Layer_"+j, image.getStack().getProcessor(sel).convertToFloat());
 					}
 				} else {
 					/* Convert original to float to have a float image stack for the filters! */
