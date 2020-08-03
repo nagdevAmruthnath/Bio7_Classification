@@ -184,10 +184,8 @@ public class Main {
 			if (gui.useDirectoryDialog) {
 				String dirSelection = Bio7Dialog.directory("Select the base directory");
 				File dir = new File(dirSelection);
-				final String[] SUFFIX = { "tif", "tiff" };
-				// System.out.println("Getting all files in with extension SUFFIX " +
-				// dir.getCanonicalPath() + " including those in subdirectories");
-				List<File> files = (List<File>) FileUtils.listFiles(dir, SUFFIX, true);
+				final String[] ext = { "tif", "tiff","dcm","png"};
+				List<File> files = (List<File>) FileUtils.listFiles(dir, ext, true);
 				for (int i = 0; i < files.size(); i++) {
 					File file = files.get(i);
 
