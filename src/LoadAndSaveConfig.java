@@ -87,6 +87,8 @@ public class LoadAndSaveConfig {
 				
 				modelGui.checkUseImportMacro.setSelection(read(reader));
 				
+				modelGui.checkUseDirectory.setSelection(read(reader));
+				
 				modelGui.textImageJMacro.setText(reader.readLine());
 
 				modelGui.txtTrainingRScript.setText(reader.readLine());
@@ -190,6 +192,9 @@ public class LoadAndSaveConfig {
 		/*Second tab. Settings for the script paths!*/
 		
 		buffer.append(modelGui.checkUseImportMacro.getSelection());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkUseDirectory.getSelection());
 		buffer.append(sep);
 		
 		buffer.append(modelGui.getMacroTextOption());

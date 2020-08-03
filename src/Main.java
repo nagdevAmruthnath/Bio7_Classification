@@ -5,6 +5,11 @@ import static com.eco.bio7.image.ImageMethods.imageFromR;
 import static com.eco.bio7.rbridge.RServeUtil.evalRScript;
 import static com.eco.bio7.rbridge.RServeUtil.listRObjects;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -124,6 +129,12 @@ public class Main {
 
 	public void action(int choice, IProgressMonitor monitor) {
 
+		/*
+		 * Important call to get the features and feature settings from the GUI
+		 * (syncExec wrapped for SWT)!
+		 */
+		gui.getFeatureOptions();
+
 		/* Create feature stack! */
 		if (choice == 1) {
 			String files = Bio7Dialog.openFile();
@@ -170,35 +181,39 @@ public class Main {
 		/* Classify selected images with external Script! */
 		else if (choice == 4) {
 
-			String[] files = openMultipleFiles();
-			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
+			if (gui.useDirectoryDialog) {
+				String dirSelection = Bio7Dialog.directory("Select the base directory");
+				File dir = new File(dirSelection);
+				final String[] SUFFIX = { "tif", "tiff" };
+				// System.out.println("Getting all files in with extension SUFFIX " +
+				// dir.getCanonicalPath() + " including those in subdirectories");
+				List<File> files = (List<File>) FileUtils.listFiles(dir, SUFFIX, true);
+				for (int i = 0; i < files.size(); i++) {
+					File file = files.get(i);
 
-					ImagePlus imPlus = createStackFeatures(files[i], null, monitor);
-					// System.out.println(choice);
-
-					/* Correct some image names for R! */
-					String name = imPlus.getTitle();
-					String nameCorrected = RServeUtil.replaceWrongRWord(name);
-					/* Transfer the feature stack to R! */
-					imageFeatureStackToR(nameCorrected, 0, imPlus);
-					RConnection rcon = RServe.getConnection();
+					String currentFile = null;
 					try {
-						rcon.eval("current_feature_stack<-" + nameCorrected + "");
-					} catch (RserveException e) {
+						currentFile = file.getCanonicalPath();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					monitor.setTaskName("Apply Classification Script");
-					/* Predict in R (evalRScript is a custom method) with the randomForest model! */
-					String path = gui.getPathClassificationScript();
-					if (path.endsWith(".R")) {
-						evalRScript(path);
-						/* Transfer the classification result from R back to ImageJ! */
-						imageFromR(3, "imageMatrix", 1);
-						WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
-						gui.layout();
-					}
+					ImagePlus imPlus = createStackFeatures(currentFile, null, monitor);
+					// System.out.println(choice);
 
+					classify(monitor, imPlus);
+				}
+			} else {
+				String[] files = openMultipleFiles();
+				if (files != null) {
+					for (int i = 0; i < files.length; i++) {
+
+						ImagePlus imPlus = createStackFeatures(files[i], null, monitor);
+						// System.out.println(choice);
+
+						classify(monitor, imPlus);
+
+					}
 				}
 			}
 
@@ -206,15 +221,35 @@ public class Main {
 
 	}
 
+	private void classify(IProgressMonitor monitor, ImagePlus imPlus) {
+		/* Correct some image names for R! */
+		String name = imPlus.getTitle();
+		String nameCorrected = RServeUtil.replaceWrongRWord(name);
+		/* Transfer the feature stack to R! */
+		imageFeatureStackToR(nameCorrected, 0, imPlus);
+		RConnection rcon = RServe.getConnection();
+		try {
+			rcon.eval("current_feature_stack<-" + nameCorrected + "");
+		} catch (RserveException e) {
+			e.printStackTrace();
+		}
+		monitor.setTaskName("Apply Classification Script");
+		/* Predict in R (evalRScript is a custom method) with the randomForest model! */
+		String path = gui.getPathClassificationScript();
+		if (path.endsWith(".R")) {
+			evalRScript(path);
+			/* Transfer the classification result from R back to ImageJ! */
+			imageFromR(3, "imageMatrix", 1);
+			WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
+			gui.layout();
+		}
+	}
+
 	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image = null;
 		ImageStack stack = null;
-		/*
-		 * Important call to get the features and feature options from the GUI (syncExec
-		 * wrapped for SWT)!
-		 */
-		gui.getFeatureOptions();
+
 		/*
 		 * If we want to use an import macro, e.g., using the BioFormats library
 		 * commands which can be recorded with the ImageJ macro recorder!
@@ -222,7 +257,12 @@ public class Main {
 		if (gui.useImportMacro) {
 			/* Multiple files selected! */
 			if (files != null) {
-				IJ.runMacroFile(gui.getMacroTextOption(), getCurrentPath() + "/" + files);
+				/* If we used the directory dialog to open all files! */
+				if (gui.useDirectoryDialog) {
+					IJ.runMacroFile(gui.getMacroTextOption(), files);
+				} else {
+					IJ.runMacroFile(gui.getMacroTextOption(), getCurrentPath() + "/" + files);
+				}
 
 			} else {
 				/* Call ImageJ macro with option (file path)! */
@@ -232,7 +272,12 @@ public class Main {
 		} else {
 			/* Multiple files selected! */
 			if (files != null) {
-				image = IJ.openImage(getCurrentPath() + "/" + files);
+				/* If we used the directory dialog to open all files! */
+				if (gui.useDirectoryDialog) {
+					image = IJ.openImage(files);
+				} else {
+					image = IJ.openImage(getCurrentPath() + "/" + files);
+				}
 
 			} else {
 				image = IJ.openImage(singleFile);

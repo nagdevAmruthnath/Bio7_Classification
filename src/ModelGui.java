@@ -103,6 +103,8 @@ public class ModelGui extends Composite {
 	protected boolean kuwahara;
 	protected String kuwaharaOption;
 	protected String edgesOption;
+	protected Button checkUseDirectory;
+	protected boolean useDirectoryDialog;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -330,7 +332,14 @@ public class ModelGui extends Composite {
 			}
 		});
 		checkUseImportMacro.setText("Use ImageJ Macro at Import");
-		new Label(composite_1, SWT.NONE);
+		
+		checkUseDirectory = new Button(composite_1, SWT.CHECK);
+		checkUseDirectory.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		checkUseDirectory.setText("Open Directory for Classification\n");
 
 		buttonMacro = new Button(composite_1, SWT.NONE);
 		buttonMacro.addSelectionListener(new SelectionAdapter() {
@@ -398,6 +407,8 @@ public class ModelGui extends Composite {
 				toHsb = checkConvertToHsb.getSelection();
 
 				useImportMacro = checkUseImportMacro.getSelection();
+				
+				useDirectoryDialog=checkUseDirectory.getSelection();
 
 				channelOption = channelSelectionText.getText();
 
@@ -423,8 +434,8 @@ public class ModelGui extends Composite {
 				minimumOption = optionsMinimum.getText();
 
 				edges = checkEdges.getSelection();
-                edgesOption=optionsEdges.getText();
-                
+				edgesOption = optionsEdges.getText();
+
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
 
