@@ -334,7 +334,7 @@ public class ModelGui extends Composite {
 		checkUseImportMacro.setText("Use ImageJ Macro at Import");
 		
 		checkUseDirectory = new Button(composite_1, SWT.CHECK);
-		GridData gd_checkUseDirectory = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
+		GridData gd_checkUseDirectory = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_checkUseDirectory.heightHint = 25;
 		checkUseDirectory.setLayoutData(gd_checkUseDirectory);
 		checkUseDirectory.addSelectionListener(new SelectionAdapter() {
@@ -342,7 +342,7 @@ public class ModelGui extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
-		checkUseDirectory.setText("Open Directory for Classification");
+		checkUseDirectory.setText("Use Directory Dialog");
 
 		buttonMacro = new Button(composite_1, SWT.NONE);
 		buttonMacro.addSelectionListener(new SelectionAdapter() {
