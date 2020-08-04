@@ -447,7 +447,7 @@ public class Main {
 
 		if (gui.median) {
 			monitor.setTaskName("Apply Median Filter");
-			/* Split the median option to get all sigmas! */
+			/* Split the median option to get all radii! */
 			String[] medianRadius = gui.medianOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -464,7 +464,7 @@ public class Main {
 
 		if (gui.mean) {
 			monitor.setTaskName("Apply Mean Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] meanRadius = gui.meanOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -481,7 +481,7 @@ public class Main {
 
 		if (gui.variance) {
 			monitor.setTaskName("Apply Variance Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] varianceSigma = gui.varianceOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -496,7 +496,7 @@ public class Main {
 		}
 		if (gui.maximum) {
 			monitor.setTaskName("Apply Maximum Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] maximumSigma = gui.maximumOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -512,7 +512,7 @@ public class Main {
 
 		if (gui.minimum) {
 			monitor.setTaskName("Apply Minimum Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] minimumSigma = gui.minimumOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -685,7 +685,7 @@ public class Main {
 
 		if (gui.topHat) {
 			monitor.setTaskName("Apply Top Hat Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] topHatRadius = gui.topHatOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -703,7 +703,7 @@ public class Main {
 			monitor.setTaskName("Apply Kuwahara Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				/* Split the mean option to get all sigmas! */
+				/* Split the mean option to get all radii! */
 				String[] kuwaharaOptions = gui.kuwaharaOption.split(",");
 				for (int j = 0; j < kuwaharaOptions.length; j++) {
 					int radius = Integer.parseInt(kuwaharaOptions[j]);
