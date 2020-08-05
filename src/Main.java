@@ -48,6 +48,7 @@ import ij.plugin.ImageCalculator;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
 import ij.process.ColorProcessor;
+import ij.process.ColorSpaceConverter;
 import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
@@ -301,35 +302,63 @@ public class Main {
 
 		/* If we have a RGB! */
 		if (image.getProcessor() instanceof ColorProcessor) {
-
+            /*Convert to HSB!*/
 			if (gui.toHsb) {
 				monitor.setTaskName("Convert RGB To HSB Color Space");
 				ImageConverter con = new ImageConverter(image);
-				con.convertToHSB();
+				con.convertToHSB32();
 
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
-
-				// IJ.run(rgb, "HSB Stack", "");
 				ImageStack hsbStack = image.getStack();
-				/* Create a feature stack from all available channels (e.g., R,G,B) images! */
+				/* Create a feature stack from selected HSB channels! */
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/* Add RGB channels to the stack! */
-						/* Convert original to float to have a float image stack for the filters! */
+						/* Add selected HSB float channels to the stack! */
 						int sel = Integer.parseInt(channelToInclude[j]);
-						/* Use selected slices. Important to convert to Float! */
-						ImageProcessor floatProcessor = hsbStack.getProcessor(sel).convertToFloat();
+						/* Use selected slices! */
+						ImageProcessor floatProcessor = hsbStack.getProcessor(sel);
 						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				} else {
 					/* Use all slices. Important to convert to Float! */
-					stack = image.getStack().convertToFloat();
+					stack = image.getStack();
 				}
 
-			} else {
+			} 
+			 /*Convert to LAB!*/
+			else if (gui.toLab) {
+				monitor.setTaskName("Convert RGB To LAB Color Space");
+				ColorSpaceConverter converter = new ColorSpaceConverter();
+		  		ImagePlus imp = converter.RGBToLab(image);	  		
+		  		//imp.show();
+				image.hide();
+		  		imp.copyAttributes(image);
+		  		image.changes = false;
+		  		image.close();
+				String opt = gui.channelOption;
+				String[] channelToInclude = opt.split(",");
+				ImageStack labStack = imp.getStack();
+				/* Create a LAB stack from selected channels! */
+				stack = new ImageStack(imp.getWidth(), imp.getHeight());
+				if (opt.isEmpty() == false && channelToInclude.length > 0) {
+					for (int j = 0; j < channelToInclude.length; j++) {
+						/* Add LAB channels to the stack. Already a float image! */
+						int sel = Integer.parseInt(channelToInclude[j]);
+						/* Use selected slices!*/
+						ImageProcessor floatProcessor = labStack.getProcessor(sel);
+						stack.addSlice("Channel_" + j, floatProcessor);
+					}
+				} else {
+					/* Use all slices. Already a float image! */
+					stack = imp.getStack();
+				}
+
+			}
+			
+			else {
 
 				/* Split original to R,G,B channels! */
 				ImagePlus[] channels = ChannelSplitter.split(image);

@@ -105,6 +105,8 @@ public class ModelGui extends Composite {
 	protected String edgesOption;
 	protected Button checkUseDirectory;
 	protected boolean useDirectoryDialog;
+	protected Button checkConvertToLab;
+	protected boolean toLab;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -188,8 +190,26 @@ public class ModelGui extends Composite {
 		btnNewButton_4.setText("Save Configuration");
 
 		checkConvertToHsb = new Button(composite, SWT.CHECK);
-		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		checkConvertToHsb.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				checkConvertToLab.setSelection(false);
+			}
+		});
+		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		checkConvertToHsb.setText("Convert to HSB Color Space");
+
+		checkConvertToLab = new Button(composite, SWT.CHECK);
+		checkConvertToLab.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				checkConvertToHsb.setSelection(false);
+			}
+		});
+		checkConvertToLab.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		checkConvertToLab.setText("Convert to LAB Color Space");
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
 		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
@@ -332,7 +352,7 @@ public class ModelGui extends Composite {
 			}
 		});
 		checkUseImportMacro.setText("Use ImageJ Macro at Import");
-		
+
 		checkUseDirectory = new Button(composite_1, SWT.CHECK);
 		GridData gd_checkUseDirectory = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_checkUseDirectory.heightHint = 25;
@@ -409,9 +429,11 @@ public class ModelGui extends Composite {
 
 				toHsb = checkConvertToHsb.getSelection();
 
+				toLab = checkConvertToLab.getSelection();
+
 				useImportMacro = checkUseImportMacro.getSelection();
-				
-				useDirectoryDialog=checkUseDirectory.getSelection();
+
+				useDirectoryDialog = checkUseDirectory.getSelection();
 
 				channelOption = channelSelectionText.getText();
 

@@ -35,6 +35,8 @@ public class LoadAndSaveConfig {
 				BufferedReader reader = new BufferedReader(fileReader);
 
 				modelGui.checkConvertToHsb.setSelection(read(reader));
+				
+				modelGui.checkConvertToLab.setSelection(read(reader));
 
 				modelGui.channelSelectionText.setText(reader.readLine());
 
@@ -110,6 +112,9 @@ public class LoadAndSaveConfig {
 		String sep = System.getProperty("line.separator");
 		// buffer.append(sep);
 		buffer.append(modelGui.checkConvertToHsb.getSelection());
+		buffer.append(sep);
+		
+		buffer.append(modelGui.checkConvertToLab.getSelection());
 		buffer.append(sep);
 
 		buffer.append(modelGui.channelSelectionText.getText());
