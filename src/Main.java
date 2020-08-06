@@ -182,7 +182,7 @@ public class Main {
 			if (gui.useDirectoryDialog) {
 				String dirSelection = Bio7Dialog.directory("Select the base directory");
 				File dir = new File(dirSelection);
-				final String[] ext = { "tif", "tiff","dcm","png"};
+				final String[] ext = { "tif", "tiff", "dcm", "png" };
 				List<File> files = (List<File>) FileUtils.listFiles(dir, ext, true);
 				for (int i = 0; i < files.size(); i++) {
 					File file = files.get(i);
@@ -299,7 +299,7 @@ public class Main {
 
 		/* If we have a RGB! */
 		if (image.getProcessor() instanceof ColorProcessor) {
-            /*Convert to HSB!*/
+			/* Convert to HSB! */
 			if (gui.toHsb) {
 				monitor.setTaskName("Convert RGB To HSB Color Space");
 				ImageConverter con = new ImageConverter(image);
@@ -324,17 +324,17 @@ public class Main {
 					stack = image.getStack();
 				}
 
-			} 
-			 /*Convert to LAB!*/
+			}
+			/* Convert to LAB! */
 			else if (gui.toLab) {
 				monitor.setTaskName("Convert RGB To LAB Color Space");
 				ColorSpaceConverter converter = new ColorSpaceConverter();
-		  		ImagePlus imp = converter.RGBToLab(image);	  		
-		  		//imp.show();
+				ImagePlus imp = converter.RGBToLab(image);
+				// imp.show();
 				image.hide();
-		  		imp.copyAttributes(image);
-		  		image.changes = false;
-		  		image.close();
+				imp.copyAttributes(image);
+				image.changes = false;
+				image.close();
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
 				ImageStack labStack = imp.getStack();
@@ -344,7 +344,7 @@ public class Main {
 					for (int j = 0; j < channelToInclude.length; j++) {
 						/* Add LAB channels to the stack. Already a float image! */
 						int sel = Integer.parseInt(channelToInclude[j]);
-						/* Use selected slices!*/
+						/* Use selected slices! */
 						ImageProcessor floatProcessor = labStack.getProcessor(sel);
 						stack.addSlice("Channel_" + j, floatProcessor);
 					}
@@ -354,7 +354,7 @@ public class Main {
 				}
 
 			}
-			
+
 			else {
 
 				/* Split original to R,G,B channels! */
