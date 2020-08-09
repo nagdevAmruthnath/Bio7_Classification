@@ -9,7 +9,7 @@ With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update
 https://bio7.github.io/javacv/
 
 To make the libraries accessible for the dynamic Java compiler add the following libs to the
-compiler classpath (you find them find them in the new installed Java CV plugin - see MacOSX screenshot below)
+compiler classpath (you find them find them in the installed Java CV plugin - see MacOSX screenshot below)
 
 ![image](libs.png)
 
