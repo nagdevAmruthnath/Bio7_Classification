@@ -5,6 +5,10 @@ import static com.eco.bio7.image.ImageMethods.imageFromR;
 import static com.eco.bio7.rbridge.RServeUtil.evalRScript;
 import static com.eco.bio7.rbridge.RServeUtil.listRObjects;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,7 +29,6 @@ import com.eco.bio7.rbridge.RServeUtil;
 import com.eco.bio7.rbridge.RState;
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Filters.GaborFilter;
-import Catalano.Imaging.Filters.Kuwahara;
 import boofcv.alg.filter.derivative.DerivativeLaplacian;
 import boofcv.alg.filter.derivative.DerivativeType;
 import boofcv.alg.filter.derivative.GImageDerivativeOps;
@@ -36,13 +39,13 @@ import filter.Lipschitz_;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.Prefs;
 import ij.WindowManager;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.ImageCalculator;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
 import ij.process.ColorProcessor;
+import ij.process.ColorSpaceConverter;
 import ij.process.FloatProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
@@ -124,25 +127,31 @@ public class Main {
 
 	public void action(int choice, IProgressMonitor monitor) {
 
+		/*
+		 * Important call to get the features and feature settings from the GUI
+		 * (syncExec wrapped for SWT)!
+		 */
+		gui.getFeatureOptions();
+
 		/* Create feature stack! */
 		if (choice == 1) {
 			String files = Bio7Dialog.openFile();
 			if (files != null) {
-				// System.out.println(files);
-				// for (int i = 0; i < files.length; i++) {
 				ImagePlus imPlus = createStackFeatures(null, files, monitor);
 				imPlus.show();
 				gui.layout();
-				// }
+
 			}
 
 		}
 		/* Create ROI Classes! */
 		else if (choice == 2) {
-			Bio7Dialog.message(
-					"Add selections to the ROI Manager and transfer the ROI selections with the 'Pixel RM Stack action'\n\n'"
-							+ "Create class names with an underscore (class_1, class_2... etc.) and select the option 'Create signature form ROI Manager name'\n"
-							+ "in the 'Pixel RM Stack action'!");
+			Bio7Dialog.message("Add selections (ROI's = specific class) to the ROI Manager.\n\n"
+					+ "Rename the ROI's to identify the classes - at the end of the string use an underscore followed by the class"
+					+ "number (class_1, class_2 or cell_1, cell_2..., etc.).\n\n"
+					+ "Open the 'Pixel RM Stack action'\n\n"
+					+ "Select the option 'Create signature from ROI Manager name' and transfer the ROI's!");
+			/* Opens the ROI Manager of ImageJ! */
 			IJ.run("ROI Manager...", "");
 
 		}
@@ -170,35 +179,37 @@ public class Main {
 		/* Classify selected images with external Script! */
 		else if (choice == 4) {
 
-			String[] files = openMultipleFiles();
-			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
+			if (gui.useDirectoryDialog) {
+				String dirSelection = Bio7Dialog.directory("Select the base directory");
+				File dir = new File(dirSelection);
+				final String[] ext = { "tif", "tiff", "dcm", "png" };
+				List<File> files = (List<File>) FileUtils.listFiles(dir, ext, true);
+				for (int i = 0; i < files.size(); i++) {
+					File file = files.get(i);
 
-					ImagePlus imPlus = createStackFeatures(files[i], null, monitor);
-					// System.out.println(choice);
-
-					/* Correct some image names for R! */
-					String name = imPlus.getTitle();
-					String nameCorrected = RServeUtil.replaceWrongRWord(name);
-					/* Transfer the feature stack to R! */
-					imageFeatureStackToR(nameCorrected, 0, imPlus);
-					RConnection rcon = RServe.getConnection();
+					String currentFile = null;
 					try {
-						rcon.eval("current_feature_stack<-" + nameCorrected + "");
-					} catch (RserveException e) {
+						currentFile = file.getCanonicalPath();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					monitor.setTaskName("Apply Classification Script");
-					/* Predict in R (evalRScript is a custom method) with the randomForest model! */
-					String path = gui.getPathClassificationScript();
-					if (path.endsWith(".R")) {
-						evalRScript(path);
-						/* Transfer the classification result from R back to ImageJ! */
-						imageFromR(3, "imageMatrix", 1);
-						WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
-						gui.layout();
-					}
+					ImagePlus imPlus = createStackFeatures(currentFile, null, monitor);
+					// System.out.println(choice);
 
+					classify(monitor, imPlus);
+				}
+			} else {
+				String[] files = openMultipleFiles();
+				if (files != null) {
+					for (int i = 0; i < files.length; i++) {
+
+						ImagePlus imPlus = createStackFeatures(files[i], null, monitor);
+						// System.out.println(choice);
+
+						classify(monitor, imPlus);
+
+					}
 				}
 			}
 
@@ -206,74 +217,135 @@ public class Main {
 
 	}
 
+	private void classify(IProgressMonitor monitor, ImagePlus imPlus) {
+		/* Correct some image names for R! */
+		String name = imPlus.getTitle();
+		String nameCorrected = RServeUtil.replaceWrongRWord(name);
+		/* Transfer the feature stack to R! */
+		imageFeatureStackToR(nameCorrected, 0, imPlus);
+		RConnection rcon = RServe.getConnection();
+		try {
+			rcon.eval("current_feature_stack<-" + nameCorrected + "");
+		} catch (RserveException e) {
+			e.printStackTrace();
+		}
+		monitor.setTaskName("Apply Classification Script");
+		/* Predict in R (evalRScript is a custom method) with the randomForest model! */
+		String path = gui.getPathClassificationScript();
+		if (path.endsWith(".R")) {
+			evalRScript(path);
+			/* Transfer the classification result from R back to ImageJ! */
+			imageFromR(3, "imageMatrix", 1);
+			WindowManager.getCurrentWindow().getImagePlus().setTitle(name + "_Classified");
+			gui.layout();
+		}
+	}
+
 	private ImagePlus createStackFeatures(String files, String singleFile, IProgressMonitor monitor) {
 		ImagePlus imPlus = null;
 		ImagePlus image = null;
 		ImageStack stack = null;
-		/*
-		 * Important call to get the features and feature options from the GUI (syncExec
-		 * wrapped for SWT)!
-		 */
-		gui.getFeatureOptions();
 
+		/*
+		 * If we want to use an import macro, e.g., using the BioFormats library
+		 * commands which can be recorded with the ImageJ macro recorder!
+		 */
 		if (gui.useImportMacro) {
-			/* Call ImageJ macro with option (file path)! */
-			IJ.runMacroFile(gui.getMacroTextOption(), singleFile);
+			/* Multiple files selected! */
+			if (files != null) {
+				/* If we used the directory dialog to open all files! */
+				if (gui.useDirectoryDialog) {
+					IJ.runMacroFile(gui.getMacroTextOption(), files);
+				} else {
+					IJ.runMacroFile(gui.getMacroTextOption(), getCurrentPath() + "/" + files);
+				}
+
+			} else {
+				/* Call ImageJ macro with option (file path)! */
+				IJ.runMacroFile(gui.getMacroTextOption(), singleFile);
+			}
 
 		} else {
+			/* Multiple files selected! */
 			if (files != null) {
-				image = IJ.openImage(getCurrentPath() + "/" + files);// Open image data with the ImageJ without
-																		// display!
+				/* If we used the directory dialog to open all files! */
+				if (gui.useDirectoryDialog) {
+					image = IJ.openImage(files);
+				} else {
+					image = IJ.openImage(getCurrentPath() + "/" + files);
+				}
+
 			} else {
 				image = IJ.openImage(singleFile);
 			}
 		}
-		/* We must avoid a null reference! */
+		/*
+		 * We must avoid a null reference when using the BioFormats library with the
+		 * macro import option!
+		 */
 		if (gui.useImportMacro && image == null) {
 			image = WindowManager.getCurrentImage();
 		}
-		/* Duplicate the image! */
-		// Duplicator duplicator = new Duplicator();
-		/* Duplicate original! */
-		// ImagePlus rgb = duplicator.run(image);
-
-		/*
-		 * Convert original to float for the filter (and grayscale layer if not color)
-		 * images!
-		 */
-		// image.setProcessor(image.getProcessor().convertToFloat());
 
 		/* If we have a RGB! */
 		if (image.getProcessor() instanceof ColorProcessor) {
-
+			/* Convert to HSB! */
 			if (gui.toHsb) {
 				monitor.setTaskName("Convert RGB To HSB Color Space");
 				ImageConverter con = new ImageConverter(image);
-				con.convertToHSB();
+				con.convertToHSB32();
 
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
-
-				// IJ.run(rgb, "HSB Stack", "");
 				ImageStack hsbStack = image.getStack();
-				/* Create a feature stack from all available channels (e.g., R,G,B) images! */
+				/* Create a feature stack from selected HSB channels! */
 				stack = new ImageStack(image.getWidth(), image.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/* Add RGB channels to the stack! */
-						/* Convert original to float to have a float image stack for the filters! */
+						/* Add selected HSB float channels to the stack! */
 						int sel = Integer.parseInt(channelToInclude[j]);
-						/* Use selected slices. Important to convert to Float! */
-						ImageProcessor floatProcessor = hsbStack.getProcessor(sel).convertToFloat();
+						/* Use selected slices! */
+						ImageProcessor floatProcessor = hsbStack.getProcessor(sel);
 						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				} else {
 					/* Use all slices. Important to convert to Float! */
-					stack = image.getStack().convertToFloat();
+					stack = image.getStack();
 				}
 
-			} else {
+			}
+			/* Convert to LAB! */
+			else if (gui.toLab) {
+				monitor.setTaskName("Convert RGB To LAB Color Space");
+				ColorSpaceConverter converter = new ColorSpaceConverter();
+				ImagePlus imp = converter.RGBToLab(image);
+				// imp.show();
+				image.hide();
+				imp.copyAttributes(image);
+				image.changes = false;
+				image.close();
+				String opt = gui.channelOption;
+				String[] channelToInclude = opt.split(",");
+				ImageStack labStack = imp.getStack();
+				/* Create a LAB stack from selected channels! */
+				stack = new ImageStack(imp.getWidth(), imp.getHeight());
+				if (opt.isEmpty() == false && channelToInclude.length > 0) {
+					for (int j = 0; j < channelToInclude.length; j++) {
+						/* Add LAB channels to the stack. LAB stack are already float images! */
+						int sel = Integer.parseInt(channelToInclude[j]);
+						/* Use selected slices! */
+						ImageProcessor floatProcessor = labStack.getProcessor(sel);
+						stack.addSlice("Channel_" + j, floatProcessor);
+					}
+				} else {
+					/* Use all slices. LAB stack are already float images! */
+					stack = imp.getStack();
+				}
+
+			}
+
+			else {
 
 				/* Split original to R,G,B channels! */
 				ImagePlus[] channels = ChannelSplitter.split(image);
@@ -303,7 +375,7 @@ public class Main {
 				}
 			}
 		} else {/* Grayscale images (8-bit, 16-bit, 32-bit) */
-			/* If we have a grayscale stack image! */
+			/* If we have a grayscale stack! */
 			if (image.getStackSize() > 1) {
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
@@ -312,8 +384,9 @@ public class Main {
 					stack = new ImageStack(image.getWidth(), image.getHeight());
 					for (int j = 0; j < channelToInclude.length; j++) {
 						/* Add selected slices to a new stack! */
-						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with index 1 no correction necessary!
-						stack.addSlice("Grayscale_Layer_"+j, image.getStack().getProcessor(sel).convertToFloat());
+						int sel = Integer.parseInt(channelToInclude[j]);// Stack starts with index 1 no correction
+																		// necessary!
+						stack.addSlice("Grayscale_Layer_" + j, image.getStack().getProcessor(sel).convertToFloat());
 					}
 				} else {
 					/* Convert original to float to have a float image stack for the filters! */
@@ -390,7 +463,7 @@ public class Main {
 
 		if (gui.median) {
 			monitor.setTaskName("Apply Median Filter");
-			/* Split the median option to get all sigmas! */
+			/* Split the median option to get all radii! */
 			String[] medianRadius = gui.medianOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -407,7 +480,7 @@ public class Main {
 
 		if (gui.mean) {
 			monitor.setTaskName("Apply Mean Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] meanRadius = gui.meanOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -424,7 +497,7 @@ public class Main {
 
 		if (gui.variance) {
 			monitor.setTaskName("Apply Variance Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] varianceSigma = gui.varianceOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -439,7 +512,7 @@ public class Main {
 		}
 		if (gui.maximum) {
 			monitor.setTaskName("Apply Maximum Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] maximumSigma = gui.maximumOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -455,7 +528,7 @@ public class Main {
 
 		if (gui.minimum) {
 			monitor.setTaskName("Apply Minimum Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] minimumSigma = gui.minimumOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -628,7 +701,7 @@ public class Main {
 
 		if (gui.topHat) {
 			monitor.setTaskName("Apply Top Hat Filter");
-			/* Split the mean option to get all sigmas! */
+			/* Split the mean option to get all radii! */
 			String[] topHatRadius = gui.topHatOption.split(",");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -646,7 +719,7 @@ public class Main {
 			monitor.setTaskName("Apply Kuwahara Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-				/* Split the mean option to get all sigmas! */
+				/* Split the mean option to get all radii! */
 				String[] kuwaharaOptions = gui.kuwaharaOption.split(",");
 				for (int j = 0; j < kuwaharaOptions.length; j++) {
 					int radius = Integer.parseInt(kuwaharaOptions[j]);
