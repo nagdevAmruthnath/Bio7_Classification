@@ -2,12 +2,26 @@
 
 ### A repository for a Bio7 Graphical User Interface for supervised classification which can be extended easily.
 
-#### Please note: To compile the Java project imported from GIT you have to fix the Java classpath (created on a different computer). 
-#### Select the project, open the context menu and execute the 'Fix Project Classpath' action. This will automatically fix the classpath.
+## Installation
 
-When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
+With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update Site:
 
-#### Open and compile the 'Main.java' class dynamically ('Compile Java' action main toolbar) with Bio7 >=3.1 to open the interface.
+https://bio7.github.io/javacv/
+
+To make the libraries accessible for the dynamic Java compiler add the following libs to the
+compiler classpath (you find them find them in the new installed Java CV plugin - see MacOSX screenshot below)
+
+![image](libs.png)
+
+In addition you have to recalculate the projects classpath (the path to the libraries on your OS). Select the project folder, open the context menu and execute
+the 'Fix Project Classpath' action. This will automatically set the correct classpath of the Bio7 (Eclipse) Java JDT project.
+
+Note: When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
+
+
+## Usage
+
+Open and compile the 'Main.java' class dynamically (use the 'Compile Java' action in the Bio7 main toolbar).
 
 Follow Button 1-4 for a classification workflow which trains and classifies images with R (scripts
 are available in the R directory) in a non-blocking job.
@@ -22,20 +36,15 @@ All settings for classification can be stored or reopened with the 'Load/Save Co
 In the Settings tab the path to the R and ImageJ macro scripts can be set if necessary (or easier simply change the default scripts).
 
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
-to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!)
+to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
+
+## Customization
 
 The 'ModelGui' graphical view interface can be modified or extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
+The Main.java class can be extended with further filters or default features. To store or load settings of the GUI edit the Settings.java file.
 
-## Installation
+The default R scripts and the ImageJ import macro can be changed with the default Bio7 editors.
 
-With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update Site:
 
-https://bio7.github.io/javacv/
 
-To make the libraries accessible for the dynamic Java compiler add the following libs to the
-compiler classpath (you find them find them in the new installed Java CV plugin - see MacOSX screenshot below)
-
-![image](libs.png)
-
-In addition you have to recalculate the projects classpath (Context Menu->Fix Project Classpath).
 

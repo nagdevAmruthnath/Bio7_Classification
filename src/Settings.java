@@ -6,10 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import com.eco.bio7.batch.Bio7Dialog;
 
-public class LoadAndSaveConfig {
+public class Settings {
 	private ModelGui modelGui;
 
-	public LoadAndSaveConfig(ModelGui modelGui) {
+	public Settings(ModelGui modelGui) {
 		this.modelGui = modelGui;
 	}
 

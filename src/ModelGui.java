@@ -174,7 +174,7 @@ public class ModelGui extends Composite {
 		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new LoadAndSaveConfig(ModelGui.this).loadScript();
+				new Settings(ModelGui.this).loadScript();
 			}
 		});
 		btnLoadConfiguration.setText("Load Configuration");
@@ -184,7 +184,7 @@ public class ModelGui extends Composite {
 		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new LoadAndSaveConfig(ModelGui.this).saveScript();
+				new Settings(ModelGui.this).saveScript();
 			}
 		});
 		btnNewButton_4.setText("Save Configuration");
