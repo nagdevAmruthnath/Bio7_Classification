@@ -286,16 +286,6 @@ public class Main {
 		if (gui.useImportMacro && image == null) {
 			image = WindowManager.getCurrentImage();
 		}
-		/* Duplicate the image! */
-		// Duplicator duplicator = new Duplicator();
-		/* Duplicate original! */
-		// ImagePlus rgb = duplicator.run(image);
-
-		/*
-		 * Convert original to float for the filter (and grayscale layer if not color)
-		 * images!
-		 */
-		// image.setProcessor(image.getProcessor().convertToFloat());
 
 		/* If we have a RGB! */
 		if (image.getProcessor() instanceof ColorProcessor) {
@@ -342,14 +332,14 @@ public class Main {
 				stack = new ImageStack(imp.getWidth(), imp.getHeight());
 				if (opt.isEmpty() == false && channelToInclude.length > 0) {
 					for (int j = 0; j < channelToInclude.length; j++) {
-						/* Add LAB channels to the stack. Already a float image! */
+						/* Add LAB channels to the stack. LAB stack are already float images! */
 						int sel = Integer.parseInt(channelToInclude[j]);
 						/* Use selected slices! */
 						ImageProcessor floatProcessor = labStack.getProcessor(sel);
 						stack.addSlice("Channel_" + j, floatProcessor);
 					}
 				} else {
-					/* Use all slices. Already a float image! */
+					/* Use all slices. LAB stack are already float images! */
 					stack = imp.getStack();
 				}
 
@@ -385,7 +375,7 @@ public class Main {
 				}
 			}
 		} else {/* Grayscale images (8-bit, 16-bit, 32-bit) */
-			/* If we have a grayscale stack image! */
+			/* If we have a grayscale stack! */
 			if (image.getStackSize() > 1) {
 				String opt = gui.channelOption;
 				String[] channelToInclude = opt.split(",");
