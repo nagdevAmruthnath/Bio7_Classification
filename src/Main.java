@@ -53,7 +53,7 @@ public class Main {
 
 	public Main() {
 
-		CustomView view = new CustomView();
+		CustomView view = new CustomView(); 
 
 		Display display = Util.getDisplay();
 
@@ -636,7 +636,7 @@ public class Main {
 					double radius = Double.parseDouble(topHatRadius[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
-					ran.rank(ip, radius, RankFilters.TOP_HAT);
+					ran.rank(ip, radius, RankFilters.TOP_HAT); 
 					stack.addSlice("Top_Hat_" + radius + "_Layer_" + i, ip);
 				}
 			}
