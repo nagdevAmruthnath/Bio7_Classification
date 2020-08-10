@@ -16,6 +16,7 @@ import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.image.CanvasView;
 import com.eco.bio7.image.Util;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -75,7 +76,7 @@ public class ModelGui extends Composite {
 	protected Text optionsVariance;
 	protected boolean variance;
 	protected String varianceOption;
-	private Text optionsEdges;
+	protected Text optionsEdges;
 	protected Text optionDiffGaussian;
 	protected Button checkDifferenceOfGaussian;
 	protected boolean diffOfGaussian;
@@ -93,6 +94,19 @@ public class ModelGui extends Composite {
 	protected boolean useImportMacro;
 	protected String textOptionMacro;
 	private Button buttonMacro;
+	protected Button checkTopHat;
+	protected Text optionsTopHat;
+	protected boolean topHat;
+	protected String topHatOption;
+	protected Button checkKuwahara;
+	protected Text optionsKuwahara;
+	protected boolean kuwahara;
+	protected String kuwaharaOption;
+	protected String edgesOption;
+	protected Button checkUseDirectory;
+	protected boolean useDirectoryDialog;
+	protected Button checkConvertToLab;
+	protected boolean toLab;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -160,7 +174,7 @@ public class ModelGui extends Composite {
 		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new LoadAndSaveConfig(ModelGui.this).loadScript();
+				new Settings(ModelGui.this).loadScript();
 			}
 		});
 		btnLoadConfiguration.setText("Load Configuration");
@@ -170,14 +184,32 @@ public class ModelGui extends Composite {
 		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new LoadAndSaveConfig(ModelGui.this).saveScript();
+				new Settings(ModelGui.this).saveScript();
 			}
 		});
 		btnNewButton_4.setText("Save Configuration");
 
 		checkConvertToHsb = new Button(composite, SWT.CHECK);
-		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		checkConvertToHsb.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				checkConvertToLab.setSelection(false);
+			}
+		});
+		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		checkConvertToHsb.setText("Convert to HSB Color Space");
+
+		checkConvertToLab = new Button(composite, SWT.CHECK);
+		checkConvertToLab.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				checkConvertToHsb.setSelection(false);
+			}
+		});
+		checkConvertToLab.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		checkConvertToLab.setText("Convert to LAB Color Space");
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		Label lblSelectChannels = new Label(composite, SWT.NONE);
 		GridData gd_lblSelectChannels = new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1);
@@ -238,14 +270,13 @@ public class ModelGui extends Composite {
 		checkMaximum.setText("Maximum");
 
 		checkGradientHessian = new Button(composite, SWT.CHECK);
-		checkGradientHessian.setText("Gradient/Hessian");
+		checkGradientHessian.setText("Gradient");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
 		optionsMaximum.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		optionsMaximum.setText("2");
 
 		optionGradientHessian = new Text(composite, SWT.BORDER);
-		optionGradientHessian.setEnabled(false);
 		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLaplacian = new Button(composite, SWT.CHECK);
@@ -255,11 +286,9 @@ public class ModelGui extends Composite {
 		checkEdges.setText("Sobel Edge");
 
 		optionLaplacian = new Text(composite, SWT.BORDER);
-		optionLaplacian.setEnabled(false);
 		optionLaplacian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		optionsEdges = new Text(composite, SWT.BORDER);
-		optionsEdges.setEnabled(false);
 		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLipschitz = new Button(composite, SWT.CHECK);
@@ -273,7 +302,7 @@ public class ModelGui extends Composite {
 		optionLipschitz.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		optionGabor = new Text(composite, SWT.BORDER);
-		optionGabor.setText("32,45,0,0,1");
+		optionGabor.setText("3,4.0,0.6,1.0,2.0,0.3");
 		optionGabor.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -281,6 +310,22 @@ public class ModelGui extends Composite {
 			}
 		});
 		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		checkTopHat = new Button(composite, SWT.CHECK);
+		checkTopHat.setText("Top Hat");
+
+		checkKuwahara = new Button(composite, SWT.CHECK);
+		checkKuwahara.setText("Kuwahara");
+
+		optionsTopHat = new Text(composite, SWT.BORDER);
+		optionsTopHat.setText("2");
+		optionsTopHat.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		optionsKuwahara = new Text(composite, SWT.BORDER);
+		optionsKuwahara.setText("2");
+		optionsKuwahara.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
 		checkConvolve.setText("Convolve");
@@ -307,7 +352,17 @@ public class ModelGui extends Composite {
 			}
 		});
 		checkUseImportMacro.setText("Use ImageJ Macro at Import");
-		new Label(composite_1, SWT.NONE);
+
+		checkUseDirectory = new Button(composite_1, SWT.CHECK);
+		GridData gd_checkUseDirectory = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_checkUseDirectory.heightHint = 25;
+		checkUseDirectory.setLayoutData(gd_checkUseDirectory);
+		checkUseDirectory.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		checkUseDirectory.setText("Use Directory Dialog");
 
 		buttonMacro = new Button(composite_1, SWT.NONE);
 		buttonMacro.addSelectionListener(new SelectionAdapter() {
@@ -318,12 +373,14 @@ public class ModelGui extends Composite {
 				textImageJMacro.setText(path);
 			}
 		});
-		buttonMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridData gd_buttonMacro = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_buttonMacro.heightHint = 25;
+		buttonMacro.setLayoutData(gd_buttonMacro);
 		buttonMacro.setText("Macro");
 
-		textImageJMacro = new Text(composite_1, SWT.BORDER | SWT.MULTI);
+		textImageJMacro = new Text(composite_1, SWT.BORDER);
 		textImageJMacro.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/Import.ijm");
+		textImageJMacro.setText(FileRoot.getCurrentCompileDir() + "/../Macro/IJMacro.ijm");
 
 		btnNewButton_5 = new Button(composite_1, SWT.NONE);
 		btnNewButton_5.addSelectionListener(new SelectionAdapter() {
@@ -341,7 +398,7 @@ public class ModelGui extends Composite {
 
 		txtTrainingRScript = new Text(composite_1, SWT.BORDER);
 		txtTrainingRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		txtTrainingRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Train_RandomForest.R");
+		txtTrainingRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Train.R");
 		btnRClassificationScript = new Button(composite_1, SWT.NONE);
 		btnRClassificationScript.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -358,7 +415,7 @@ public class ModelGui extends Composite {
 
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
 		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify_RandomForest.R");
+		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify.R");
 
 	}
 
@@ -372,7 +429,11 @@ public class ModelGui extends Composite {
 
 				toHsb = checkConvertToHsb.getSelection();
 
+				toLab = checkConvertToLab.getSelection();
+
 				useImportMacro = checkUseImportMacro.getSelection();
+
+				useDirectoryDialog = checkUseDirectory.getSelection();
 
 				channelOption = channelSelectionText.getText();
 
@@ -398,6 +459,7 @@ public class ModelGui extends Composite {
 				minimumOption = optionsMinimum.getText();
 
 				edges = checkEdges.getSelection();
+				edgesOption = optionsEdges.getText();
 
 				convolve = checkConvolve.getSelection();
 				convolveOption = optionConvolve.getText();
@@ -413,6 +475,12 @@ public class ModelGui extends Composite {
 
 				gabor = checkGabor.getSelection();
 				gaborOption = optionGabor.getText();
+
+				topHat = checkTopHat.getSelection();
+				topHatOption = optionsTopHat.getText();
+
+				kuwahara = checkKuwahara.getSelection();
+				kuwaharaOption = optionsKuwahara.getText();
 
 			}
 		});
@@ -458,7 +526,8 @@ public class ModelGui extends Composite {
 		});
 		return textOptionMacro;
 	}
-   /*Here we layout the ImageJ panel!*/
+
+	/* Here we layout the ImageJ panel! */
 	public void layout() {
 		CanvasView canvasView = CanvasView.getCanvas_view();
 		canvasView.updatePlotCanvas();

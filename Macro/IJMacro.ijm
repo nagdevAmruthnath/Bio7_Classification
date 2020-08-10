@@ -9,15 +9,11 @@ Thanks to Kevin Ward from NASA Earth Observatory Group / Earth Science Data Syst
 
 last=file.lastIndexOf("_B");
 sub=file.substring(0,last+2);
-<<<<<<< HEAD
-layers="2,3,4";
-run("Bio-Formats", "open="+ file+" autoscale color_mode=Default group_files rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT axis_1_number_of_images=11 axis_1_axis_first_image=1 axis_1_axis_increment=1 contains=[] name="+sub+"<"+layers+">.TIF");
-//run("Scale...", "x=0.5 y=0.5 width=3856 height=3916 interpolation=Bilinear average create");
 
-=======
 layers="1,2";
 run("Bio-Formats", "open=["+file+"] autoscale color_mode=Default group_files rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT axis_1_number_of_images=11 axis_1_axis_first_image=1 axis_1_axis_increment=1 contains=[] name="+sub+"<"+layers+">.TIF");
 run("Scale...", "x=0.5 y=0.5 width=3856 height=3916 interpolation=Bilinear average create");
 */
->>>>>>> branch 'master' of https://github.com/Bio7/Bio7_Classification.git
+
+
  

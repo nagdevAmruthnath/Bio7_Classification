@@ -24,7 +24,7 @@ import ij.plugin.filter.*;
 	Source from: https://imagej.nih.gov/ij/plugins/kuwahara.html
 */
 public class Kuwahara_Filter  implements PlugInFilter {
-	static int size = 5;
+	public static int size = 5;
 	static boolean filterRGB;
 	boolean isRGB;
 
