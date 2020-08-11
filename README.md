@@ -8,8 +8,12 @@ With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update
 
 https://bio7.github.io/javacv/
 
+In addition install the latest ImageJ update with the following Update Site:
+
+https://bio7.github.io/imagej/
+
 To make the libraries accessible for the dynamic Java compiler add the following libs to the
-compiler classpath (you find them find them in the new installed Java CV plugin - see MacOSX screenshot below)
+compiler classpath (you find them find them in the installed Java CV plugin - see MacOSX screenshot below)
 
 ![image](libs.png)
 
@@ -33,7 +37,10 @@ in one image layer each.
 
 All settings for classification can be stored or reopened with the 'Load/Save Configuration' actions in a simple text file.
 
-In the Settings tab the path to the R and ImageJ macro scripts can be set if necessary (or easier simply change the default scripts).
+In the Settings tab the path to the R (training and classification) and the ImageJ import macro scripts can be set if necessary (or easier simply change the default scripts).
+It is also possible to enable a directory dialog (see option 'Use Directory Dialog') for the classification (step 4) of images in a folder and it's subfolders (lists the image files recursively) 
+instead of using selected images with the file dialog (for multiple files).
+In addition the data transfer type to R can be selected if a more memory efficient transfer is needed or possible (this action will set the transfer type of images, too).
 
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
 to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).

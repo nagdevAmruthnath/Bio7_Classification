@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import com.eco.bio7.batch.Bio7Dialog;
+import com.eco.bio7.image.RImageMethodsView;
 
 public class Settings {
 	private ModelGui modelGui;
@@ -100,6 +101,10 @@ public class Settings {
 				modelGui.txtTrainingRScript.setText(reader.readLine());
 
 				modelGui.txtClassificationRScript.setText(reader.readLine());
+				
+				int selection = Integer.parseInt(reader.readLine());
+				modelGui.transferTypeCombo.select(selection);
+				RImageMethodsView.getTransferTypeCombo().select(selection);
 
 				reader.close();
 
@@ -217,6 +222,9 @@ public class Settings {
 
 		buffer.append(modelGui.getPathClassificationScript());
 		buffer.append(sep);
+		
+		buffer.append(modelGui.transferTypeCombo.getSelectionIndex());
+		
 
 		String file = Bio7Dialog.saveFile("*.txt");
 		if (file != null) {
