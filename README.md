@@ -8,7 +8,7 @@ With Bio7 3.1 first install the Java CV libraries available as an Eclipse Update
 
 https://bio7.github.io/javacv/
 
-In addition install the latest ImageJ update with the following Update Site:
+Also install the latest ImageJ update with the following Update Site:
 
 https://bio7.github.io/imagej/
 
