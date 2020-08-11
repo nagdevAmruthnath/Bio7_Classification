@@ -40,10 +40,7 @@ All settings for classification can be stored or reopened with the 'Load/Save Co
 In the Settings tab the path to the R (training and classification) and the ImageJ import macro scripts can be set if necessary (or easier simply change the default scripts).
 It is also possible to enable a directory dialog (see option 'Use Directory Dialog') for the classification (step 4) of images in a folder and it's subfolders (lists the image files recursively) 
 instead of using selected images with the file dialog (for multiple files).
-<<<<<<< HEAD
 In addition the data transfer type to R can be selected if a more memory efficient transfer is needed or possible (this action will set the transfer type of images, too).
-=======
->>>>>>> branch 'master' of https://github.com/Bio7/Bio7_Classification.git
 
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
 to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
