@@ -25,7 +25,11 @@ Note: When you import the project from a local file location or *.zip file the c
 
 ## Usage
 
+##### Video:
+
 [![Alt text](https://img.youtube.com/vi/3PUxGm6zJAk/0.jpg)](https://www.youtube.com/watch?v=3PUxGm6zJAk)
+
+##### Documentation:
 
 Open and compile the 'Main.java' class dynamically (use the 'Compile Java' action in the Bio7 main toolbar).
 
