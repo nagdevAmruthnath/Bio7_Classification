@@ -23,6 +23,7 @@ import org.rosuda.REngine.Rserve.RserveException;
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.collection.CustomView;
 import com.eco.bio7.collection.Work;
+import com.eco.bio7.image.RImageMethodsView;
 import com.eco.bio7.image.Util;
 import com.eco.bio7.rbridge.RServe;
 import com.eco.bio7.rbridge.RServeUtil;
@@ -53,9 +54,10 @@ import ij.process.ImageProcessor;
 public class Main {
 
 	private ModelGui gui;
-
+	protected int transferType;
+   
 	public Main() {
-
+        /*Create the GUI interface!*/
 		CustomView view = new CustomView();
 
 		Display display = Util.getDisplay();
@@ -221,8 +223,15 @@ public class Main {
 		/* Correct some image names for R! */
 		String name = imPlus.getTitle();
 		String nameCorrected = RServeUtil.replaceWrongRWord(name);
-		/* Transfer the feature stack to R! */
-		imageFeatureStackToR(nameCorrected, 0, imPlus);
+		/*Set the data type for the R transfer from the Bio7 GUI!*/
+		int transferType=getRDataTransferType();
+		if (transferType==3){
+			Bio7Dialog.message("RGB Byte Transfer not available for this operation!");
+			return;
+		}
+		/*Transfer the feature stack to R in the selected datatype! */
+		imageFeatureStackToR(nameCorrected, transferType, imPlus);
+		imPlus=null;
 		RConnection rcon = RServe.getConnection();
 		try {
 			rcon.eval("current_feature_stack<-" + nameCorrected + "");
@@ -469,7 +478,6 @@ public class Main {
 			for (int i = 1; i <= stackSize; i++) {
 				for (int j = 0; j < medianRadius.length; j++) {
 					double radius = Double.parseDouble(medianRadius[j]);
-					// IJ.run(plus, "Median...", "radius="+medianSigma[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					extracted(radius, ran, ip, RankFilters.MEDIAN);
@@ -486,7 +494,6 @@ public class Main {
 			for (int i = 1; i <= stackSize; i++) {
 				for (int j = 0; j < meanRadius.length; j++) {
 					double radius = Double.parseDouble(meanRadius[j]);
-					// IJ.run(plus, "Mean...", "radius="+meanSigma[j]);
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					RankFilters ran = new RankFilters();
 					ran.rank(ip, radius, RankFilters.MEAN);
@@ -555,17 +562,12 @@ public class Main {
 				if (gradientHessian[0].isEmpty() == false) {
 					for (int j = 0; j < gradientHessian.length; j++) {
 						double sigma = Double.parseDouble(gradientHessian[j]);
-
 						ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-
 						gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
-
 						gradient(stack, ip);
-
 					}
 				} else {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
-
 					gradient(stack, ip);
 				}
 			}
@@ -625,9 +627,7 @@ public class Main {
 						gaussian.blurGaussian(ip, 0.4 * sigma, 0.4 * sigma, 0.0002);
 						IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
 						stack.addSlice("Edges_Layer_From_Gaussian_" + j + "_Layer_" + i, ip);
-
 					}
-
 				} else {
 					ImageProcessor ip = tempStack.getProcessor(i).duplicate();
 					IJ.run(new ImagePlus("Edges_layer" + i + "_temp", ip), "Find Edges", "stack");
@@ -639,11 +639,9 @@ public class Main {
 		}
 
 		if (gui.lipschitz) {
-
 			monitor.setTaskName("Apply Lipschitz Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
-
 				/* See if we have several Lipschitz filter settings! */
 				String[] libschitzOptionsSet = gui.lipschitzOption.split(";");
 				for (int j = 0; j < libschitzOptionsSet.length; j++) {
@@ -662,7 +660,6 @@ public class Main {
 		}
 
 		if (gui.gabor) {
-
 			monitor.setTaskName("Apply Gabor Filter");
 			int stackSize = tempStack.getSize();
 			for (int i = 1; i <= stackSize; i++) {
@@ -670,7 +667,6 @@ public class Main {
 				String[] gaborOptionsSet = gui.gaborOption.split(";");
 
 				for (int j = 0; j < gaborOptionsSet.length; j++) {
-
 					String opGabor = gaborOptionsSet[j];
 					/* Split the Gabor set for one filter! */
 					String[] gaborOptions = opGabor.split(",");
@@ -754,7 +750,7 @@ public class Main {
 		tempStack = null;
 		return imPlus;
 	}
-
+    /*Method to calculate the gradient!*/
 	private void gradient(ImageStack stack, ImageProcessor ip) {
 		int width = ip.getWidth();
 		int height = ip.getHeight();
@@ -798,13 +794,13 @@ public class Main {
 		// stack.addSlice("Hessian_Sobel XY", flxyProcessor);
 		// stack.addSlice("Hessian_Sobel YY", flyyProcessor);
 	}
-
+   /*Method to apply the RankFilters!*/
 	private void extracted(double radius, final RankFilters ran, ImageProcessor ip, int FilterType) {
 
 		ran.rank(ip, radius, FilterType);
 
 	}
-
+   /*Method to convert BoofCV data to ImageJ ImageProcessor!*/
 	private void ipToBoofCVGray32(ImageProcessor ip, GrayF32 boofFilterImageInput) {
 		float[][] fl = ip.getFloatArray();
 		for (int y = 0; y < ip.getHeight(); y++) {
@@ -814,8 +810,20 @@ public class Main {
 			}
 		}
 	}
+	
+	/*A method to get the Bio7 GUI R data transfer type*/
+	private int getRDataTransferType() {
+		/*Wrap to avoid an invalid thread access!*/
+		Display display = Util.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				transferType = RImageMethodsView.getTransferTypeCombo().getSelectionIndex();
+			}
+		});
+		return transferType;
+	}
 
-	/* Only implemented to avoid a console warning! */
+	/* Only implemented to avoid a console warning! Constructor of this class will be called after compilation and instantiation! */
 	public static void main(String[] args) {
 
 	}
