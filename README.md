@@ -22,7 +22,6 @@ the 'Fix Project Classpath' action. This will automatically set the correct clas
 
 Note: When you import the project from a local file location or *.zip file the classpath is automatically adjusted on import.
 
-
 ## Usage
 
 #### Video:
