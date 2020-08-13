@@ -80,6 +80,9 @@ MacOSX:
 
 For an increased Java heap space open the Bio7 package (context menu if you click on the icon) then go to Contents->MacOS and open the Bio7.ini file 
 with a texteditor. In the file you can change the default memory settings e.g. the initial heap size -Xms and the maximum heap space -Xmx.
+
+Example:
+
 For instance to be able to return back much memory after image transfer use a low -Xms setting (e.g.: -Xms1024m). The maximum size for the Java Runtime (-Xmx) depends on the image size
 and could be adjusted depending on the available RAM (using for instance the half of the available RAM) of the OS.
 
