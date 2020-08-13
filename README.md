@@ -67,15 +67,17 @@ Use the example size only if necessary and if you have the memory available!
 
 #### Java:
 
-The Java runtime is able to optimize memory on demand and return occupied memory to the OS. After the the transfer to R the image data on the Java
+The Java runtime is able to optimize memory on demand and return occupied memory to the OS. After the transfer to R the image data on the Java
 side in the classification process (open and transfer to R) by default is closed. If the memory settings of Java in Bio7 (see Bio7.ini file) are adjusted accordingly most
 of the memory can be returned to the OS and thus to R and the memory intensive classification process.
 
 Windows and Linux:
+
 For an increased Java heap space open the Bio7.ini file in the install directory of Bio7. In the file you can change the default memory settings e.g. 
 the initial heap size -Xms and the maximum heap space -Xmx.
 
 MacOSX:
+
 For an increased Java heap space open the Bio7 package (context menu if you click on the icon) then go to Contents->MacOS and open the Bio7.ini file 
 with a texteditor. In the file you can change the default memory settings e.g. the initial heap size -Xms and the maximum heap space -Xmx.
 For instance to be able to return back much memory after image transfer use a low -Xms setting (e.g.: -Xms1024m). The maximum size for the Java Runtime (-Xmx) depends on the image size
