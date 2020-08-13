@@ -52,6 +52,36 @@ In addition the data transfer type to R can be selected if a more memory efficie
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
 to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
 
+## RAM Usage Settings for Big Images
+
+#### Rserve:
+
+If I want to transfer a huge image to R the following warning message about buffer size occurs: "WARNING: discarding buffer because too big (awaiting……"
+Solution: Increase the size of the input buffer in the Rserve preferences. Open the Rserve preferences Preferences->Preferences Bio7->Preferences R.
+In the Field "Rserve startup arguments" copy the following startup argument:
+
+maxinbuf="4194304"
+
+The max. packet size from the client to Rserve is set to 4GB in this example (maxinbuf argument in kb). 
+Use the example size only if necessary and if you have the memory available!
+
+#### Java:
+
+The Java runtime is able to optimize memory on demand and return occupied memory to the OS. After the the transfer to R the image data on the Java
+side in the classification process (open and transfer to R) by default is closed. If the memory settings of Java in Bio7 (see Bio7.ini file) are adjusted accordingly most
+of the memory can be returned to the OS and thus to R and the memory intensive classification process.
+
+Windows and Linux:
+For an increased Java heap space open the Bio7.ini file in the install directory of Bio7. In the file you can change the default memory settings e.g. 
+the initial heap size -Xms and the maximum heap space -Xmx.
+
+MacOSX:
+For an increased Java heap space open the Bio7 package (context menu if you click on the icon) then go to Contents->MacOS and open the Bio7.ini file 
+with a texteditor. In the file you can change the default memory settings e.g. the initial heap size -Xms and the maximum heap space -Xmx.
+For instance to be able to return back much memory after image transfer use a low -Xms setting (e.g.: -Xms1024m). The maximum size for the Java Runtime (-Xmx) depends on the image size
+and could be adjusted depending on the available RAM (using for instance the half of the available RAM) of the OS.
+
+
 ## Customization
 
 The 'ModelGui' graphical view interface can be modified or extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
