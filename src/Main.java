@@ -186,6 +186,8 @@ public class Main {
 				File dir = new File(dirSelection);
 				final String[] ext = { "tif", "tiff", "dcm", "png" };
 				List<File> files = (List<File>) FileUtils.listFiles(dir, ext, true);
+				//Only directories:
+				//FileUtils.listFilesAndDirs(new File(dir), new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY)
 				for (int i = 0; i < files.size(); i++) {
 					File file = files.get(i);
 

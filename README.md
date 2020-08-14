@@ -86,6 +86,15 @@ Example:
 For instance to be able to return back much memory after image transfer use a low -Xms setting (e.g.: -Xms1024m). The maximum size for the Java Runtime (-Xmx) depends on the image size
 and could be adjusted depending on the available RAM (using for instance the half of the available RAM) of the OS.
 
+#### Image Transfer And Classification Data:
+
+In the Settings tab the datatype from Java to R can be adjusted for a less memory consumption if possible (transfer and classification - options are: double, integer, raw).
+
+#### Using the Bioformats library:
+
+Using the Bio-Formats library with the ImageJ macro (enable the option 'Use ImageJ Macro at Import' in the 'Settings' tab) it is possible to crop huge images to parts before the R classification process starts.
+The library has to be installed first as an ImageJ plugin.
+Bio-Formats GUI import commands can be recorded with the ImageJ macro recorder for use in the available project macro for, e.g., a specific import.
 
 ## Customization
 

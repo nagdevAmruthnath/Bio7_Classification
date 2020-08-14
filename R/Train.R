@@ -17,3 +17,8 @@ print(rf_model)
 #The same as above:
 #res<-randomForest(as.factor(dftrain[,1])~dftrain[,-1],data=dftrain,ntree=64)
 
+
+#Using the ranger package: 
+#library(ranger)
+#rf_model<-ranger(data = dftrain, dependent.variable.name = "Class",classification = TRUE,num.trees = 64)
+#print(rf_model)
