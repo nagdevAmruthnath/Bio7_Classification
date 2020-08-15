@@ -452,6 +452,7 @@ public class ModelGui extends Composite {
 		gd_transferTypeCombo.widthHint = 269;
 		transferTypeCombo.setLayoutData(gd_transferTypeCombo);
 		transferTypeCombo.setItems(new String[] { "Double", "Integer", "Byte" });
+		transferTypeCombo.select(0);
 		transferTypeCombo.setText("Double");
 		transferTypeCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent e) {
