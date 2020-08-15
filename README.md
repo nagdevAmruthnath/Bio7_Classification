@@ -52,7 +52,7 @@ In addition the data transfer type to R can be selected if a more memory efficie
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
 to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
 
-For convenience images and stored ROI Manager files can be dropped on the ImageJ-Canvas view to open them. In addition a save R workspace file can be opened, too, by
+For convenience images and stored ROI Manager files can be dropped on the ImageJ-Canvas view to open them. In addition a saved R workspace file can be opened, too, by
 dropping it on the main toolbar of Bio7. Finally a stored GUI configuration file can be opened by dropping it directly on the GUI.
 
 ## RAM Usage Settings for Big Images
