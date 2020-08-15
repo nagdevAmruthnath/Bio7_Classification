@@ -15,8 +15,10 @@ import org.eclipse.swt.widgets.Text;
 import com.eco.bio7.batch.Bio7Dialog;
 import com.eco.bio7.batch.FileRoot;
 import com.eco.bio7.image.CanvasView;
+import com.eco.bio7.image.RImageMethodsView;
 import com.eco.bio7.image.Util;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Combo;
 
 public class ModelGui extends Composite {
 	protected boolean convolve;
@@ -107,6 +109,9 @@ public class ModelGui extends Composite {
 	protected boolean useDirectoryDialog;
 	protected Button checkConvertToLab;
 	protected boolean toLab;
+	private Label transferTypeLabel;
+	protected Combo transferTypeCombo;
+	protected int transferType;
 
 	public ModelGui(Composite parent, Main model, int style) {
 		super(parent, SWT.NONE);
@@ -416,7 +421,23 @@ public class ModelGui extends Composite {
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
 		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify.R");
-
+		
+		transferTypeLabel = new Label(composite_1, SWT.CENTER);
+		transferTypeLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		transferTypeLabel.setText("Select Transfer Type");
+		
+		transferTypeCombo = new Combo(composite_1, SWT.NONE);
+		GridData gd_transferTypeCombo = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		gd_transferTypeCombo.widthHint = 269;
+		transferTypeCombo.setLayoutData(gd_transferTypeCombo);
+		transferTypeCombo.setItems(new String[] { "Double", "Integer", "Byte"});
+		transferTypeCombo.setText("Double");
+		transferTypeCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(final SelectionEvent e) {
+				int index=transferTypeCombo.getSelectionIndex();			
+				RImageMethodsView.getTransferTypeCombo().select(index);
+			}
+		});
 	}
 
 	public void getFeatureOptions() {
@@ -434,6 +455,8 @@ public class ModelGui extends Composite {
 				useImportMacro = checkUseImportMacro.getSelection();
 
 				useDirectoryDialog = checkUseDirectory.getSelection();
+				
+				transferType=transferTypeCombo.getSelectionIndex();
 
 				channelOption = channelSelectionText.getText();
 
