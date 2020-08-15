@@ -28,9 +28,11 @@ public class Settings {
 	 * For each value follow the sequence of the GUI. Load and save actions must
 	 * follow the same sequence (simple text file)!
 	 */
-	public void loadScript() {
+	public void loadScript(String file) {
 
-		String file = Bio7Dialog.openFile(new String[] { "*.txt", "*" });
+		if (file == null) {
+			file = Bio7Dialog.openFile(new String[] { "*.txt", "*" });
+		}
 		if (file != null) {
 			File fil = new File(file);
 
@@ -101,7 +103,7 @@ public class Settings {
 				modelGui.txtTrainingRScript.setText(reader.readLine());
 
 				modelGui.txtClassificationRScript.setText(reader.readLine());
-				
+
 				int selection = Integer.parseInt(reader.readLine());
 				modelGui.transferTypeCombo.select(selection);
 				RImageMethodsView.getTransferTypeCombo().select(selection);
@@ -222,9 +224,8 @@ public class Settings {
 
 		buffer.append(modelGui.getPathClassificationScript());
 		buffer.append(sep);
-		
+
 		buffer.append(modelGui.transferTypeCombo.getSelectionIndex());
-		
 
 		String file = Bio7Dialog.saveFile("*.txt");
 		if (file != null) {

@@ -2,6 +2,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -117,8 +123,23 @@ public class ModelGui extends Composite {
 		super(parent, SWT.NONE);
 		this.model = model;
 		setLayout(new FillLayout(SWT.HORIZONTAL));
-
 		tabFolder = new CTabFolder(this, SWT.BORDER);
+		/*Add drag and drop for the Configuration file!*/
+		DropTarget dt = new DropTarget(tabFolder, DND.DROP_DEFAULT | DND.DROP_MOVE);
+		dt.setTransfer(new Transfer[] { FileTransfer.getInstance() });
+		dt.addDropListener(new DropTargetAdapter() {
+			public void drop(DropTargetEvent event) {
+
+				FileTransfer ft = FileTransfer.getInstance();
+				if (ft.isSupportedType(event.currentDataType)) {
+					String[] fileList = (String[]) event.data;
+					for (int i = 0; i < fileList.length; i++) {
+						//System.out.println(fileList[i]);
+						new Settings(ModelGui.this).loadScript(fileList[0]);
+					}
+				}
+			}
+		});
 		// tabFolder.setSelectionBackground(
 		// Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
@@ -179,7 +200,7 @@ public class ModelGui extends Composite {
 		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				new Settings(ModelGui.this).loadScript();
+				new Settings(ModelGui.this).loadScript(null);
 			}
 		});
 		btnLoadConfiguration.setText("Load Configuration");
@@ -421,20 +442,20 @@ public class ModelGui extends Composite {
 		txtClassificationRScript = new Text(composite_1, SWT.BORDER);
 		txtClassificationRScript.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify.R");
-		
+
 		transferTypeLabel = new Label(composite_1, SWT.CENTER);
 		transferTypeLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		transferTypeLabel.setText("Select Transfer Type");
-		
+
 		transferTypeCombo = new Combo(composite_1, SWT.NONE);
 		GridData gd_transferTypeCombo = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 		gd_transferTypeCombo.widthHint = 269;
 		transferTypeCombo.setLayoutData(gd_transferTypeCombo);
-		transferTypeCombo.setItems(new String[] { "Double", "Integer", "Byte"});
+		transferTypeCombo.setItems(new String[] { "Double", "Integer", "Byte" });
 		transferTypeCombo.setText("Double");
 		transferTypeCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent e) {
-				int index=transferTypeCombo.getSelectionIndex();			
+				int index = transferTypeCombo.getSelectionIndex();
 				RImageMethodsView.getTransferTypeCombo().select(index);
 			}
 		});
@@ -455,8 +476,8 @@ public class ModelGui extends Composite {
 				useImportMacro = checkUseImportMacro.getSelection();
 
 				useDirectoryDialog = checkUseDirectory.getSelection();
-				
-				transferType=transferTypeCombo.getSelectionIndex();
+
+				transferType = transferTypeCombo.getSelectionIndex();
 
 				channelOption = channelSelectionText.getText();
 
