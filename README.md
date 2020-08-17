@@ -52,11 +52,15 @@ In addition the data transfer type to R can be selected if a more memory efficie
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
 to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
 
-## RAM Usage Settings for Big Images
+For convenience images and stored ROI Manager files can be dropped on the ImageJ-Canvas view to open them. In addition a saved R workspace file can be opened, too, by
+dropping it on the main toolbar of Bio7. Finally a stored GUI configuration file can be opened by dropping it directly on the classification GUI.
 
+## RAM Usage Settings for Big Images
+ 
 #### Rserve:
 
-If I want to transfer a huge image to R the following warning message about buffer size occurs: "WARNING: discarding buffer because too big (awaiting……"
+If I want to transfer a huge image to R the following warning message about buffer size occurs: "WARNING: discarding buffer because too big awaiting.."
+
 Solution: Increase the size of the input buffer in the Rserve preferences. Open the Rserve preferences Preferences->Preferences Bio7->Preferences R.
 In the Field "Rserve startup arguments" copy the following startup argument:
 
