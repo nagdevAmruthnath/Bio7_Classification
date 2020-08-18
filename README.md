@@ -55,7 +55,7 @@ In addition the data transfer type to R can be selected if a more memory efficie
 ##### Supported Images:
 
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
-to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
+to import images with an ImageJ macro (e.g. Landsat 8 images, see ImageJ macro example!).
 
 ##### Note:
 
