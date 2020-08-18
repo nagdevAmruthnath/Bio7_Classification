@@ -43,7 +43,7 @@ Several features can be enabled in the default tab which will be added to the de
 A comma separated text argument adds filter images of different radius or applies special settings for edge algorithms like Difference of Gaussian, Lipschitz, Gabor, Convolve. 
 For some edge detection methods a ';' separator can be set, too, for different sets of edge settings (Difference of Gaussian, Lipschitz, Gabor, Convolve) resulting
 in one image layer each.
-
+ 
 All settings for classification can be stored or reopened with the 'Load/Save Configuration' actions in a simple text file (simply drag the file on the GUI interface to load it!).
 
 ##### Settings Tab:
