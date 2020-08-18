@@ -32,6 +32,8 @@ Note: When you import the project from a local file location or *.zip file the c
 
 Open and compile the 'Main.java' class dynamically (use the 'Compile Java' action in the Bio7 main toolbar).
 
+##### Features Tab:
+
 Follow Button 1-4 for a classification workflow which trains and classifies images with R (scripts
 are available in the R directory) in a non-blocking job.
  
@@ -40,17 +42,22 @@ text argument adds filter images of different radius or applies special settings
 For some edge detection methods a ';' separator can be set, too, for different sets of edge settings (Difference of Gaussian, Lipschitz, Gabor, Convolve) resulting
 in one image layer each.
 
-All settings for classification can be stored or reopened with the 'Load/Save Configuration' actions in a simple text file.
+All settings for classification can be stored or reopened with the 'Load/Save Configuration' actions in a simple text file (simply drag the file on the GUI interface to load it!).
+
+##### Settings Tab:
 
 In the Settings tab the path to the R (training and classification) and the ImageJ import macro scripts can be set if necessary (or easier simply change the default scripts).
 It is also possible to enable a directory dialog (see option 'Use Directory Dialog') for the classification (step 4) of images in a folder and it's subfolders (lists the image files recursively) 
-
 instead of using selected images with the file dialog (for multiple files).
 
 In addition the data transfer type to R can be selected if a more memory efficient transfer is needed or possible (this action will set the transfer type of images, too).
 
+##### Supported Images:
+
 Until now Multichannel images (e.g. RGB) and Grayscale images or stacks (8-bit, 16-bit, 32-bit) can be classified. It is also possible
 to import images with an ImageJ macro (e.g. Landsat 8 images, see macro example!).
+
+##### Note:
 
 For convenience images and stored ROI Manager files can be dropped on the ImageJ-Canvas view to open them. In addition a saved R workspace file can be opened, too, by
 dropping it on the main toolbar of Bio7. Finally a stored GUI configuration file can be opened by dropping it directly on the classification GUI.
