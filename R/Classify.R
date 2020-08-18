@@ -8,6 +8,6 @@ imageMatrix<-matrix(as.integer(final),imageSizeX,imageSizeY)#Create a image matr
 #Here we plot the result with R!
 #image(1:imageSizeX,1:imageSizeY,imageMatrix,xlim=c(1,imageSizeX),ylim=c(imageSizeY,1),axes = T,useRaster=TRUE)
 
-#Using Ranger package!
+#Using the Ranger package!
 #final<-predict(rf_model,current_feature_stack)
 #imageMatrix<-matrix(as.integer(final$predictions),imageSizeX,imageSizeY)#Create a image matrix
