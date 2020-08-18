@@ -36,9 +36,11 @@ Open and compile the 'Main.java' class dynamically (use the 'Compile Java' actio
 
 Follow Button 1-4 for a classification workflow which trains and classifies images with R (scripts
 are available in the R directory) in a non-blocking job.
- 
-Several features can be enabled in the default tab which will be added to the default image layers. A comma separated
-text argument adds filter images of different radius or applies special settings for edge algorithms like Difference of Gaussian, Lipschitz, Gabor, Convolve. 
+
+RGB images can be converted to a different color space (see option HSB Stack, LAB Stack) and selected channels from multichannel images
+or stacks can be extracted individually.
+Several features can be enabled in the default tab which will be added to the default image layers. 
+A comma separated text argument adds filter images of different radius or applies special settings for edge algorithms like Difference of Gaussian, Lipschitz, Gabor, Convolve. 
 For some edge detection methods a ';' separator can be set, too, for different sets of edge settings (Difference of Gaussian, Lipschitz, Gabor, Convolve) resulting
 in one image layer each.
 
