@@ -117,6 +117,14 @@ The Main.java class can be extended with further filters or default features. To
 
 The default R scripts and the ImageJ import macro can be changed with the default Bio7 editors.
 
+## External Java Libraries
+
+The plugin uses at the moment two external Java libraries which will be installed with the Java CV plugin:
+
+[BoofCV](https://boofcv.org)
+
+[Catalano-Framework](https://github.com/DiegoCatalano/Catalano-Framework)
+
 
 
 
