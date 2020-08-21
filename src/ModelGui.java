@@ -156,7 +156,7 @@ public class ModelGui extends Composite {
 		composite.setLayout(new GridLayout(2, true));
 
 		Button btnNewButton = new Button(composite, SWT.NONE);
-		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -166,7 +166,7 @@ public class ModelGui extends Composite {
 		btnNewButton.setText("Create Stack (1)");
 
 		Button btnNewButton_1 = new Button(composite, SWT.NONE);
-		btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -176,7 +176,7 @@ public class ModelGui extends Composite {
 		btnNewButton_1.setText("Create Classes (2)");
 
 		Button btnNewButton_2 = new Button(composite, SWT.NONE);
-		btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnNewButton_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -186,7 +186,7 @@ public class ModelGui extends Composite {
 		btnNewButton_2.setText("Train Script (3)");
 
 		Button btnNewButton_3 = new Button(composite, SWT.NONE);
-		btnNewButton_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnNewButton_3.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -196,7 +196,7 @@ public class ModelGui extends Composite {
 		btnNewButton_3.setText("Classify Script (4)");
 
 		btnLoadConfiguration = new Button(composite, SWT.NONE);
-		btnLoadConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnLoadConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnLoadConfiguration.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -206,7 +206,7 @@ public class ModelGui extends Composite {
 		btnLoadConfiguration.setText("Load Configuration");
 
 		btnNewButton_4 = new Button(composite, SWT.NONE);
-		btnNewButton_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNewButton_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnNewButton_4.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,7 +222,7 @@ public class ModelGui extends Composite {
 				checkConvertToLab.setSelection(false);
 			}
 		});
-		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		checkConvertToHsb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		checkConvertToHsb.setText("Convert to HSB Color Space");
 
 		checkConvertToLab = new Button(composite, SWT.CHECK);
@@ -232,7 +232,7 @@ public class ModelGui extends Composite {
 				checkConvertToHsb.setSelection(false);
 			}
 		});
-		checkConvertToLab.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		checkConvertToLab.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		checkConvertToLab.setText("Convert to LAB Color Space");
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
@@ -249,9 +249,11 @@ public class ModelGui extends Composite {
 		new Label(composite, SWT.NONE);
 
 		checkGaussianFilter = new Button(composite, SWT.CHECK);
+		checkGaussianFilter.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkGaussianFilter.setText("Gaussian Blur");
 
 		checkDifferenceOfGaussian = new Button(composite, SWT.CHECK);
+		checkDifferenceOfGaussian.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkDifferenceOfGaussian.setText("Difference of Gaussian");
 
 		optionGaussian = new Text(composite, SWT.BORDER);
@@ -263,9 +265,11 @@ public class ModelGui extends Composite {
 		optionDiffGaussian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkMean = new Button(composite, SWT.CHECK);
+		checkMean.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkMean.setText("Mean");
 
 		checkMedian = new Button(composite, SWT.CHECK);
+		checkMedian.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkMedian.setText("Median");
 
 		optionsMean = new Text(composite, SWT.BORDER);
@@ -277,13 +281,15 @@ public class ModelGui extends Composite {
 		optionMedian.setText("2");
 
 		checkMinimum = new Button(composite, SWT.CHECK);
+		checkMinimum.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkMinimum.setText("Minimum");
 
 		checkVariance = new Button(composite, SWT.CHECK);
+		checkVariance.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkVariance.setText("Variance");
 
 		optionsMinimum = new Text(composite, SWT.BORDER);
-		GridData gd_optionsMinimum = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_optionsMinimum = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_optionsMinimum.widthHint = 167;
 		optionsMinimum.setLayoutData(gd_optionsMinimum);
 		optionsMinimum.setText("2");
@@ -293,9 +299,11 @@ public class ModelGui extends Composite {
 		optionsVariance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkMaximum = new Button(composite, SWT.CHECK);
+		checkMaximum.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkMaximum.setText("Maximum");
 
 		checkGradientHessian = new Button(composite, SWT.CHECK);
+		checkGradientHessian.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkGradientHessian.setText("Gradient");
 
 		optionsMaximum = new Text(composite, SWT.BORDER);
@@ -306,9 +314,11 @@ public class ModelGui extends Composite {
 		optionGradientHessian.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLaplacian = new Button(composite, SWT.CHECK);
+		checkLaplacian.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkLaplacian.setText("Laplacian");
 
 		checkEdges = new Button(composite, SWT.CHECK);
+		checkEdges.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkEdges.setText("Sobel Edge");
 
 		optionLaplacian = new Text(composite, SWT.BORDER);
@@ -318,9 +328,11 @@ public class ModelGui extends Composite {
 		optionsEdges.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkLipschitz = new Button(composite, SWT.CHECK);
+		checkLipschitz.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkLipschitz.setText("Lipschitz");
 
 		checkGabor = new Button(composite, SWT.CHECK);
+		checkGabor.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkGabor.setText("Gabor");
 
 		optionLipschitz = new Text(composite, SWT.BORDER);
@@ -338,9 +350,11 @@ public class ModelGui extends Composite {
 		optionGabor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		checkTopHat = new Button(composite, SWT.CHECK);
+		checkTopHat.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkTopHat.setText("Top Hat");
 
 		checkKuwahara = new Button(composite, SWT.CHECK);
+		checkKuwahara.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkKuwahara.setText("Kuwahara");
 
 		optionsTopHat = new Text(composite, SWT.BORDER);
@@ -354,6 +368,7 @@ public class ModelGui extends Composite {
 		new Label(composite, SWT.NONE);
 
 		checkConvolve = new Button(composite, SWT.CHECK);
+		checkConvolve.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkConvolve.setText("Convolve");
 		new Label(composite, SWT.NONE);
 
