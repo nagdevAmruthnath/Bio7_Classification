@@ -387,6 +387,7 @@ public class ModelGui extends Composite {
 		composite_1.setLayout(new GridLayout(2, true));
 
 		checkUseImportMacro = new Button(composite_1, SWT.CHECK);
+		checkUseImportMacro.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		checkUseImportMacro.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -414,7 +415,7 @@ public class ModelGui extends Composite {
 				textImageJMacro.setText(path);
 			}
 		});
-		GridData gd_buttonMacro = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		GridData gd_buttonMacro = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_buttonMacro.heightHint = 25;
 		buttonMacro.setLayoutData(gd_buttonMacro);
 		buttonMacro.setText("Macro");
@@ -432,7 +433,7 @@ public class ModelGui extends Composite {
 				txtTrainingRScript.setText(path);
 			}
 		});
-		GridData gd_btnNewButton_5 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_btnNewButton_5 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_btnNewButton_5.heightHint = 25;
 		btnNewButton_5.setLayoutData(gd_btnNewButton_5);
 		btnNewButton_5.setText("Training Script");
@@ -449,7 +450,7 @@ public class ModelGui extends Composite {
 				txtClassificationRScript.setText(path);
 			}
 		});
-		GridData gd_btnRClassificationScript = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_btnRClassificationScript = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_btnRClassificationScript.heightHint = 25;
 		btnRClassificationScript.setLayoutData(gd_btnRClassificationScript);
 		btnRClassificationScript.setText("Classification Script");
@@ -459,7 +460,7 @@ public class ModelGui extends Composite {
 		txtClassificationRScript.setText(FileRoot.getCurrentCompileDir() + "/../R/Classify.R");
 
 		transferTypeLabel = new Label(composite_1, SWT.CENTER);
-		transferTypeLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		transferTypeLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		transferTypeLabel.setText("Select Transfer Type");
 
 		transferTypeCombo = new Combo(composite_1, SWT.NONE);
