@@ -84,7 +84,7 @@ public class Main {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Transfer Image Data And Convolve ...", IProgressMonitor.UNKNOWN);
+				monitor.beginTask("Started selected action ...", IProgressMonitor.UNKNOWN);
 				/* We create a feature stack. R connection not necessary! */
 				if (choice == 1) {
 					action(choice, monitor);
