@@ -112,7 +112,7 @@ Bio-Formats GUI import commands can be recorded with the ImageJ macro recorder f
 
 ## Customization
 
-The 'ModelGui' graphical view interface can be modified or extended with the Eclipse WindowBuilder plugin (SWT) if installed in Bio7.
+The 'ModelGui' graphical view interface can be modified or extended with the [Eclipse WindowBuilder plugin](https://marketplace.eclipse.org/content/windowbuilder) (SWT) if installed in Bio7.
 The Main.java class can be extended with further filters or default features. To store or load settings of the GUI edit the Settings.java file.
 
 The default R scripts and the ImageJ import macro can be changed with the default Bio7 editors.
